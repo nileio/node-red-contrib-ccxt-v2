@@ -167,3 +167,13 @@ npm install node-red-contrib-ccxt --save
 ![ccxt_bittrex_ohclv](https://user-images.githubusercontent.com/1216181/53039005-62d28c00-347e-11e9-936d-210b6c9f50a7.png)
 
 In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the secrets.
+
+
+**To Do**
+
+- API payload is not required for some custom APIs. detect and remove error message on the node.
+- Add a help hover button or an area where the documentation of the API is displayed when selecting a custom API.
+- Add a persistent link to API doc when selecting an exchange. Info hover button to retrieve
+exchange info or a description of the selected item somewhere.
+- Auto populate API payload for selected custom API.
+- Review custom API syntax for implicit calls.

@@ -12,3 +12,14 @@ Now this node package supports the API for all **(133 exchanges) crypto exchange
 **Fixes**
 
 Some Exchanges not support pass API parameters like string so I will send these parameters like JSON object always. In bittrex for example only support JSON parameters and Kraken not. But always support JSON parameters.
+
+### 0.2.3.1
+
+forked due to inactivity with upstream project.
+
+**Fixes**
+
+-ACX: corrected and removed APIs list from ccxt package. upstream ccxt need to be updated.
+-Fixed a bug where the call fails if the custom API includes a path parameter such as 
+/path/{market}
+/path/{coin}/balance

@@ -40,7 +40,7 @@ module.exports = function(RED) {
             node.callbackApiTypes = function(req, res) {
                 var exchange = req.query.exchange;
 
-                // create to exchange object
+                // create to exchange object passing in exchange id
                 var exchange = new ccxt[exchange] ();
 
                 // get all api types by exchange
@@ -80,7 +80,7 @@ module.exports = function(RED) {
                         var secret = RED.nodes.getNode(config.apisecrets);
 
                         if (secret == undefined) {
-                            node.error('Not exist any Exchange credential configured', msg);                            
+                            node.error('No Exchange credentials configured.', msg);                            
                             return;
                         }
 
@@ -126,10 +126,15 @@ module.exports = function(RED) {
                     } else if (api === "fetchTrades") {
                         result = await exchange.fetchTrades(fetchtradessymbol);
                     } else if (api === "customAPI") {
-                        result = await exchange[config.apitype + '_' + config.apicustom.toLowerCase()](JSON.parse(config.apipayload));
+
+                      var impApiCall = config.apicustom.replace("/","_");
+                        impApiCall = impApiCall.replace("{","");
+                        impApiCall = impApiCall.replace("}","");
+                        impApiCall = config.apitype + '_' + impApiCall.toLowerCase();
+                        result = await exchange[impApiCall](JSON.parse(config.apipayload));
                     } else {
-                        node.status({fill:"yellow", shape: "ring", text: "CCXT API not exist"});
-                        node.warning("CCXT API not exist");
+                        node.status({fill:"yellow", shape: "ring", text: "CCXT API does not exist"});
+                        node.warning("CCXT API does not exist");
                     }
 
                     // clear any node error
