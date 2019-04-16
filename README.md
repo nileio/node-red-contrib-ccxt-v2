@@ -11,7 +11,6 @@ For the latest updates see the [CHANGELOG.md](https://github.com/masalinas/node-
 npm install node-red-contrib-ccxt --save
 ```
 
-
 ## Exchanges supported
 
 * 1BTCXE
