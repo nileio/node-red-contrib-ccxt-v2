@@ -1488,7 +1488,7 @@
 
 <script type="text/javascript">
     RED.nodes.registerType("ccxt-api", {
-        category:'Traiding',
+        category:'CryptoExchange',
         defaults: {
             name: {value: ''},
             exchange: {value: 'bittrex', required:true},
@@ -1536,7 +1536,7 @@
                 });
             }
 
-            // recover API types from CCXT node package
+            // retrieve API types from CCXT node package
             getAPITypes = function(exchange) {
                 var apitype = $("#node-input-apitype option:selected").val();            
 
@@ -1568,7 +1568,7 @@
                 });
             }
 
-            // recover APIs from CCXT node package
+            // retrieve APIs from CCXT node package
             getAPIS = function(exchange, apiType) {
                 $.getJSON('apis', { exchange: exchange, apitype: apiType}, function(result) {
                     var apiElement = $("#node-input-apicustom");
