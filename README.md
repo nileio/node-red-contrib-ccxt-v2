@@ -6,7 +6,7 @@ Now this node package supports the API for all **(133 Exchanges)** Crypto Exchan
 
 For the latest updates see the [CHANGELOG.md](https://github.com/masalinas/node-red-contrib-ccxt/blob/master/CHANGELOG.md)
 
-## Installation
+## Installation Instructions
 ```
 npm install node-red-contrib-ccxt --save
 ```
