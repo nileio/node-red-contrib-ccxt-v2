@@ -45,7 +45,7 @@ module.exports = function(RED) {
             };
 
             node.callbackExchangeCaps = function(req, res) {
-                console.log("github commit?");
+                console.log("github 5commit?");
                 var exchange = req.query.exchange;
 
                 //TODO: fix bug The Ocean exchange cannot be instantiated
