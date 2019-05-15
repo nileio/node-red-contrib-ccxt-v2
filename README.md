@@ -1,6 +1,6 @@
 TODO: README & docs
 
-This package is now way different than the fork.
+This package is now way different than the fork. This is work in progress, unfinished ...
 
 # node-red-contrib-ccxt
 
