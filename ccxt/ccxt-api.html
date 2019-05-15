@@ -1,1688 +1,810 @@
-<script type="text/x-red" data-template-name="ccxt-api">
-  <div class="form-row">
-    <label for="node-input-name"><i class="fa"></i>Name</label>
-    <input type="text" id="node-input-name">
-  </div>
-
-  <!-- Exchange selector -->
-  <div class="form-row">
-    <label for="node-input-exchange"><i class="fa "></i>Exchange</label>
-    <select type="text" id="node-input-exchange">
-      <option value="_1btcxe">1BTCXE</option>
-      <option value="acx">ACX</option>
-      <option value="allcoin">Allcoin</option>
-      <option value="anxpro">ANXPro</option>
-      <option value="anybits">Anybits</option>
-      <option value="bcex">BCEX</option>
-      <option value="bibox">Bibox</option>
-      <option value="bigone">BigONE</option>
-      <option value="binance">Binance</option>
-      <option value="bit2c">Bit2C</option>
-      <option value="bitbank">bitbank</option>
-      <option value="bitbay">BitBay</option>
-      <option value="bitfinex">Bitfinex</option>
-      <option value="bitfinex2">Bitfinex v2</option>
-      <option value="bitflyer">bitFlyer</option>
-      <option value="bitforex">Bitforex</option>      
-      <option value="bithumb">Bithumb</option>
-      <option value="bitibu">Bitibu</option>
-      <option value="bitkk">bitkk</option>
-      <option value="bitlish">Bitlish</option>
-      <option value="bitmarket">BitMarket</option>
-      <option value="bitmex">BitMEX</option>
-      <option value="bitsane">Bitsane</option>
-      <option value="bitso">Bitso</option>
-      <option value="bitstamp">Bitstamp</option>
-      <option value="bitstamp1">Bitstamp v1</option>
-      <option value="bittrex">Bittrex</option>
-      <option value="bitz">Bit-Z</option>
-      <option value="bl3p">BL3P</option>
-      <option value="bleutrade">Bleutrade</option>
-      <option value="braziliex">Braziliex</option>
-      <option value="btcalpha">BTC-Alpha</option>
-      <option value="btcbox">BtcBox</option>
-      <option value="btcchina">BTCChina</option>
-      <option value="btcexchange">BTCExchange</option>
-      <option value="btcmarkets">BTC Markets</option>
-      <option value="btctradeim">BtcTrade.im</option>
-      <option value="btctradeua">BTC Trade UA</option>
-      <option value="btcturk">BTCTurk</option>
-      <option value="buda">Buda</option>
-      <option value="bxinth">BX.in.th</option>
-      <option value="ccex">C-CEX</option>
-      <option value="cex">CEX.IO</option>
-      <option value="chbtc">CHBTC</option>
-      <option value="chilebit">ChileBit</option>
-      <option value="cobinhood">COBINHOOD</option>
-      <option value="coinbase">Coinbase</option>
-      <option value="coinbaseprime">Coinbase Prime</option>
-      <option value="coinbasepro">Coinbase Pro</option>
-      <option value="coincheck">coincheck</option>
-      <option value="coinegg">CoinEgg</option>
-      <option value="coinex">CoinEx</option>
-      <option value="coinexchange">CoinExchange</option>
-      <option value="coinfalcon">CoinFalcon</option>
-      <option value="coinfloor">coinfloor</option>
-      <option value="coingi">Coingi</option>
-      <option value="coinmarketcap">CoinMarketCap</option>
-      <option value="coinmate">CoinMate</option>
-      <option value="coinnest">coinnest</option>
-      <option value="coinone">CoinOne</option>
-      <option value="coinspot">CoinSpot</option>
-      <option value="cointiger">CoinTiger</option>
-      <option value="coolcoin">CoolCoin</option>
-      <option value="coss">COSS</option>
-      <option value="crex24">CREX24</option>
-      <option value="crypton">Crypton</option>
-      <option value="cryptopia">Cryptopia</option>
-      <option value="deribit">Deribit</option>
-      <option value="dsx">DSX</option>
-      <option value="ethfinex">Ethfinex</option>
-      <option value="exmo">EXMO</option>
-      <option value="exx">EXX</option>
-      <option value="fcoin">FCoin</option>
-      <option value="flowbtc">flowBTC</option>
-      <option value="foxbit">FoxBit</option>
-      <option value="fybse">FYB-SE</option>
-      <option value="fybsg">FYB-SG</option>
-      <option value="gatecoin">Gatecoin</option>
-      <option value="gateio">Gate.io</option>
-      <option value="gdax">GDAX</option>
-      <option value="gemini">Gemini</option>
-      <option value="getbtc">GetBTC</option>
-      <option value="hadax">HADAX</option>
-      <option value="hitbtc">HitBTC</option>
-      <option value="hitbtc2">HitBTC v2</option>
-      <option value="huobipro">Huobi Pro</option>
-      <option value="ice3x">ice3x</option>
-      <option value="independentreserve">Independent Reserve</option>
-      <option value="indodax">INDODAX</option>
-      <option value="itbit">itBit</option>
-      <option value="jubi">jubi.com</option>
-      <option value="kkex">KKEX</option>
-      <option value="kraken">Kraken</option>
-      <option value="kucoin">Kucoin</option>
-      <option value="kucoin2">KuCoin 2</option>
-      <option value="kuna">Kuna</option>
-      <option value="lakebtc">LakeBTC</option>
-      <option value="lbank">LBank</option>
-      <option value="liqui">Liqui</option>
-      <option value="liquid">Liquid</option>
-      <option value="livecoin">LiveCoin</option>
-      <option value="luno">luno</option>
-      <option value="lykke">Lykke</option>
-      <option value="mercado">Mercado Bitcoin</option>
-      <option value="mixcoins">MixCoins</option>
-      <option value="negociecoins">NegocieCoins</option>
-      <option value="nova">Novaexchange</option>
-      <option value="okcoincny">OKCoin CNY</option>
-      <option value="okcoinusd">OKCoin USD</option>
-      <option value="okex">OKEX</option>
-      <option value="paymium">Paymium</option>
-      <option value="poloniex">Poloniex</option>
-      <option value="qryptos">QRYPTOS</option>
-      <option value="quadrigacx">QuadrigaCX</option>
-      <option value="quoinex">QUOINEX</option>
-      <option value="rightbtc">RightBTC</option>
-      <option value="southxchange">SouthXchange</option>
-      <option value="surbitcoin">SurBitcoin</option>
-      <option value="theocean">The Ocean</option>
-      <option value="therock">TheRockTrading</option>
-      <option value="tidebit">TideBit</option>
-      <option value="tidex">Tidex</option>
-      <option value="uex">UEX</option>
-      <option value="upbit">Upbit</option>
-      <option value="urdubit">UrduBit</option>
-      <option value="vaultoro">Vaultoro</option>
-      <option value="vbtc">VBTC</option>
-      <option value="virwox">VirWoX</option>
-      <option value="xbtce">xBTCe</option>
-      <option value="yobit">YoBit</option>
-      <option value="yunbi">YUNBI</option>
-      <option value="zaif">Zaif</option>
-      <option value="zb">ZB</option>
-    </select>
-  </div>
-
-  <!-- API selector -->
-  <div class="form-row">
-    <label for="node-input-api"><i class="fa"></i>API</label>
-    <select type="text" id="node-input-api">
-      <option value="loadMarkets">Load Markets</option>
-      <option value="fetchMarkets">Fetch Markets</option>
-      <option value="fetchTicker">Fetch Ticker</option>
-      <option value="fetchTickers">Fetch Tickers</option>
-      <option value="fetchOrderBook">Fetch Order Book</option>
-      <option value="fetchOHLCV">Fetch OHLCV</option>
-      <option value="fetchTrades">Fetch Trades</option>
-      <option value="customAPI">Custom API</option>
-    </select>
-  </div>
-
-  <!-- load market attributes -->
-  <div class="form-row node-input-public-api-load-markets" style="display: none;">
-     <label for="node-input-loadmarketsreload"><i class="fa"></i>Reload</label>
-     <input type="checkbox" id="node-input-loadmarketsreload">
-  </div>
-
-  <!-- fetch ticker attributes -->
-  <div class="form-row node-input-public-api-fetch-ticker" style="display: none;">
-     <label for="node-input-fetchtickersymbol"><i class="fa"></i>Symbol</label>
-     <input type="text" id="node-input-fetchtickersymbol">
-  </div>
-
-  <!-- fetch order book attributes -->
-  <div class="form-row node-input-public-api-order-book" style="display: none;">
-     <label for="node-input-orderbooksymbol"><i class="fa"></i>Symbol</label>
-     <input type="text" id="node-input-orderbooksymbol">
-  </div>
-
-  <!-- fetch OHCLV attributes -->
-  <div class="form-row node-input-public-api-fetch-ohlcv" style="display: none;">
-     <label for="node-input-fetchohlcvsymbol"><i class="fa"></i>Symbol</label>
-     <input type="text" id="node-input-fetchohlcvsymbol">
-  </div>
-
-  <div class="form-row node-input-public-api-fetch-ohlcv" style="display: none;">
-     <label for="node-input-fetchohlcvtimeframe"><i class="fa"></i>Time Frame</label>
-     <select type="text" id="node-input-fetchohlcvtimeframe">
-        <option value="1m">1 Min</option>
-        <option value="5m">5 Min</option>
-        <option value="30m">30 Min</option>
-        <option value="1h">1 Hour</option>
-        <option value="1d">1 Day</option>
-     </select>
-  </div>
-
-  <div class="form-row node-input-public-api-fetch-ohlcv" style="display: none;">
-     <label for="node-input-fetchohlcvsince"><i class="fa"></i>Since</label>
-     <input type="date" id="node-input-fetchohlcvsince">
-  </div>
-
-  <div class="form-row node-input-public-api-fetch-ohlcv" style="display: none;">
-     <label for="node-input-fetchohlcvlimit"><i class="fa"></i>Limit</label>
-     <input type="number" id="node-input-fetchohlcvlimit">
-  </div>
-
-  <!-- fetch trades attributes -->
-  <div class="form-row node-input-public-api-fetch-trades" style="display: none;">
-     <label for="node-input-fetchtradessymbol"><i class="fa"></i>Symbol</label>
-     <input type="text" id="node-input-fetchtradessymbol">
-  </div>
-
-  <!-- load Custom API Methods -->
-  <div class="form-row node-input-public-api-custom" style="display: none;">
-    <label for="node-input-apisecrets">Secrets</label>
-    <input type="text" id="node-input-apisecrets">
-  </div>
-
-  <div class="form-row node-input-public-api-custom" style="display: none;">
-    <label for="node-input-apitype"><i class="fa"></i>API Type</label>
-    <select type="text" id="node-input-apitype">
-    </select>
-  </div>
-
-  <div class="form-row node-input-public-api-custom" style="display: none;">
-    <label for="node-input-apicustom"><i class="fa"></i>API Name</label>
-    <select type="text" id="node-input-apicustom">
-    </select>
-  </div>
-
-  <div class="form-row node-input-public-api-custom" style="display: none;">
-    <label for="node-input-apipayload"><i class="fa"></i>API Payload</label>
-    <input type="json" id="node-input-apipayload" style="width:70%>        
-    <input type="hidden" id="node-input-payloadType">
-  </div>
-</script>
-
-<script type="text/x-red" data-help-name="ccxt-api">
-  <p>CCXT API</p>
-  <h3>Inputs</h3>
-  <dl class="message-properties">
-     <dt>Exchange<span class="property-type">string</span></dt>
-     <dd>Exchange list:
-        <p></p>
-        <p><a href="https://1btcxe.com" target="_blank"><img src="_1btcxe.jpg" alt="_1btcxe"></a></p>
-        <ul>
-            <li><b>Id:</b> _1btcxe</li>
-            <li><b>Name:</b> <a href="https://1btcxe.com" target="_blank">1BTCXE</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://1btcxe.com/api-docs.php" target="_blank">API</a></li>
-            <li><b>Country:</b> Panama</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://acx.io" target="_blank"><img src="acx.jpg" alt="acx"></a></p>
-        <ul>
-            <li><b>Id:</b> acx</li>
-            <li><b>Name:</b> <a href="https://acx.io" target="_blank">ACX</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://acx.io/documents/api_v2" target="_blank">API</a></li>
-            <li><b>Country:</b> Australia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.allcoin.com" target="_blank"><img src="allcoin.jpg" alt="allcoin"></a></p>
-        <ul>
-            <li><b>Id:</b> allcoin</li>
-            <li><b>Name:</b> <a href="https://www.allcoin.com" target="_blank">Allcoin</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.allcoin.com/About/APIReference" target="_blank">API</a></li>
-            <li><b>Country:</b> Canada</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://anxpro.com" target="_blank"><img src="anxpro.jpg" alt="anxpro"></a></p>
-        <ul>
-            <li><b>Id:</b> anxpro</li>
-            <li><b>Name:</b> <a href="https://anxpro.com" target="_blank">ANXPro</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="http://docs.anxv2.apiary.io" target="_blank">API</a></li>
-            <li><b>Country:</b> Japan, Singapore, Hong Kong, New Zealand</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://anybits.com/" target="_blank"><img src="anybits.jpg" alt="anybits"></a></p>
-        <ul>
-            <li><b>Id:</b> anybits</li>
-            <li><b>Name:</b> <a href="https://anybits.com/" target="_blank">Anybits</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://anybits.com/help/api" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bcex.top/user/reg/type/2/pid/758978" target="_blank"><img src="bcex.jpg" alt="bcex"></a></p>
-        <ul>
-            <li><b>Id:</b> bcex</li>
-            <li><b>Name:</b> <a href="https://www.bcex.top/user/reg/type/2/pid/758978" target="_blank">BCEX</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.bcex.top/api_market/market/" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bibox.com" target="_blank"><img src="bibox.jpg" alt="bibox"></a></p>
-        <ul>
-            <li><b>Id:</b> bibox</li>
-            <li><b>Name:</b> <a href="https://www.bibox.com" target="_blank">Bibox</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/Biboxcom/api_reference/wiki/home_en" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://b1.run/" target="_blank"><img src="bigone.jpg" alt="bigone"></a></p>
-        <ul>
-            <li><b>Id:</b> bigone</li>
-            <li><b>Name:</b> <a href="https://b1.run/" target="_blank">BigONE</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://open.big.one/docs/api.html" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>        
-        <p><a href="https://www.binance.com/" target="_blank"><img src="binance.jpg" alt="binance"></a></p>
-        <ul>
-            <li><b>Id:</b> binance</li>
-            <li><b>Name:</b> <a href="https://www.binance.com/" target="_blank">Binance</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> <a href="https://github.com/ccxt/ccxt/wiki/Certification" target="_blank"><img src="ccxt_certified.svg" alt="ccxt_certified"></a></li>
-        </ul>
-        <p><a href="https://www.bit2c.co.il/" target="_blank"><img src="bit2c.jpg" alt="bit2c"></a></p>
-        <ul>
-            <li><b>Id:</b> bit2c</li>
-            <li><b>Name:</b> <a href="https://www.bit2c.co.il/" target="_blank">Bit2C</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.bit2c.co.il/home/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Israel</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bitbank.cc/" target="_blank"><img src="bitbank.jpg" alt="bitbank"></a></p>
-        <ul>
-            <li><b>Id:</b> bitbank</li>
-            <li><b>Name:</b> <a href="https://bitbank.cc/" target="_blank">bitbank</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://docs.bitbank.cc/" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bitbay.net/" target="_blank"><img src="bitbay.jpg" alt="bitbay"></a></p>
-        <ul>
-            <li><b>Id:</b> bitbay</li>
-            <li><b>Name:</b> <a href="https://bitbay.net" target="_blank">BitBay</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://bitbay.net/public-api" target="_blank">API</a></li>
-            <li><b>Country:</b> Poland, EU</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bitfinex.com/" target="_blank"><img src="bitfinex.jpg" alt="bitfinex"></a></p>
-        <ul>
-            <li><b>Id:</b> bitfinex</li>
-            <li><b>Name:</b> <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a></li></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://bitfinex.readme.io/v1/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> British Virgin Islands</li>
-            <li><b>Certified:</b> <a href="https://github.com/ccxt/ccxt/wiki/Certification" target="_blank"><img src="ccxt_certified.svg" alt="ccxt_certified"></a></li>
-        </ul>
-        <p><a href="https://www.bitfinex.com/" target="_blank"><img src="bitfinex2.jpg" alt="bitfinex2"></a></p>
-        <ul>
-            <li><b>Id:</b> bitfinex2</li>
-            <li><b>Name:</b> <a href="https://www.bitfinex.com" target="_blank">Bitfinex v2</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://bitfinex.readme.io/v2/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> British Virgin Islands</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bitflyer.jp/" target="_blank"><img src="bitflyer.jpg" alt="bitflyer"></a></p>
-        <ul>
-            <li><b>Id:</b> bitflyer</li>
-            <li><b>Name:</b> <a href="https://bitflyer.jp" target="_blank">bitFlyer</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://bitflyer.jp/API" target="_blank">API</a></li>
-            <li><b>Country:</b> Japan</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bitforex.com/" target="_blank"><img src="bitforex.jpg" alt="bitforex"></a></p>
-        <ul>
-            <li><b>Id:</b> bitforex</li>
-            <li><b>Name:</b> <a href="https://www.bitforex.com/" target="_blank">Bitforex</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/bitforexapi/API_Docs/wiki" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bithumb.com/" target="_blank"><img src="bithumb.jpg" alt="bithumb"></a></p>
-        <ul>
-            <li><b>Id:</b> bithumb</li>
-            <li><b>Name:</b> <a href="https://www.bithumb.com" target="_blank">Bithumb</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.bithumb.com/u1/US127" target="_blank">API</a></li>
-            <li><b>Country:</b> South Korea</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bitibu.com/" target="_blank"><img src="bitibu.jpg" alt="bitibu"></a></p>
-        <ul>
-            <li><b>Id:</b> bitibu</li>
-            <li><b>Name:</b> <a href="https://bitibu.com/" target="_blank">Bitibu</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://bitibu.com/documents/api_v2" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://vip.zb.com/" target="_blank"><img src="bitkk.jpg" alt="bitkk"></a></p>
-        <ul>
-            <li><b>Id:</b> bitkk</li>
-            <li><b>Name:</b> <a href="https://vip.zb.com/" target="_blank">Bitibu</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.bitkk.com/i/developer" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bitlish.com/" target="_blank"><img src="bitlish.jpg" alt="bitlish"></a></p>
-        <ul>
-            <li><b>Id:</b> bitlish</li>
-            <li><b>Name:</b> <a href="https://bitlish.com" target="_blank">Bitlish</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://bitlish.com/api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK, EU, Russia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bitmarket.net/" target="_blank"><img src="bitmarket.jpg" alt="bitmarket"></a></p>
-        <ul>
-            <li><b>Id:</b> bitmarket</li>
-            <li><b>Name:</b> <a href="https://www.bitmarket.pl" target="_blank">BitMarket</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.bitmarket.net/docs.php?file=api_public.html" target="_blank">API</a></li>
-            <li><b>Country:</b> Poland, EU</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bitmex.com/" target="_blank"><img src="bitmex.jpg" alt="bitmex"></a></p>
-        <ul>
-            <li><b>Id:</b> bitmex</li>
-            <li><b>Name:</b> <a href="https://www.bitmex.com" target="_blank">BitMEX</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.bitmex.com/app/apiOverview" target="_blank">API</a></li>
-            <li><b>Country:</b> Seychelles</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bitsane.com/" target="_blank"><img src="bitsane.jpg" alt="bitsane"></a></p>
-        <ul>
-            <li><b>Id:</b> bitsane</li>
-            <li><b>Name:</b> <a href="https://bitsane.com/" target="_blank">Bitsane</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://bitsane.com/help/api" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bitso.com/" target="_blank"><img src="bitso.jpg" alt="bitso"></a></p>
-        <ul>
-            <li><b>Id:</b> bitso</li>
-            <li><b>Name:</b> <a href="https://bitso.com" target="_blank">Bitso</a></li>
-            <li><b>Version:</b> 3</li>
-            <li><b>Doc:</b> <a href="https://bitso.com/api_info" target="_blank">API</a></li>
-            <li><b>Country:</b> Mexico</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bitstamp.net" target="_blank"><img src="bitstamp1.jpg" alt="bitstamp1"></a></p>
-        <ul>
-            <li><b>Id:</b> bitstamp1</li>
-            <li><b>Name:</b> <a href="https://www.bitstamp.net" target="_blank">Bitstamp v1</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.bitstamp.net/api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.bitstamp.net" target="_blank"><img src="bitstamp.jpg" alt="bitstamp"></a></p>
-        <ul>
-            <li><b>Id:</b> bitstamp</li>
-            <li><b>Name:</b> <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://www.bitstamp.net/api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bittrex.com" target="_blank"><img src="bittrex.jpg" alt="bittrex"></a></p>
-        <ul>
-            <li><b>Id:</b> bittrex</li>
-            <li><b>Name:</b> <a href="https://bittrex.com" target="_blank">Bittrex</a></li>
-            <li><b>Version:</b> 1.1</li>
-            <li><b>Doc:</b> <a href="https://bittrex.com/Home/Api" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> <a href="https://github.com/ccxt/ccxt/wiki/Certification" target="_blank"><img src="ccxt_certified.svg" alt="ccxt_certified"></a></li>
-        </ul>
-        <p><a href="https://u.bit-z.com" target="_blank"><img src="bitz.jpg" alt="bitz"></a></p>
-        <ul>
-            <li><b>Id:</b> bitz</li>
-            <li><b>Name:</b> <a href="https://u.bit-z.com" target="_blank">Bit-Z</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://apidoc.bit-z.com/en" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bl3p.eu" target="_blank"><img src="bl3p.jpg" alt="bl3p"></a></p>
-        <ul>
-            <li><b>Id:</b> bl3p</li>
-            <li><b>Name:</b> <a href="https://bl3p.eu" target="_blank">BL3P</a></li>
-            <li><b>Version:</b> 1.1</li>
-            <li><b>Doc:</b> <a href="https://github.com/BitonicNL/bl3p-api/tree/master/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Netherlands, EU</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bleutrade.com" target="_blank"><img src="bleutrade.jpg" alt="bleutrade"></a></p>
-        <ul>
-            <li><b>Id:</b> bleutrade</li>
-            <li><b>Name:</b> <a href="https://bleutrade.com" target="_blank">Bleutrade</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://bleutrade.com/help/API" target="_blank">API</a></li>
-            <li><b>Country:</b> Brazil</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://braziliex.com" target="_blank"><img src="braziliex.jpg" alt="braziliex"></a></p>
-        <ul>
-            <li><b>Id:</b> braziliex</li>
-            <li><b>Name:</b> <a href="https://braziliex.com" target="_blank">Braziliex</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://braziliex.com/exchange/api.php" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://btc-alpha.com" target="_blank"><img src="btcalpha.jpg" alt="btcalpha"></a></p>
-        <ul>
-            <li><b>Id:</b> btcalpha</li>
-            <li><b>Name:</b> <a href="https://btc-alpha.com" target="_blank">BTC-Alpha</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://btc-alpha.github.io/api-docs" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.btcbox.co.jp" target="_blank"><img src="btcbox.jpg" alt="btcbox"></a></p>
-        <ul>
-            <li><b>Id:</b> btcbox</li>
-            <li><b>Name:</b> <a href="https://www.btcbox.co.jp" target="_blank">BtcBox</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.btcbox.co.jp/help/asm" target="_blank">API</a></li>
-            <li><b>Country:</b> Japan</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.btcchina.com" target="_blank"><img src="btcchina.jpg" alt="btcchina"></a></p>
-        <ul>
-            <li><b>Id:</b> btcchina</li>
-            <li><b>Name:</b> <a href="https://www.btcchina.com" target="_blank">BTCChina</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.btcchina.com/apidocs" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.btcexchange.ph" target="_blank"><img src="btcexchange.jpg" alt="btcexchange"></a></p>
-        <ul>
-            <li><b>Id:</b> btcexchange	</li>
-            <li><b>Name:</b> <a href="https://www.btcexchange.ph" target="_blank">BTCExchange</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://github.com/BTCTrader/broker-api-docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Philippines</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://btcmarkets.net" target="_blank"><img src="btcmarkets.jpg" alt="btcmarkets"></a></p>
-        <ul>
-            <li><b>Id:</b> btcmarket</li>
-            <li><b>Name:</b> <a href="https://btcmarkets.net" target="_blank">BTC Markets</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://github.com/BTCMarkets/API" target="_blank">API</a></li>
-            <li><b>Country:</b> Australia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.btctrade.im" target="_blank"><img src="btctradeim.jpg" alt="btctradeim"></a></p>
-        <ul>
-            <li><b>Id:</b> btctradeim</li>
-            <li><b>Name:</b> <a href="https://www.btctrade.im" target="_blank">BtcTrade.im</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.btctrade.im/help.api.html" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://btc-trade.com.ua" target="_blank"><img src="btctradeua.jpg" alt="btctradeua"></a></p>
-        <ul>
-            <li><b>Id:</b> btctradeua</li>
-            <li><b>Name:</b> <a href="https://btc-trade.com.ua" target="_blank">BTC Trade UA</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://docs.google.com/document/d/1ocYA0yMy_RXd561sfG3qEPZ80kyll36HUxvCRe5GbhE/edit" target="_blank">API</a></li>
-            <li><b>Country:</b> Ukraine</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.btcturk.com" target="_blank"><img src="btcturk.jpg" alt="btcturk"></a></p>
-        <ul>
-            <li><b>Id:</b> btcturk</li>
-            <li><b>Name:</b> <a href="https://www.btcturk.com" target="_blank">BTCTurk</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://github.com/BTCTrader/broker-api-docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Turkey</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.buda.com" target="_blank"><img src="buda.jpg" alt="buda"></a></p>
-        <ul>
-            <li><b>Id:</b> buda</li>
-            <li><b>Name:</b> <a href="https://www.buda.com" target="_blank">Buda</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://api.buda.com/" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://bx.in.th" target="_blank"><img src="bxinth.jpg" alt="bxinth"></a></p>
-        <ul>
-            <li><b>Id:</b> bxinth</li>
-            <li><b>Name:</b> <a href="https://bx.in.th" target="_blank">BX.in.th</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://bx.in.th/info/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Thailand</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://c-cex.com" target="_blank"><img src="ccex.jpg" alt="ccex"></a></p>
-        <ul>
-            <li><b>Id:</b> ccex</li>
-            <li><b>Name:</b> <a href="https://c-cex.com" target="_blank">C-CEX</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://c-cex.com/?id=api" target="_blank">API</a></li>
-            <li><b>Country:</b> Germany, EU</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://cex.io" target="_blank"><img src="cex.jpg" alt="cex"></a></p>
-        <ul>
-            <li><b>Id:</b> cex</li>
-            <li><b>Name:</b> <a href="https://cex.io" target="_blank">CEX.IO</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://cex.io/cex-api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK, EU, Cyprus, Russia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://vip.zb.com" target="_blank"><img src="chbtc.jpg" alt="chbtc"></a></p>
-        <ul>
-            <li><b>Id:</b> chbtc</li>
-            <li><b>Name:</b> <a href="https://vip.zb.com" target="_blank">CHBTC</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.chbtc.com/i/developer" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://chilebit.net" target="_blank"><img src="chilebit.jpg" alt="chilebit"></a></p>
-        <ul>
-            <li><b>Id:</b> chilebit</li>
-            <li><b>Name:</b> <a href="https://chilebit.net" target="_blank">ChileBit</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://blinktrade.com/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Chile</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://cobinhood.com" target="_blank"><img src="cobinhood.jpg" alt="cobinhood"></a></p>
-        <ul>
-            <li><b>Id:</b> cobinhood</li>
-            <li><b>Name:</b> <a href="https://cobinhood.com" target="_blank">COBINHOOD</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://cobinhood.github.io/api-public" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.coinbase.com" target="_blank"><img src="coinbase.jpg" alt="coinbase"></a></p>
-        <ul>
-            <li><b>Id:</b> coinbase</li>
-            <li><b>Name:</b> <a href="https://www.coinbase.com" target="_blank">Coinbase</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://developers.coinbase.com/api/v2" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://prime.coinbase.com/" target="_blank"><img src="coinbaseprime.jpg" alt="coinbaseprime"></a></p>
-        <ul>
-            <li><b>Id:</b> coinbaseprime</li>
-            <li><b>Name:</b> <a href="https://prime.coinbase.com/" target="_blank">Coinbase Prime</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://docs.prime.coinbase.com/" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://pro.coinbase.com/" target="_blank"><img src="coinbasepro.jpg" alt="coinbasepro"></a></p>
-        <ul>
-            <li><b>Id:</b> coinbasepro</li>
-            <li><b>Name:</b> <a href="https://pro.coinbase.com/" target="_blank">Coinbase Pro</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://docs.pro.coinbase.com/" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://coincheck.com/" target="_blank"><img src="coincheck.jpg" alt="coincheck"></a></p>
-        <ul>
-            <li><b>Id:</b> coincheck</li>
-            <li><b>Name:</b> <a href="https://coincheck.com" target="_blank">coincheck</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://coincheck.com/documents/exchange/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Japan, Indonesia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.coinegg.com" target="_blank"><img src="coinegg.jpg" alt="coinegg"></a></p>
-        <ul>
-            <li><b>Id:</b> coinegg</li>
-            <li><b>Name:</b> <a href="https://www.coinegg.com" target="_blank">CoinEgg</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.coinegg.com/explain.api.html" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul> 
-        <p><a href="https://www.coinex.com" target="_blank"><img src="coinex.jpg" alt="coinex"></a></p>
-        <ul>
-            <li><b>Id:</b> coinex</li>
-            <li><b>Name:</b> <a href="https://www.coinex.com" target="_blank">CoinEx</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/coinexcom/coinex_exchange_api/wiki" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>    
-        <p><a href="https://www.coinexchange.io" target="_blank"><img src="coinexchange.jpg" alt="coinexchange"></a></p>
-        <ul>
-            <li><b>Id:</b> coinexchange</li>
-            <li><b>Name:</b> <a href="https://www.coinexchange.io" target="_blank">CoinExchange</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://coinexchangeio.github.io/slate" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul> 
-        <p><a href="https://coinfalcon.com" target="_blank"><img src="coinfalcon.jpg" alt="coinfalcon"></a></p>
-        <ul>
-            <li><b>Id:</b> coinfalcon</li>
-            <li><b>Name:</b> <a href="https://coinfalcon.com" target="_blank">CoinFalcon</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://docs.coinfalcon.com" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>                              
-        <p><a href="https://www.coinfloor.co.uk" target="_blank"><img src="coinfloor.jpg" alt="coinfloor"></a></p>
-        <ul>
-            <li><b>Id:</b> coinfloor</li>
-            <li><b>Name:</b> <a href="https://www.coinfloor.co.uk" target="_blank">coinfloor</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://github.com/coinfloor/api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://coingi.com" target="_blank"><img src="coingi.jpg" alt="coingi"></a></p>
-        <ul>
-            <li><b>Id:</b> coingi</li>
-            <li><b>Name:</b> <a href="https://coingi.com" target="_blank">Coingi</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="http://docs.coingi.apiary.io" target="_blank">API</a></li>
-            <li><b>Country:</b> Panama, Bulgaria, China, US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://coinmarketcap.com" target="_blank"><img src="coinmarketcap.jpg" alt="coinmarketcap"></a></p>
-        <ul>
-            <li><b>Id:</b> coinmarketcap</li>
-            <li><b>Name:</b> <a href="https://coinmarketcap.com" target="_blank">CoinMarketCap</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://coinmarketcap.com/api" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://coinmate.io" target="_blank"><img src="coinmate.jpg" alt="coinmate"></a></p>
-        <ul>
-            <li><b>Id:</b> coinmate</li>
-            <li><b>Name:</b> <a href="https://coinmate.io" target="_blank">CoinMate</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="http://docs.coinmate.apiary.io" target="_blank">API</a></li>
-            <li><b>Country:</b> UK, Czech Republic</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.coinnest.co.kr" target="_blank"><img src="coinnest.jpg" alt="coinnest"></a></p>
-        <ul>
-            <li><b>Id:</b> coinnest</li>
-            <li><b>Name:</b> <a href="https://www.coinnest.co.kr" target="_blank">coinnest</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.coinnest.co.kr/doc/intro.html" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://coinone.co.kr" target="_blank"><img src="coinone.jpg" alt="coinone"></a></p>
-        <ul>
-            <li><b>Id:</b> coinone</li>
-            <li><b>Name:</b> <a href="https://coinone.co.kr" target="_blank">CoinOne</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://doc.coinone.co.kr" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.coinspot.com.au" target="_blank"><img src="coinspot.jpg" alt="coinspot"></a></p>
-        <ul>
-            <li><b>Id:</b> coinspot</li>
-            <li><b>Name:</b> <a href="https://www.coinspot.com.au" target="_blank">CoinSpot</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.coinspot.com.au/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Australia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.cointiger.pro" target="_blank"><img src="cointiger.jpg" alt="cointiger"></a></p>
-        <ul>
-            <li><b>Id:</b> cointiger</li>
-            <li><b>Name:</b> <a href="https://www.cointiger.pro" target="_blank">CoinTiger</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/cointiger/api-docs-en/wiki" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.coolcoin.com" target="_blank"><img src="coolcoin.jpg" alt="coolcoin"></a></p>
-        <ul>
-            <li><b>Id:</b> coolcoin</li>
-            <li><b>Name:</b> <a href="https://www.coolcoin.com" target="_blank">CoolCoin</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.coolcoin.com/help.api.html" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.coss.io" target="_blank"><img src="coss.jpg" alt="coss"></a></p>
-        <ul>
-            <li><b>Id:</b> coss</li>
-            <li><b>Name:</b> <a href="https://www.coss.io" target="_blank">COSS</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://api.coss.io/v1/spec" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> <a href="https://github.com/ccxt/ccxt/wiki/Certification" target="_blank"><img src="ccxt_certified.svg" alt="ccxt_certified"></a></li>
-        </ul>
-        <p><a href="https://crex24.com" target="_blank"><img src="crex24.jpg" alt="crex24"></a></p>
-        <ul>
-            <li><b>Id:</b> crex24</li>
-            <li><b>Name:</b> <a href="https://crex24.com" target="_blank">CREX24</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://docs.crex24.com/trade-api/v2" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://cryptonbtc.com" target="_blank"><img src="crypton.jpg" alt="crypton"></a></p>
-        <ul>
-            <li><b>Id:</b> crypton</li>
-            <li><b>Name:</b> <a href="https://cryptonbtc.com" target="_blank">Crypton</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://cryptonbtc.docs.apiary.io/" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.cryptopia.co.nz" target="_blank"><img src="cryptopia.jpg" alt="cryptopia"></a></p>
-        <ul>
-            <li><b>Id:</b> cryptopia</li>
-            <li><b>Name:</b> <a href="https://www.cryptopia.co.nz" target="_blank">Cryptopia</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.cryptopia.co.nz/Forum/Category/45" target="_blank">API</a></li>
-            <li><b>Country:</b> New Zealand</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.deribit.com" target="_blank"><img src="deribit.jpg" alt="deribit"></a></p>
-        <ul>
-            <li><b>Id:</b> deribit</li>
-            <li><b>Name:</b> <a href="https://www.deribit.com" target="_blank">Deribit</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://docs.deribit.com/" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://dsx.uk" target="_blank"><img src="dsx.jpg" alt="dsx"></a></p>
-        <ul>
-            <li><b>Id:</b> dsx</li>
-            <li><b>Name:</b> <a href="https://dsx.uk" target="_blank">DSX</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://api.dsx.uk" target="_blank">API</a></li>
-            <li><b>Country:</b> UK</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.ethfinex.com" target="_blank"><img src="ethfinex.jpg" alt="ethfinex"></a></p>
-        <ul>
-            <li><b>Id:</b> ethfinex</li>
-            <li><b>Name:</b> <a href="https://www.ethfinex.com" target="_blank">Ethfinex</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://bitfinex.readme.io/v1/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> UK</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://exmo.me" target="_blank"><img src="exmo.jpg" alt="exmo"></a></p>
-        <ul>
-            <li><b>Id:</b> exmo</li>
-            <li><b>Name:</b> <a href="https://exmo.me" target="_blank">EXMO</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://exmo.me/en/api_doc" target="_blank">API</a></li>
-            <li><b>Country:</b> Spain, Russia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.exx.com" target="_blank"><img src="exx.jpg" alt="exx"></a></p>
-        <ul>
-            <li><b>Id:</b> exx</li>
-            <li><b>Name:</b> <a href="https://www.exx.com" target="_blank">EXX</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.exx.com/help/restApi" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.fcoin.com" target="_blank"><img src="fcoin.jpg" alt="fcoin"></a></p>
-        <ul>
-            <li><b>Id:</b> fcoin</li>
-            <li><b>Name:</b> <a href="https://www.fcoin.com" target="_blank">FCoin</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://developer.fcoin.com" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://trader.flowbtc.com" target="_blank"><img src="flowbtc.jpg" alt="flowbtc"></a></p>
-        <ul>
-            <li><b>Id:</b> flowbtc</li>
-            <li><b>Name:</b> <a href="https://trader.flowbtc.com" target="_blank">flowBTC</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="http://www.flowbtc.com.br/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Brazil</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://foxbit.exchange" target="_blank"><img src="foxbit.jpg" alt="foxbit"></a></p>
-        <ul>
-            <li><b>Id:</b> foxbit</li>
-            <li><b>Name:</b> <a href="https://foxbit.exchange" target="_blank">FoxBit</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://blinktrade.com/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Brazil</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.fybse.se" target="_blank"><img src="fybse.jpg" alt="fybse"></a></p>
-        <ul>
-            <li><b>Id:</b> fybse</li>
-            <li><b>Name:</b> <a href="https://www.fybse.se" target="_blank">FYB-SE</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="http://docs.fyb.apiary.io" target="_blank">API</a></li>
-            <li><b>Country:</b> Sweden</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.fybsg.com" target="_blank"><img src="fybsg.jpg" alt="fybsg"></a></p>
-        <ul>
-            <li><b>Id:</b> fybsg</li>
-            <li><b>Name:</b> <a href="https://www.fybsg.com" target="_blank">FYB-SG</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="http://docs.fyb.apiary.io" target="_blank">API</a></li>
-            <li><b>Country:</b> Singapore</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://gatecoin.com" target="_blank"><img src="gatecoin.jpg" alt="gatecoin"></a></p>
-        <ul>
-            <li><b>Id:</b> gatecoin</li>
-            <li><b>Name:</b> <a href="https://gatecoin.com" target="_blank">Gatecoin</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://gatecoin.com/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Hong Kong</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.gate.io" target="_blank"><img src="gateio.jpg" alt="gateio"></a></p>
-        <ul>
-            <li><b>Id:</b> gateio</li>
-            <li><b>Name:</b> <a href="https://www.gate.io" target="_blank">Gatecoin</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://gate.io/api2" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.gdax.com" target="_blank"><img src="gdax.jpg" alt="gdax"></a></p>
-        <ul>
-            <li><b>Id:</b> gdax</li>
-            <li><b>Name:</b> <a href="https://www.gdax.com" target="_blank">GDAX</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://docs.gdax.com" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://gemini.com" target="_blank"><img src="gemini.jpg" alt="gemini"></a></p>
-        <ul>
-            <li><b></b>Id: gemini</li>
-            <li><b>Name:</b> <a href="https://gemini.com" target="_blank">Gemini</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://docs.gemini.com/rest-api" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://getbtc.org" target="_blank"><img src="getbtc.jpg" alt="getbtc"></a></p>
-        <ul>
-            <li><b>Id:</b> getbtc</li>
-            <li><b>Name:</b> <a href="https://getbtc.org" target="_blank">GetBTC</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://getbtc.org/api-docs.php" target="_blank">API</a></li>
-            <li><b>Country:</b> St. Vincent & Grenadines, Russia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.huobi.br.com" target="_blank"><img src="hadax.jpg" alt="hadax"></a></p>
-        <ul>
-            <li><b>Id:</b> hadax</li>
-            <li><b>Name:</b> <a href="https://www.huobi.br.com" target="_blank">HADAX</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/huobiapi/API_Docs/wiki" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://hitbtc.com" target="_blank"><img src="hitbtc.jpg" alt="hitbtc"></a></p>
-        <ul>
-            <li><b>Id:</b> hitbtc</li>
-            <li><b>Name:</b> <a href="https://hitbtc.com" target="_blank">HitBTC</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/hitbtc-com/hitbtc-api/blob/master/APIv1.md" target="_blank">API</a></li>
-            <li><b>Country:</b> Hong Kong</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://hitbtc.com" target="_blank"><img src="hitbtc2.jpg" alt="hitbtc2"></a></p>
-        <ul>
-            <li><b>Id:</b> hitbtc2</li>
-            <li><b>Name:</b> <a href="https://hitbtc.com" target="_blank">HitBTC v2</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://api.hitbtc.com" target="_blank">API</a></li>
-            <li><b>Country:</b> Hong Kong</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.huobi.br.com" target="_blank"><img src="huobipro.jpg" alt="huobipro"></a></p>
-        <ul>
-            <li><b>Id:</b> huobipro</li>
-            <li><b>Name:</b> <a href="https://www.huobi.br.com" target="_blank">Huobi Pro</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/huobiapi/API_Docs/wiki/REST_api_reference" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://ice3x.com" target="_blank"><img src="ice3x.jpg" alt="ice3x"></a></p>
-        <ul>
-            <li><b>Id:</b> ice3x</li>
-            <li><b>Name:</b> <a href="https://ice3x.com" target="_blank">ICE3X</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://ice3x.co.za/ice-cubed-bitcoin-exchange-api-documentation-1-june-2017" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.independentreserve.com" target="_blank"><img src="independentreserve.jpg" alt="independentreserve"></a></p>
-        <ul>
-            <li><b>Id:</b> independentreserve</li>
-            <li><b>Name:</b> <a href="https://www.independentreserve.com" target="_blank">Independent Reserve</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.independentreserve.com/API" target="_blank">API</a></li>
-            <li><b>Country:</b> Australia, New Zealand</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://indodax.com" target="_blank"><img src="indodax.jpg" alt="indodax"></a></p>
-        <ul>
-            <li><b>Id:</b> indodax</li>
-            <li><b>Name:</b> <a href="https://indodax.com" target="_blank">INDODAX</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.independentreserve.com/API" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.itbit.com" target="_blank"><img src="itbit.jpg" alt="itbit"></a></p>
-        <ul>
-            <li><b>Id:</b> itbit</li>
-            <li><b>Name:</b> <a href="https://www.itbit.com" target="_blank">itBit</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://api.itbit.com/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.jubi.com" target="_blank"><img src="jubi.jpg" alt="jubi"></a></p>
-        <ul>
-            <li><b>Id:</b> jubi</li>
-            <li><b>Name:</b> <a href="https://www.jubi.com" target="_blank">jubi.com</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.jubi.com/help/api.html" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://kkex.com" target="_blank"><img src="kkex.jpg" alt="kkex"></a></p>
-        <ul>
-            <li><b>Id:</b> kkex</li>
-            <li><b>Name:</b> <a href="https://kkex.com" target="_blank">KKEX</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://kkex.com/api_wiki/cn" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.kraken.com" target="_blank"><img src="kraken.jpg" alt="kraken"></a></p>
-        <ul>
-            <li><b>Id:</b> kraken</li>
-            <li><b>Name:</b> <a href="https://www.kraken.com" target="_blank">Kraken</a></li>
-            <li><b>Version:</b> 0</li>
-            <li><b>Doc:</b> <a href="https://www.kraken.com/en-us/help/api" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.kucoin.com" target="_blank"><img src="kucoin.jpg" alt="kucoin"></a></p>
-        <ul>
-            <li><b> Id:</b> kucoin</li>
-            <li><b>Name:</b> <a href="https://kucoin.com" target="_blank">Kucoin</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://kucoinapidocs.docs.apiary.io" target="_blank">API</a></li>
-            <li><b>Country:</b> Hong Kong</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.kucoin.com" target="_blank"><img src="kucoin2.jpg" alt="kucoin2"></a></p>
-        <ul>
-            <li><b> Id:</b> kucoin</li>
-            <li><b>Name:</b> <a href="https://kucoin.com" target="_blank">KuCoin 2</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://kucoinapidocs.docs.apiary.io" target="_blank">API</a></li>
-            <li><b>Country:</b> Hong Kong</li>
-            <li><b>Certified:</b> <a href="https://github.com/ccxt/ccxt/wiki/Certification" target="_blank"><img src="ccxt_certified.svg" alt="ccxt_certified"></a></li>
-        </ul>
-        <p><a href="https://kuna.io" target="_blank"><img src="kuna.jpg" alt="kuna"></a></p>
-        <ul>
-            <li><b>Id:</b> kuna</li>
-            <li><b>Name:</b> <a href="https://kuna.io" target="_blank">Kuna</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://kuna.io/documents/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Ukraine</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.lakebtc.com" target="_blank"><img src="lakebtc.jpg" alt="lakebtc"></a></p>
-        <ul>
-            <li><b>Id:</b> lakebtc</li>
-            <li><b>Name:</b> <a href="https://www.lakebtc.com" target="_blank">LakeBTC</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://www.lakebtc.com/s/api_v2" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.lbank.info" target="_blank"><img src="lbank.jpg" alt="lbank"></a></p>
-        <ul>
-            <li><b>Id:</b> lbank</li>
-            <li><b>Name:</b> <a href="https://www.lbank.info" target="_blank">LBank</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/LBank-exchange/lbank-official-api-docs" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://liqui.io" target="_blank"><img src="liqui.jpg" alt="liqui"></a></p>
-        <ul>
-            <li><b>Id:</b> liqui</li>
-            <li><b>Name:</b> <a href="https://liqui.io" target="_blank">Liqui</a></li>
-            <li><b>Version:</b> 3</li>
-            <li><b>Doc:</b> <a href="https://liqui.io/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Ukraine</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.liquid.com" target="_blank"><img src="liquid.jpg" alt="liquid"></a></p>
-        <ul>
-            <li><b>Id:</b> liqui</li>
-            <li><b>Name:</b> <a href="https://www.liquid.com" target="_blank">Liquid</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://developers.quoine.com" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://livecoin.net" target="_blank"><img src="livecoin.jpg" alt="livecoin"></a></p>
-        <ul>
-            <li><b>Id:</b> livecoin</li>
-            <li><b>Name:</b> <a href="https://www.livecoin.net" target="_blank">LiveCoin</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.livecoin.net/api?lang=en" target="_blank">API</a></li>
-            <li><b>Country:</b> US, UK, Russia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.luno.com" target="_blank"><img src="luno.jpg" alt="luno"></a></p>
-        <ul>
-            <li><b>Id:</b> luno</li>
-            <li><b>Name:</b> <a href="https://www.luno.com" target="_blank">luno</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.luno.com/en/api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK, Singapore, South Africa</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.lykke.com" target="_blank"><img src="lykke.jpg" alt="lykke"></a></p>
-        <ul>
-            <li><b>Id:</b> lykke</li>
-            <li><b>Name:</b> <a href="https://www.lykke.com" target="_blank">Lykke</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://hft-api.lykke.com/swagger/ui" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.mercadobitcoin.com.br" target="_blank"><img src="mercado.jpg" alt="mercado"></a></p>
-        <ul>
-            <li><b>Id:</b> mercado</li>
-            <li><b>Name:</b> <a href="https://www.mercadobitcoin.com.br" target="_blank">Mercado Bitcoin</a></li>
-            <li><b>Version:</b> 3</li>
-            <li><b>Doc:</b> <a href="https://www.mercadobitcoin.com.br/api-doc" target="_blank">API</a></li>
-            <li><b>Country:</b> Brazil</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://mixcoins.com" target="_blank"><img src="mixcoins.jpg" alt="mixcoins"></a></p>
-        <ul>
-            <li><b>Id:</b> mixcoins</li>
-            <li><b>Name:</b> <a href="https://mixcoins.com" target="_blank">MixCoins</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://mixcoins.com/help/api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK, Hong Kong</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.negociecoins.com.br" target="_blank"><img src="negociecoins.jpg" alt=""></a></p>
-        <ul>
-            <li><b>Id:</b> negociecoins</li>
-            <li><b>Name:</b> <a href="https://www.negociecoins.com.br" target="_blank">NegocieCoins</a></li>
-            <li><b>Version:</b> 3</li>
-            <li><b>Doc:</b> <a href="https://www.negociecoins.com.br/documentacao-tradeapi" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://novaexchange.com" target="_blank"><img src="nova.jpg" alt="nova"></a></p>
-        <ul>
-            <li><b>Id:</b> nova</li>
-            <li><b>Name:</b> <a href="https://novaexchange.com" target="_blank">Novaexchange</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://novaexchange.com/remote/faq" target="_blank">API</a></li>
-            <li><b>Country:</b> Tanzania</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.okcoin.cn" target="_blank"><img src="okcoincny.jpg" alt="okcoincny"></a></p>
-        <ul>
-            <li><b>Id:</b> okcoincny</li>
-            <li><b>Name:</b> <a href="https://www.okcoin.cn" target="_blank">OKCoin CNY</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.okcoin.cn/rest_getStarted.html" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.okcoin.com" target="_blank"><img src="okcoinusd.jpg" alt="okcoinusd"></a></p>
-        <ul>
-            <li><b>Id:</b> okcoinusd</li>
-            <li><b>Name:</b> <a href="https://www.okcoin.com" target="_blank">OKCoin USD</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.okcoin.com/rest_getStarted.html" target="_blank">API</a></li>
-            <li><b>Country:</b> China, US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.okex.com" target="_blank"><img src="okex.jpg" alt="okex"></a></p>
-        <ul>
-            <li><b>Id:</b> okex</li>
-            <li><b>Name:</b> <a href="https://www.okex.com" target="_blank">OKEX</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.okex.com/rest_getStarted.html" target="_blank">API</a></li>
-            <li><b>Country:</b> China, US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.paymium.com" target="_blank"><img src="paymium.jpg" alt="paymium"></a></p>
-        <ul>
-            <li><b>Id:</b> paymium</li>
-            <li><b>Name:</b> <a href="https://www.paymium.com" target="_blank">Paymium</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://github.com/Paymium/api-documentation" target="_blank">API</a></li>
-            <li><b>Country:</b> France, EU</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://poloniex.com" target="_blank"><img src="poloniex.jpg" alt="poloniex"></a></p>
-        <ul>
-            <li><b>Id:</b> poloniex</li>
-            <li><b>Name:</b> <a href="https://poloniex.com" target="_blank">Poloniex</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://poloniex.com/support/api" target="_blank">API</a></li>
-            <li><b>Country:</b> US</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.qryptos.com" target="_blank"><img src="qryptos.jpg" alt="qryptos"></a></p>
-        <ul>
-            <li><b>Id:</b> qryptos</li>
-            <li><b>Name:</b> <a href="https://www.qryptos.com" target="_blank">QRYPTOS</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://developers.quoine.com" target="_blank">API</a></li>
-            <li><b>Country:</b> China, Taiwan</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.quadrigacx.com" target="_blank"><img src="quadrigacx.jpg" alt="quadrigacx"></a></p>
-        <ul>
-            <li><b>Id:</b> quadrigacx</li>
-            <li><b>Name:</b> <a href="https://www.quadrigacx.com" target="_blank">QuadrigaCX</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://www.quadrigacx.com/api_info" target="_blank">API</a></li>
-            <li><b>Country:</b> Canada</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.liquid.com" target="_blank"><img src="quoinex.jpg" alt="quoinex"></a></p>
-        <ul>
-            <li><b>Id:</b> quoinex</li>
-            <li><b>Name:</b> <a href="https://www.liquid.com" target="_blank">QUOINEX</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://developers.quoine.com/" target="_blank">API</a></li>
-            <li><b>Country:</b> Japan, Singapore, Vietnam</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.rightbtc.com" target="_blank"><img src="rightbtc.jpg" alt="rightbtc"></a></p>
-        <ul>
-            <li><b>Id:</b> rightbtc</li>
-            <li><b>Name:</b> <a href="https://www.rightbtc.com" target="_blank">RightBTC</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://52.53.159.206/api/trader" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.southxchange.com" target="_blank"><img src="southxchange.jpg" alt="southxchange"></a></p>
-        <ul>
-            <li><b>Id:</b> southxchange</li>
-            <li><b>Name:</b> <a href="https://www.southxchange.com" target="_blank">SouthXchange</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.southxchange.com/Home/Api" target="_blank">API</a></li>
-            <li><b>Country:</b> Argentina</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://surbitcoin.com" target="_blank"><img src="surbitcoin.jpg" alt="surbitcoin"></a></p>
-        <ul>
-            <li><b>Id:</b> surbitcoin</li>
-            <li><b>Name:</b> <a href="https://surbitcoin.com" target="_blank">SurBitcoin</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://blinktrade.com/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Venezuela</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://theocean.trade" target="_blank"><img src="theocean.jpg" alt="theocean"></a></p>
-        <ul>
-            <li><b>Id:</b> theocean</li>
-            <li><b>Name:</b> <a href="https://theocean.trade" target="_blank">The Ocean</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://docs.theocean.trade" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> <a href="https://github.com/ccxt/ccxt/wiki/Certification" target="_blank"><img src="ccxt_certified.svg" alt="ccxt_certified"></a></li>
-        </ul>
-        <p><a href="https://therocktrading.com" target="_blank"><img src="therock.jpg" alt="therock"></a></p>
-        <ul>
-            <li><b>Id:</b> therock</li>
-            <li><b>Name:</b> <a href="https://therocktrading.com" target="_blank">TheRockTrading</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://api.therocktrading.com/doc/v1/index.html" target="_blank">API</a></li>
-            <li><b>Country:</b> Malta</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.tidebit.com" target="_blank"><img src="tidebit.jpg" alt="tidebit"></a></p>
-        <ul>
-            <li><b>Id:</b> tidebit</li>
-            <li><b>Name:</b> <a href="https://www.tidebit.com" target="_blank">TideBit</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://www.tidebit.com/documents/api/guide" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://tidex.com" target="_blank"><img src="tidex.jpg" alt="tidex"></a></p>
-        <ul>
-            <li><b>Id:</b> tidex</li>
-            <li><b>Name:</b> <a href="https://tidex.com" target="_blank">Tidex</a></li>
-            <li><b>Version:</b> 3</li>
-            <li><b>Doc:</b> <a href="https://tidex.com/public-api" target="_blank">API</a></li>
-            <li><b>Country:</b> UK</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.uex.com" target="_blank"><img src="uex.jpg" alt="uex"></a></p>
-        <ul>
-            <li><b>Id:</b> uex</li>
-            <li><b>Name:</b> <a href="https://www.uex.com" target="_blank">UEX</a></li>
-            <li><b>Version:</b> 1.0.3</li>
-            <li><b>Doc:</b> <a href="https://download.uex.com/doc/UEX-API-English-1.0.3.pdf" target="_blank">API</a></li>
-            <li><b>Country:</b> UK</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://upbit.com" target="_blank"><img src="upbit.jpg" alt="upbit"></a></p>
-        <ul>
-            <li><b>Id:</b> upbit</li>
-            <li><b>Name:</b> <a href="https://upbit.com" target="_blank">Upbit</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://docs.upbit.com/docs/%EC%9A%94%EC%B2%AD-%EC%88%98-%EC%A0%9C%ED%95%9C" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> <a href="https://github.com/ccxt/ccxt/wiki/Certification" target="_blank"><img src="ccxt_certified.svg" alt="ccxt_certified"></a></li>
-        </ul>
-        <p><a href="https://urdubit.com" target="_blank"><img src="urdubit.jpg" alt="urdubit"></a></p>
-        <ul>
-            <li><b>Id:</b> urdubit</li>
-            <li><b>Name:</b> <a href="https://urdubit.com" target="_blank">UrduBit</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://blinktrade.com/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Pakistan</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.vaultoro.com" target="_blank"><img src="vaultoro.jpg" alt="vaultoro"></a></p>
-        <ul>
-            <li><b>Id:</b> vaultoro</li>
-            <li><b>Name:</b> <a href="https://www.vaultoro.com" target="_blank">Vaultoro</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://api.vaultoro.com" target="_blank">API</a></li>
-            <li><b>Country:</b> Switzerland</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://vbtc.exchange" target="_blank"><img src="vbtc.jpg" alt="vbtc"></a></p>
-        <ul>
-            <li><b>Id:</b> vbtc</li>
-            <li><b>Name:</b> <a href="https://vbtc.exchange" target="_blank">VBTC</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://blinktrade.com/docs" target="_blank">API</a></li>
-            <li><b>Country:</b> Vietnam</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.virwox.com" target="_blank"><img src="virwox.jpg" alt="virwox"></a></p>
-        <ul>
-            <li><b>Id:</b> virwox</li>
-            <li><b>Name:</b> <a href="https://www.virwox.com" target="_blank">VirWoX</a></li>
-            <li><b>Version:</b> *</li>
-            <li><b>Doc:</b> <a href="https://www.virwox.com/developers.php" target="_blank">API</a></li>
-            <li><b>Country:</b> Austria, EU</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.xbtce.com" target="_blank"><img src="xbtce.jpg" alt="xbtce"></a></p>
-        <ul>
-            <li><b>Id:</b> xbtce</li>
-            <li><b>Name:</b> <a href="https://www.xbtce.com" target="_blank">xBTCe</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.xbtce.com/tradeapi" target="_blank">API</a></li>
-            <li><b>Country:</b> </li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://www.yobit.net" target="_blank"><img src="yobit.jpg" alt="yobit"></a></p>
-        <ul>
-            <li><b>Id:</b> yobit</li>
-            <li><b>Name:</b> <a href="https://www.yobit.net" target="_blank">YoBit</a></li>
-            <li><b>Version:</b> 3</li>
-            <li><b>Doc:</b> <a href="https://www.yobit.net/en/api" target="_blank">API</a></li>
-            <li><b>Country:</b> Russia</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://yunbi.com" target="_blank"><img src="yunbi.jpg" alt="yunbi"></a></p>
-        <ul>
-            <li><b>Id:</b> yunbi</li>
-            <li><b>Name:</b> <a href="https://yunbi.com" target="_blank">YUNBI</a></li>
-            <li><b>Version:</b> 2</li>
-            <li><b>Doc:</b> <a href="https://yunbi.com/documents/api/guide" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://zaif.jp" target="_blank"><img src="zaif.jpg" alt="zaif"></a></p>
-        <ul>
-            <li><b>Id:</b> zaif</li>
-            <li><b>Name:</b> <a href="https://zaif.jp" target="_blank">Zaif</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="http://techbureau-api-document.readthedocs.io/ja/latest/index.html" target="_blank">API</a></li>
-            <li><b>Country:</b> Japan</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-        <p><a href="https://vip.zb.com" target="_blank"><img src="zb.jpg" alt="zb"></a></p>
-        <ul>
-            <li><b>Id:</b> zb</li>
-            <li><b>Name:</b> <a href="https://vip.zb.com" target="_blank">ZB</a></li>
-            <li><b>Version:</b> 1</li>
-            <li><b>Doc:</b> <a href="https://www.zb.com/i/developer" target="_blank">API</a></li>
-            <li><b>Country:</b> China</li>
-            <li><b>Certified:</b> </li>
-        </ul>
-     </dd>
-  </dl>
-  
-  <dl class="message-properties">
-        <dt>API Type<span class="property-type">string</span></dt>
-        <p>API Custom Type</p>
-        <dd>Type list:
-           <ul>
-               <li>Public</li>
-               <li>Private</li>
-           </ul> 
-        </dd>
-  </dl> 
-
-  <dl class="message-properties">
-        <dt>API Name<span class="property-type">string</span></dt>
-        <p>Each Exchange have a list of different APIs. Check the API dock for each Exchange to check it</p>        
-  </dl> 
-
-  <dl class="message-properties">
-    <dt>ApiKey<span class="property-type">string</span></dt>
-  </dl>
-  <dl class="message-properties">
-    <dt>Secret ApiKey<span class="property-type">string</span></dt>
-  </dl>
-
-  <h3>Outputs</h3>
-  <dl class="message-properties">
-     <dt>payload<span class="property-type">object</span></dt>
-     <dd>The payload result object.
-        <p>Object Format:</p>
-        <ul>
-           <li>error: error array</li>
-           <li>result: object result</li>
-         </ul>
-     </dd>
-  </dl>
-
-  <h3>Error</h3>
-  <dl class="message-properties">
-     <dt>error<span class="property-type">string</span></dt>
-     <dd>The error string.</dd>
-  </dl>
-  <h3>Details</h3>
-  <p>The ccxt RED node is a collection of available crypto exchanges or exchange classes</p>
-</script>
-
 <script type="text/javascript">
     RED.nodes.registerType("ccxt-api", {
-        category:'CryptoExchange',
+        category: "CryptoExchange",
         defaults: {
-            name: {value: ''},
-            exchange: {value: 'bittrex', required:true},
-            api: {value: 'loadMarkets'},
-            loadmarketsreload: {value: false},
-            orderbooksymbol: {value: ''},
-            fetchtickersymbol: {value: ''},
-            fetchohlcvsymbol: {value: ''},
-            fetchohlcvtimeframe: {value: '1m'},
-            fetchohlcvsince: {value: undefined},
-            fetchohlcvlimit: {value: undefined},
-            fetchtradessymbol: {value: ''},
-            apisecrets: {type: 'ccxt-exchange', required: false},
-            apitype : {value: '', required: true},
-            apicustom : {value: '', required: true},
-            apipayload: {value:'', required: false, validate: RED.validators.typedInput('payloadType')},
-            payloadType: {value: 'json'}
+            name: { value: "" },
+            exchange: { value: "", required: true },
+            apitype: { value: "", required: true },
+            customapitype: { value: "", required: false },
+            api: { value: "", required: true },
+            apiprivate: { value: "false", required: true },
+            loadmarketsreload: { value: false },
+            symbol: { value: "", required: false },
+            symbolType: { value: "str", required: false },
+            limit: { value: undefined, required: false },
+            since: { value: undefined },
+            timeframe: { value: "1m" },
+            ordertype: { value: "limit" },
+            orderside: { value: "buy" },
+            amount: { value: "" },
+            orderprice: { value: "" },
+            orderid: { value: "" },
+            code: { value: "" },
+            address: { value: "" },
+            tag: { value: "" },
+
+            apisecrets: { type: "ccxt-exchange", required: false },
+            apipayloadType: { value: "none" },
+            //TODO: fix this problem. the validator is attached regardless of whether the api requires
+            //a payload or not
+            apipayload: {
+                value: "",
+                required: false
+                //validate: RED.node.vali
+                //         validate: function(v) {
+                //             console.log(
+                //                 "value is",
+                //                 v,
+                //                 "type is:",
+                //                 $("#node-input-payloadType").val()
+                //             );
+                //             if (!v) {
+                //                 $("#node-input-payloadType").val("none");
+                //                 return true;
+                //             }
+                //             if ($("#node-input-payloadType").val() === "json") {
+                //                 console.log("checking for valid json");
+                //                 try {
+                //                     JSON.parse(v);
+                //                 } catch (e) {
+                //                     console.log("bad json");
+                //                     return false;
+                //                 }
+                //                 return true;
+                //             }
+                //             if (this.payloadType === "json") {
+                //                 console.log("node value checking for valid json");
+                //                 try {
+                //                     JSON.parse(v);
+                //                 } catch (e) {
+                //                     return false;
+                //                 }
+                //                 return true;
+                //             }
+
+                //             console.log("all failed returning true");
+                //             return true;
+                //         }
+                //     }
+            }
         },
         outputs: 1,
         inputs: 1,
-        color: '#D8BFD8',
-        icon: 'bitcoin-symbol.png',
+        color: "#D8BFD8",
+        icon: "bitcoin-symbol.png",
         label: function() {
             return this.name || "ccxt API";
         },
         oneditprepare: function() {
             var node = this;
-            
-            $("#node-input-apipayload").typedInput({
-                default: 'json',
-                typeField: $("#node-input-payloadType"),
-                types:['json']
-            });
 
-            // recover Exchanges api from CCXT node package
-            getExchanges = function() {
-                $.getJSON('exchanges', function(result) {
-                    var exchangeElement = $("node-input-exchange");
+            //expermentation here
+            $("#node-input-exchange").select2();
+            $("#id-input-select-symbol").select2();
 
-                    exchangeElement.empty();
+            $("#node-input-apipayload")
+                .typedInput({
+                    typeField: $("#node-input-apipayloadType"),
+                    types: [
+                        { value: "none", label: "None", hasValue: false },
+                        "json",
+                        "msg",
+                        "flow",
+                        "global"
+                    ]
+                })
+                .typedInput("width", "68%");
+            $("#node-input-symbol")
+                .typedInput({
+                    typeField: $("#node-input-symbolType"),
+                    //  default: ["symbolslist"],
+                    types: [
+                        {
+                            value: "symbolslist",
+                            label: "Symbol",
+                            icon: "red/images/typedInput/09.png",
+                            options: ["None"]
+                        },
+                        "str",
+                        "msg",
+                        "flow",
+                        "global"
+                    ]
+                })
+                .typedInput("width", "68%");
+            // $("#node-input-timeframe")
+            //     .typedInput({
+            //         //   typeField: $("#node-input-payloadType"),
+            //         types: ["str", "msg", "flow", "global"]
+            //     })
+            //     .typedInput("width", "68%");
+            function getSymbols(ex, callback) {
+                //return empty array if no exchange
+                let symbolslist = [];
 
-                    $.each(result.exchange, function(index, item) {
-                        exchangeElement.append($("<option />").val(item).text(item));
-                    });
-                });
-            }
-
-            // retrieve API types from CCXT node package
-            getAPITypes = function(exchange) {
-                var apitype = $("#node-input-apitype option:selected").val();            
-
-                $.getJSON('apitypes', { exchange: exchange }, function(result) {
-                    var apiTypeElement = $("#node-input-apitype");
-
-                    apiTypeElement.empty();
-
-                    $.each(result.type, function(index, item) {
-                        apiTypeElement.append($("<option />").val(item).text(item));
-                    });
-
-                    // set actual value
-                    apiTypeElement.val(node.apitype);
-
-                    var type;
-                    if (apitype == undefined) {
-                        if (node.apitype !== undefined)   
-                            type =  node.apitype;
+                // let exchange = ex;
+                let apitype = $(
+                    "#node-input-apitype option:selected"
+                ).val();
+                let api = $("#node-input-api option:selected").val();
+                console.log(
+                    "symbol typedinput function...",
+                    ex,
+                    apitype,
+                    api
+                );
+                if (ex === undefined || ex === "") return [];
+                $.getJSON("exchangesymbols", { exchange: ex }, function(
+                    result
+                ) {
+                    console.log(result.symbols);
+                    if (callback && typeof callback == "function") {
+                        console.log("will call back now..");
+                        callback(result.symbols);
                     }
-                    else 
-                        type = apitype;
+                });
+                //return symbolslist;
+            }
+            let showhideInputFields = function() {
+                let exchange = $(
+                    "#node-input-exchange option:selected"
+                ).val();
+                let apitype = $(
+                    "#node-input-apitype option:selected"
+                ).val();
+                let api = $("#node-input-api option:selected").val();
+                console.log(
+                    "showhideinputfields for ...",
+                    exchange,
+                    apitype,
+                    api
+                );
+                if (!$("#id-input-apipayload").val())
+                    apitype === "customAPI"
+                        ? $("#id-input-apipayloadType").val("json")
+                        : $("#id-input-apipayloadType").val("none");
+                if (exchange !== undefined && exchange !== "") {
+                    if (apitype === "customAPI") {
+                        $("#id-anchor-display-exchange-apidoc").attr(
+                            "href",
+                            $("#node-input-exchange option:selected").attr(
+                                "apidoc"
+                            )
+                        );
+                    } else {
+                        $("#id-anchor-display-exchange-apidoc").attr(
+                            "href",
+                            "https://ccxt.readthedocs.io/en/latest/manual.html#api-methods-endpoints"
+                        );
+                    }
+                }
 
-                    // fill apis from API Type
-                    if (type !== undefined)
-                        getAPIS(exchange, node.apitype);
+                if (exchange !== undefined && exchange !== "") {
+                    $("#id-img-display-exchange-homepage").attr(
+                        "href",
+                        $("#node-input-exchange option:selected").attr(
+                            "homepage"
+                        )
+                    );
+                    $("#id-anchor-display-exchange-homepage").attr(
+                        "href",
+                        $("#node-input-exchange option:selected").attr(
+                            "homepage"
+                        )
+                    );
+                    $("#id-anchor-display-exchange-img").attr(
+                        "src",
+                        $("#node-input-exchange option:selected").attr(
+                            "logo"
+                        )
+                    );
+                    $("#id-anchor-display-exchange-img").attr(
+                        "alt",
+                        $("#node-input-exchange option:selected").text()
+                    );
+                }
+
+                //hide all params by default
+                $(".node-input-private-api").hide();
+                $(".node-input-unified-api-symbol").hide();
+                $(".node-input-unified-api-load-markets").hide();
+                $(".node-input-unified-api-limit").hide();
+                $(".node-input-unified-api-since").hide();
+                $(".node-input-unified-api-ordertype").hide();
+                $(".node-input-unified-api-orderside").hide();
+                $(".node-input-unified-api-amount").hide();
+                $(".node-input-unified-api-orderprice").hide();
+                $(".node-input-unified-api-orderid").hide();
+                $(".node-input-unified-api-timeframe").hide();
+                $(".node-input-unified-api-code").hide();
+                $(".node-input-unified-api-address").hide();
+                $(".node-input-unified-api-tag").hide();
+                $(".node-input-api-custom").hide();
+
+                // for customAPI show the API Payload parameter only
+                if (apitype === "customAPI") {
+                    $(".node-input-api-custom").show();
+                    //console.log('isPrivate :', isPrivate);
+                }
+
+                // Get the params for the unified API if an API is selected
+                if (apitype === "unifiedAPI") {
+                    if (api !== undefined && api !== "") {
+                        console.log("calling ...for", api);
+                        $.getJSON("apiparams", { api: api }, function(
+                            result
+                        ) {
+                            result.apiparams.map(function(x) {
+                                if (x === "symbol") {
+                                    console.log("x is symbol");
+                                    // $("#node-input-symbolType").val(
+                                    //     "symbolslist"
+                                    // );
+                                    //var symbols = await getSymbols();
+                                    //  console.log("symbols are:", symbols);
+                                    getSymbols(exchange, function(
+                                        symbols
+                                    ) {
+                                        symbols.forEach(function(element) {
+                                            $(
+                                                "#id-input-select-symbol"
+                                            ).append(
+                                                $("<option>", {
+                                                    value: element,
+                                                    text: element
+                                                })
+                                            );
+                                        });
+
+                                        // $("#node-input-symbol").typedInput(
+                                        //     "types",
+                                        //     [
+                                        //         {
+                                        //             value: "symbolslist",
+                                        //             label: "Symbol",
+                                        //             icon:
+                                        //                 "red/images/typedInput/09.png",
+                                        //             options: symbols
+                                        //         },
+                                        //         "str",
+                                        //         "msg",
+                                        //         "flow",
+                                        //         "global"
+                                        //     ]
+                                        // );
+                                        // $("#node-input-symbolType").val(
+                                        //     "symbolslist"
+                                        // );
+                                    });
+                                }
+                                if (x === "apipayload")
+                                    $(".node-input-api-custom").show();
+                                else
+                                    $(
+                                        ".node-input-unified-api-" + x
+                                    ).show();
+                            });
+                            console.log(
+                                "all loaded unified api params are",
+                                result
+                            );
+                        });
+                    }
+                }
+                var isPrivate = $("#node-input-api option:selected").attr(
+                    "isprivate"
+                );
+                console.log("isPrivate : ", isPrivate);
+                if (isPrivate === "true")
+                    $(".node-input-private-api").show();
+                else $(".node-input-private-api").hide();
+            };
+            // retrieve Exchanges from CCXT node package
+            let getExchanges = function() {
+                var exchangeElement = $("#node-input-exchange");
+                $.getJSON("exchanges", function(result) {
+                    exchangeElement.empty();
+                    exchangeElement.append(
+                        $("<option>", {
+                            value: "",
+                            text: ""
+                        })
+                    );
+                    console.log("loading exchanges ...");
+                    $.each(result.exchange, function(key, value) {
+                        exchangeElement.append(
+                            $("<option />")
+                                .val(key)
+                                .text(value[0])
+                                .attr("homepage", value[1])
+                                .attr("logo", value[2])
+                                .attr("apidoc", value[3])
+                        );
+                    });
+                    console.log("node exchange is : " + node.exchange);
+                    exchangeElement.val(node.exchange);
+                    var exchange = $("#node-input-exchange").val();
+                    // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
+                    $("#node-input-exchange").trigger("change");
+                    // if (
+                    //     exchange === node.exchange &&
+                    //     // exchange !== node.exchange &&
+                    //     node.exchange !== undefined
+                    // ) {
+                    //     //$("#node-input-exchange").trigger("change");
+                    //     console.log("is it calling here??");
+                    //     var apitype = $("#node-input-apitype").val();
+                    //     if (apitype === "unifiedAPI")
+                    //         getunifiedAPIs(exchange);
+                    //     if (apitype === "customAPI")
+                    //         getcustomAPIs(exchange);
+                    // }
                 }).error(function(error) {
                     console.log(error);
                 });
-            }
+            };
+            getExchanges();
+            // retrieve API types from CCXT node package
 
+            getunifiedAPIs = function(exchange) {
+                console.log("getUnifiedAPIs for exchange...", exchange);
+                var apiElement = $("#node-input-api");
+                apiElement.empty();
+                apiElement.append(
+                    $("<option />")
+                        .val("loadMarkets")
+                        .text("loadMarkets")
+                );
+                if (exchange === undefined || exchange === "") return;
+                $.getJSON("exchangecaps", { exchange: exchange }, function(
+                    result
+                ) {
+                    result.caps.forEach(function(element) {
+                        apiElement.append(
+                            $("<option>", {
+                                value: element[0],
+                                text: element[0],
+                                isprivate: element[1]
+                            })
+                        );
+
+                        //console.log(element);
+                    });
+                    // sort on text
+                    apiElement.html(
+                        apiElement.find("option").sort(function(x, y) {
+                            // to change to descending order switch "<" for ">"
+                            return $(x).text() > $(y).text() ? 1 : -1;
+                        })
+                    );
+
+                    apiElement.val(node.api);
+                    // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
+                    $("#node-input-api").trigger("change");
+                    //showhideInputFields();
+                }).error(function(error) {
+                    console.log(error);
+                });
+                //
+            };
             // retrieve APIs from CCXT node package
-            getAPIS = function(exchange, apiType) {
-                $.getJSON('apis', { exchange: exchange, apitype: apiType}, function(result) {
-                    var apiElement = $("#node-input-apicustom");
+            getcustomAPIs = function(exchange) {
+                //$.getJSON('apis', { exchange: exchange, apitype: apiType }, function (result) {
+                // var i = 0;
+                //var apis = {};
 
-                    apiElement.empty();
-                    
-                    $.each(Object.keys(result.api), function(index, verb) {                        
-                        $.each(result.api[verb], function(index, item) {
-                            apiElement.append($("<option />").val(verb + '_' + item).text(verb + '_' + item));
+                console.log("getcustomAPIs for exchange...", exchange);
+                var apiElement = $("#node-input-api");
+                var api = $("#node-input-api option:selected").val();
+                apiElement.empty();
+                if (exchange === undefined || exchange === "") return;
+
+                $.getJSON("apis", { exchange: exchange }, function(
+                    result
+                ) {
+                    $.each(Object.keys(result.api), function(
+                        index,
+                        apitype
+                    ) {
+                        $.each(Object.keys(result.api[apitype]), function(
+                            index,
+                            verb
+                        ) {
+                            $.each(result.api[apitype][verb], function(
+                                index,
+                                api
+                            ) {
+                                apiElement.append(
+                                    $("<option>", {
+                                        value: verb + "_" + api,
+                                        text: verb + "_" + api,
+                                        customapitype: apitype,
+                                        isprivate: apitype === "private"
+                                    })
+                                );
+                            });
                         });
                     });
-                    
+                    // sort on text
+                    apiElement.html(
+                        apiElement.find("option").sort(function(x, y) {
+                            // to change to descending order switch "<" for ">"
+                            return $(x).text() > $(y).text() ? 1 : -1;
+                        })
+                    );
                     // set actual value
-                    apiElement.val(node.apicustom);                                                
+                    apiElement.val(node.api);
+                    // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
+                    if (api !== node.api)
+                        $("#node-input-api").trigger("change");
+                    // showhideInputFields();
                 }).error(function(error) {
                     console.log(error);
-                });                
-            }
+                });
+
+                //
+            };
 
             // Exchange change event
-            $("#node-input-exchange").change(function() {    
-                var api = $("#node-input-api option:selected").val();
-                var exchange = $("#node-input-exchange option:selected").val();                
+            $("#node-input-exchange").change(function() {
+                console.log("exchange change event ...");
+                //var api = $("#node-input-api option:selected").val();
+                var exchange = $(
+                    "#node-input-exchange option:selected"
+                ).val();
+                //  console.log('exchange selected:{}, api is: {}', exchange, api);
+                var apitype = $("#node-input-apitype").val();
+                var apiElement = $("#node-input-api");
+                apiElement.empty();
 
-                if (api === "customAPI")
-                    getAPITypes(exchange);                
+                showhideInputFields();
+                if (
+                    //  exchange !== node.exchange &&
+                    exchange !== undefined &&
+                    exchange !== ""
+                ) {
+                    if (apitype === "unifiedAPI") getunifiedAPIs(exchange);
+                    if (apitype === "customAPI") getcustomAPIs(exchange);
+                }
+            });
+
+            // API type change event
+            $("#node-input-apitype").change(function() {
+                //   var api = $("#node-input-api option:selected").val();
+
+                var exchange = $(
+                    "#node-input-exchange option:selected"
+                ).val();
+                var apitype = $(
+                    "#node-input-apitype option:selected"
+                ).val();
+                console.log(
+                    "API type change event ...exchange&apitype",
+                    exchange,
+                    apitype
+                );
+                //empty the api because the type has changed
+                var apiElement = $("#node-input-api");
+                apiElement.empty();
+                showhideInputFields();
+
+                if (exchange !== undefined && exchange !== "") {
+                    if (apitype === "customAPI") getcustomAPIs(exchange);
+                    if (apitype === "unifiedAPI") getunifiedAPIs(exchange);
+                }
             });
 
             // API change event
             $("#node-input-api").change(function() {
-                var exchange = $("#node-input-exchange option:selected").val();
-                var api = $("#node-input-api option:selected").val();
+                console.log("API change event ..");
+                showhideInputFields();
+            });
 
-                if (api === "loadMarkets") {
-                    $(".node-input-public-api-load-markets").show();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").hide();
-                } else if (api === "fetchMarkets") {
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").hide();
-                } else if (api === "fetchTicker") {
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").show();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").hide();
-                } else if (api === "fetchTickers") {
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").hide();
-                } else if (api === "fetchOrderBook") {
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").show();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").hide();
-                } else if (api === "fetchOHLCV") {
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").show();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").hide();
-                } else if (api === "fetchTrades") {
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").show();
-                    $(".node-input-public-api-custom").hide();
-                } else if (api === "customAPI") {
-                    // get APIS Types
-                    getAPITypes(exchange);
+            $("#node-input-symbolType").on("change", function() {
+                console.log("detected a change in symbol type");
+            });
+            //value="flow" dir="" style="display: none;">
 
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").show();
+            $("#node-input-symbolType").change(function() {
+                console.log("Node Input Symbol1 change detected");
+            });
+
+            // Symbol change event
+            $("#node-input-symbol").on("change", function(type, value) {
+                console.log("Node Input Symbol4 change is: ", type, value);
+                if (value === "symbolslist") {
+                    //hide the symbolslist typedInput
+                    let typedInputContainerElement = $(
+                        ".node-input-unified-api-symbol > .red-ui-typedInput-container"
+                    );
+                    let divselectSymbolElement = $(
+                        ".node-input-select-symbol"
+                    );
+
+                    divselectSymbolElement.appendTo(
+                        typedInputContainerElement
+                    );
+
+                    //find the button and hide it
+                    let btnsymboltypedInput = typedInputContainerElement.find(
+                        ".red-ui-typedInput-option-trigger"
+                    );
+                    //  btnsymboltypedInput.
+
+                    // hide the typedInput button
+                    btnsymboltypedInput.hide();
+                    //show my select2 input
+                    divselectSymbolElement.show();
+
+                    //select the type drop down button
+                    //$(".node-input-unified-api-symbol > .red-ui-typedInput-container > button").first();
+
+                    //$(".node-input-unified-api-symbol").find(".red-ui-typedInput-container").find("button")
                 } else {
-                    $(".node-input-public-api-load-markets").hide();
-                    $(".node-input-public-api-order-book").hide();
-                    $(".node-input-public-api-fetch-ticker").hide();
-                    $(".node-input-public-api-fetch-ohlcv").hide();
-                    $(".node-input-public-api-fetch-trades").hide();
-                    $(".node-input-public-api-custom").hide();
+                    let divselectSymbolElement = $(
+                        ".node-input-select-symbol"
+                    );
+                    divselectSymbolElement.remove();
+                    //divselectSymbolElement.hide();
                 }
             });
-            
-            // API type change event
-            $("#node-input-apitype").change(function() { 
-                var api = $("#node-input-api option:selected").val();
-                var exchange = $("#node-input-exchange option:selected").val();    
-                var apitype = $("#node-input-apitype option:selected").val();            
-                
-                // get APIS types
-                if (api === "customAPI" && apitype !== undefined) 
-                    getAPIS(exchange, apitype);                                
+
+            // order type change event
+            $("#node-input-ordertype").change(function() {
+                $("#node-input-ordertype option:selected").val() ===
+                "market"
+                    ? $("#node-input-orderprice").attr("readonly", true)
+                    : $("#node-input-orderprice").attr("readonly", false);
             });
+        },
+        oneditsave: function() {
+            var node = this;
+            console.log("oneditsave ...");
+            // this.exchange.value = $("#node-input-exchange option:selected").val();
+            // node.exchange = $("#node-input-exchange option:selected").val();
+
+            console.log("node exhange: " + node.exchange);
+            console.log(
+                "this selected: " +
+                    $("#node-input-exchange option:selected").val()
+            );
+            console.log("node api: " + node.api);
+            console.log(
+                "this selected: " +
+                    $("#node-input-api option:selected").val()
+            );
+            // make sure you save the dynamic fields
+            node.exchange = $(
+                "#node-input-exchange option:selected"
+            ).val();
+            node.api = $("#node-input-api option:selected").val();
+            node.apiprivate = $("#node-input-api option:selected").attr(
+                "isprivate"
+            );
+            if (
+                $("#node-input-apitype option:selected").val() ===
+                "customAPI"
+            )
+                if (
+                    node.customapitype !==
+                    $("#node-input-api option:selected").attr(
+                        "customapitype"
+                    )
+                )
+                    $("#node-input-customapitype").val(
+                        $("#node-input-api option:selected").attr(
+                            "customapitype"
+                        )
+                    );
+            console.log("node exhange: " + node.customapitype);
+            console.log(
+                "this selected: " +
+                    $("#node-input-exchange option:selected").val()
+            );
+            console.log("node api: " + node.api);
+            console.log(
+                "this selected: " +
+                    $("#node-input-api option:selected").val()
+            );
+            console.log("this private", node.apiprivate);
         }
     });
+</script>
+<script type="text/x-red" data-template-name="ccxt-api">
+        <div class="form-row">
+        <span><a href='#' target="_blank" id="id-img-display-exchange-homepage"><img src="" alt="" id="id-anchor-display-exchange-img" style="max-width:68%;"></a></span>
+    </div>
+
+
+            <div class="form-row">
+
+              <label for="node-input-exchange"><i class="fa fa-shopping-cart"></i> Exchange</label>
+              <select type="text" id="node-input-exchange"
+              data-toggle="tooltip" data-placement="right" data-animation="true"
+              data-html="true" data-trigger="hover"
+              title="select the exchange from the drop down list">
+
+              </select>
+              <span><a href='#' target="_blank" id="id-anchor-display-exchange-homepage"><i class="fa fa-globe"></i></a></span>
+
+          </div>
+
+
+            <div class="form-row">
+              <label for="node-input-apitype"><i class="fa fa-dot-circle-o"></i> API Type</label>
+              <select type="text" id="node-input-apitype" style="width: auto;">
+                <option value="unifiedAPI">Unified API</option>
+                <option value="customAPI">Exchange API</option>
+              </select>
+
+
+            </div>
+
+
+            <div class="form-row">
+              <label for="node-input-api"><i class="fa fa-code"></i> API Name</label>
+              <select type="text" id="node-input-api" style="width: auto;">
+              </select>
+              <span><a href='#' target="_blank" id="id-anchor-display-exchange-apidoc"><i class="fa fa-info-circle"></i></a></span>
+              <input type="hidden" id="node-input-customapitype">
+            </div>
+
+
+            <div class="form-row node-input-private-api" style="display: none;width:auto;">
+              <label for="node-input-apisecrets"><i class="fa fa-user-secret"></i> Secrets</label>
+              <input type="text" id="node-input-apisecrets">
+            </div>
+
+
+
+            <div class="form-row node-input-unified-api-load-markets" style="display: none;">
+               <label for="node-input-loadmarketsreload"><i class="fa fa-refresh"></i> Reload</label>
+               <input type="checkbox" id="node-input-loadmarketsreload">
+            </div>
+
+
+
+
+            <div class="form-row node-input-unified-api-symbol" style="display: none;">
+               <label for="node-input-symbol"><i class="fa fa-exchange"></i> Symbol</label>
+               <input type="text" id="node-input-symbol">
+               <input type="hidden" id="node-input-symbolType">
+            </div>
+
+
+              <select type="text" id="id-input-select-symbol">
+                  <option>1</option>
+              </select>
+         <!--    <div class="form-row class-input-select-symbol">
+
+          </div> -->
+
+            <div class="form-row node-input-unified-api-timeframe" style="display: none;">
+                <label for="node-input-timeframe"><i class="fa fa-clock-o"></i> Time Frame</label>
+                <select type="text" id="node-input-timeframe" style="width: auto;">
+                   <option value="1m">1 Min</option>
+                   <option value="5m">5 Min</option>
+                   <option value="30m">30 Min</option>
+                   <option value="1h">1 Hour</option>
+                   <option value="1d">1 Day</option>
+                </select>
+             </div>
+
+             <div class="form-row node-input-unified-api-since" style="display: none;">
+                <label for="node-input-since"><i class="fa fa-table"></i> Since</label>
+                <input type="date" id="node-input-since">
+             </div>
+
+            <div class="form-row node-input-unified-api-limit" style="display: none;">
+                  <label for="node-input-limit"><i class="fa fa-filter"></i> Limit</label>
+                  <input type="number" id="node-input-limit">
+            </div>
+
+               <div class="form-row node-input-unified-api-ordertype" style="display: none;">
+                      <label for="node-input-ordertype"><i class="fa fa-handshake-o"></i> Type</label>
+                      <select type="text" id="node-input-ordertype" style="width: auto;">
+                         <option value="limit">Limit</option>
+                         <option value="market">Market</option>
+                      </select>
+              </div>
+
+
+              <div class="form-row node-input-unified-api-orderside" style="display: none;">
+                      <label for="node-input-orderside"><i class="fa fa-balance-scale"></i> Side</label>
+                      <select type="text" id="node-input-orderside" style="width: auto;">
+                         <option value="buy">Buy</option>
+                         <option value="sell">Sell</option>
+                      </select>
+              </div>
+
+              <div class="form-row node-input-unified-api-amount" style="display: none;">
+                      <label for="node-input-amount"><i class="fa fa-calculator"></i> Amount</label>
+                      <input type="number" id="node-input-amount">
+                   </div>
+
+              <div class="form-row node-input-unified-api-orderprice" style="display: none;">
+                          <label for="node-input-orderprice"><i class="fa fa-dollar"></i> Price</label>
+                          <input type="number" id="node-input-orderprice">
+              </div>
+
+              <div class="form-row node-input-unified-api-orderid" style="display: none;">
+                      <label for="node-input-orderid"><i class="fa fa-id-badge"></i> ID</label>
+                      <input type="text" id="node-input-orderid">
+              </div>
+
+              <div class="form-row node-input-unified-api-code" style="display: none;">
+                      <label for="node-input-code"><i class="fa fa-qrcode"></i> Currency</label>
+                      <input type="text" id="node-input-code">
+              </div>
+              <div class="form-row node-input-unified-api-address" style="display: none;">
+                      <label for="node-input-address"><i class="fa fa-address-book"></i> Address</label>
+                      <input type="text" id="node-input-address">
+              </div>
+              <div class="form-row node-input-unified-api-tag" style="display: none;">
+                      <label for="node-input-tag"><i class="fa fa-comment"></i> Tag</label>
+                      <input type="text" id="node-input-tag">
+              </div>
+
+              <div class="form-row node-input-api-custom" style="display: none;">
+                  <label for="node-input-apipayload"><i class="fa fa-envelope"></i> Payload</label>
+                  <input type="json" id="node-input-apipayload" style="width:68%;" >
+                  <input type="hidden" id="node-input-apipayloadType">
+                </div>
+                <div class="form-row">
+                    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+                    <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+                  </div>
+</script>
+
+<script type="text/x-red" data-help-name="ccxt-api">
+    <p>CCXT API</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+       <dt>Exchange<span class="property-type">string</span></dt>
+    </dl>
+
+    <dl class="message-properties">
+          <dt>API Type<span class="property-type">string</span></dt>
+          <p>API Custom Type</p>
+          <dd>Type list:
+             <ul>
+                 <li>Public</li>
+                 <li>Private</li>
+             </ul>
+          </dd>
+    </dl>
+
+    <dl class="message-properties">
+          <dt>API Name<span class="property-type">string</span></dt>
+          <p>Each Exchange have a list of different APIs. Check the API dock for each Exchange to check it</p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>ApiKey<span class="property-type">string</span></dt>
+    </dl>
+    <dl class="message-properties">
+      <dt>Secret ApiKey<span class="property-type">string</span></dt>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+       <dt>payload<span class="property-type">object</span></dt>
+       <dd>The payload result object.
+          <p>Object Format:</p>
+          <ul>
+             <li>error: error array</li>
+             <li>result: object result</li>
+           </ul>
+       </dd>
+    </dl>
+
+    <h3>Error</h3>
+    <dl class="message-properties">
+       <dt>error<span class="property-type">string</span></dt>
+       <dd>The error string.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>The ccxt RED node is a collection of available crypto exchanges or exchange classes</p>
 </script>
 
 <script type="text/x-red" data-template-name="ccxt-exchange">
@@ -1697,7 +819,7 @@
     <div class="form-row">
         <label for="node-config-input-secret"><i class="fa"></i>Secret</label>
         <input type="text" id="node-config-input-secret" placeholder="Enter Exchange Secret">
-    </div>    
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="ccxt-exchange">
@@ -1705,14 +827,14 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('ccxt-exchange', {
-        category: 'config',
+    RED.nodes.registerType("ccxt-exchange", {
+        category: "config",
         defaults: {
-            name: {value: ''}
+            name: { value: "" }
         },
         credentials: {
-            apikey: {value: ''},
-            secret: {value: ''}
+            apikey: { value: "" },
+            secret: { value: "" }
         },
         label: function() {
             if (this.name) {

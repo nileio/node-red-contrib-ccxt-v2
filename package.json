@@ -12,7 +12,7 @@
   "author": "Miguel Salinas Gancedo",
   "license": "Apache License, Version 2.0",
   "dependencies": {
-    "ccxt": "^1.18.247",
+    "ccxt": "^1.18.497",
     "moment": "^2.20.1",
     "serve-static": "^1.13.2"
   },
@@ -20,5 +20,10 @@
     "nodes": {
       "ccxt-api": "ccxt/ccxt-api.js"
     }
+  },
+  "devDependencies": {
+    "ansicolor": "^1.1.83",
+    "as-table": "^1.0.38",
+    "ololog": "^1.1.121"
   }
 }
