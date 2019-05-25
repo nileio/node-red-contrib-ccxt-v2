@@ -1,6 +1,6 @@
 TODO: README & docs
 
-This package is now way different than the fork. This is work in progress, unfinished ...
+This package is now way different from the fork, will possibly re-base with credits. This is work in progress, unfinished ...
 
 # node-red-contrib-ccxt
 
@@ -8,7 +8,9 @@ A Node-RED node implemented by CCXT.
 
 ## Description
 
-Now this node package supports the API for all **(133 Exchanges)** Crypto Exchanges in the world from [CCXT](https://github.com/ccxt/ccxt) node-RED package. More than **1500 APIS** implemented to be used.
+Now this node package supports all APIs which are provided by CCXT. The node acts as a relay proxy to the CCXT package which exectues all calls.
+Please check CCXT website for all supported excahgnes.
+As of the latest release, there are **(133 Exchanges)** Crypto Exchanges in the world from [CCXT](https://github.com/ccxt/ccxt) node-RED package.
 
 For the latest updates see the [CHANGELOG.md](https://github.com/masalinas/node-red-contrib-ccxt/blob/master/CHANGELOG.md)
 
