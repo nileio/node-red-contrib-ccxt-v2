@@ -1,6 +1,19 @@
 TODO: README & docs
 
-This package is now way different from the fork, will possibly re-base with credits. This is work in progress, unfinished ...
+This package is now way different from the fork, will possibly re-base with original author credits.
+This is work in progress, unfinished ...
+
+**New Features**
+
+-   Automatic load of all unified and custom (exchange-specific) APIs.
+-   Now only the supported APIs by the exchange will be listed.
+-   Automatic detection of private and public APIs. Private APIs only require API Key and Secret.
+-   Links for the selected exchange API docs.
+-   Automatic detection of required and optional parameters for the selected Exchange.
+-   Dynamic flow input parameters.
+-   Cool searable drop-down lists for easily finding the exchange or required API.
+-   Automatic detection of the API required and optional parameters.
+-   much more to come ...
 
 # node-red-contrib-ccxt
 
