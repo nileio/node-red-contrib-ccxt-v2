@@ -12,7 +12,6 @@ This is work in progress, unfinished ...
 -   Automatic detection of required and optional parameters for the selected Exchange.
 -   Dynamic flow input parameters.
 -   Cool searable drop-down lists for easily finding the exchange or required API.
--   Automatic detection of the API required and optional parameters.
 -   much more to come ...
 
 # node-red-contrib-ccxt
