@@ -61,6 +61,6 @@ In the **Example folder** of the node you have the flow of these two cases. Of c
 -   API payload is not required for some custom APIs. detect and remove error message on the node.
 -   Add a help hover button or an area where the documentation of the API is displayed when selecting a custom API.
 -   Add a persistent link to API doc when selecting an exchange. Info hover button to retrieve
-    exchange info or a description of the selected item somewhere.
+-   exchange info or a description of the selected item somewhere.
 -   Auto populate API payload for selected custom API.
 -   Review custom API syntax for implicit calls.
