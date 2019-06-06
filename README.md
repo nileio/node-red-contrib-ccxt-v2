@@ -49,7 +49,7 @@ npm install node-red-contrib-ccxt-v2 --save
 In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the secrets.
 
 **To Do**
-
+- Include locale and multiple languages support. At the moment it is only english.
 - Testing of all new features
 - Testing of dynamic configuration based on msg or flow
 - Testing of trade APIs
