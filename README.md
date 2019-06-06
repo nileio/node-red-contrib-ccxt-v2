@@ -1,7 +1,12 @@
-TODO: README & docs
+# node-red-contrib-ccxt-v2
 
-This package is now way different from the fork, will possibly re-base with original author credits.
-This is work in progress, unfinished ...
+A Node-RED node to communicate with various crypto exchanges using CCXT library. The node now supports all Unified and Exchange-specific APIs.
+
+
+
+This package is now way different from the fork, will possibly re-factor with original author credits.
+This is now in Beta testing with really cool new features as below :)
+Please create an issue for any question or suggestion.
 
 **New Features**
 
@@ -11,30 +16,25 @@ This is work in progress, unfinished ...
 - Links for the selected exchange API docs.
 - Automatic detection of required and optional parameters for the selected Exchange.
 - Dynamic flow input parameters.
-- Cool searable drop-down lists for easily finding the exchange or required API.
+- Cool searable drop-down lists based on select2 for easily finding the exchange or required API.
 - much more to come ...
-
-# node-red-contrib-ccxt
-
-A Node-RED node implemented by CCXT.
 
 ## Description
 
-Now this node package supports all APIs which are provided by CCXT. The node acts as a relay proxy to the CCXT package which exectues all calls.
-Please check CCXT website for all supported excahgnes.
-As of the latest release, there are **(133 Exchanges)** Crypto Exchanges in the world from [CCXT](https://github.com/ccxt/ccxt) node-RED package.
+This node package supports all APIs which are provided by latest version of CCXT. The node acts as a relay proxy to the CCXT package which exectues all unified and custom calls.
+Please check CCXT website for all supported exchanges.
+As of the latest release, there are **(133 Exchanges)** Crypto Exchanges supported from [CCXT](https://github.com/ccxt/ccxt) node-RED package.
 
 For the latest updates see the [CHANGELOG.md](https://github.com/masalinas/node-red-contrib-ccxt/blob/master/CHANGELOG.md)
 
 ## Installation Instructions
 
 ```
-npm install node-red-contrib-ccxt --save
+npm install node-red-contrib-ccxt-v2 --save
 ```
 
-## All Exchanges supported by ccxt are included
-
 ## CCXT node-RED Configuration
+
 
 ## Some examples
 
@@ -52,4 +52,5 @@ In the **Example folder** of the node you have the flow of these two cases. Of c
 
 - Testing of all new features
 - Testing of dynamic configuration based on msg or flow
-- Testing of order managment APIs
+- Testing of trade APIs
+- Additional feature requests
