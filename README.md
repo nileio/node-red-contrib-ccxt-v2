@@ -2,11 +2,9 @@
 
 A Node-RED node to communicate with various crypto exchanges using CCXT library. The node now supports all Unified and Exchange-specific APIs.
 
+Note this package has much more added features and changes from the original fork, so this is refactored to v2.
 
-
-This package is now way different from the fork, will possibly re-factor with original author credits.
-This is now in Beta testing with really cool new features as below :)
-Please create an issue for any question or suggestion.
+This is now in Beta testing with really cool new features as below :) Please create an issue for any question or suggestion.
 
 **New Features**
 
