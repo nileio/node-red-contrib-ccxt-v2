@@ -1,7 +1,7 @@
 TODO: README & docs
 
 This package is now way different from the fork, will possibly re-base with original author credits.
-This is work in progress, unfinished ...
+This is now in Beta with really cool new features :)
 
 **New Features**
 
@@ -11,7 +11,7 @@ This is work in progress, unfinished ...
 - Links for the selected exchange API docs.
 - Automatic detection of required and optional parameters for the selected Exchange.
 - Dynamic flow input parameters.
-- Cool searable drop-down lists for easily finding the exchange or required API.
+- Cool searable drop-down lists based on select2 for easily finding the exchange or required API.
 - much more to come ...
 
 # node-red-contrib-ccxt
@@ -20,7 +20,7 @@ A Node-RED node implemented by CCXT.
 
 ## Description
 
-Now this node package supports all APIs which are provided by CCXT. The node acts as a relay proxy to the CCXT package which exectues all calls.
+Now this node package supports all APIs which are provided by latest version of CCXT. The node acts as a relay proxy to the CCXT package which exectues all calls.
 Please check CCXT website for all supported excahgnes.
 As of the latest release, there are **(133 Exchanges)** Crypto Exchanges in the world from [CCXT](https://github.com/ccxt/ccxt) node-RED package.
 
