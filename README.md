@@ -1,7 +1,7 @@
-TODO: README & docs
 
-This package is now way different from the fork, will possibly re-base with original author credits.
-This is now in Beta with really cool new features :)
+This package is now way different from the fork, will possibly re-factor with original author credits.
+This is now in Beta testing with really cool new features as below :)
+Please create an issue for any question or suggestion.
 
 **New Features**
 
