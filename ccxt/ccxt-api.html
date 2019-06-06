@@ -1,6 +1,6 @@
 <script type="text/javascript">
   RED.nodes.registerType("ccxt-api", {
-    category: "CryptoExchange",
+    category: "Crypto API",
     defaults: {
       name: { value: "" },
       exchange: { value: "", required: true },
@@ -538,7 +538,7 @@
               inputSelectSymbolElem.val($("#node-input-symbol").val());
             else inputSelectSymbolElem.val(node.symbol);
 
-            //should i trigger the change event ?
+            
           });
           //   let select2InputSymbol = $("#id-input-select-symbol");
 
