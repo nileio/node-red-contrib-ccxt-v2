@@ -20,6 +20,10 @@ forked due to inactivity with upstream project.
 **Fixes**
 
 -ACX: corrected and removed APIs list from ccxt package. upstream ccxt need to be updated.
--Fixed a bug where the call fails if the custom API includes a path parameter such as 
+-Fixed a bug where the call fails if the custom API includes a path parameter such as
 /path/{market}
 /path/{coin}/balance
+
+### 0.3.0.1
+
+Beta release for the new version to support the goals of the new project.

@@ -12,6 +12,7 @@ module.exports = function(RED) {
   // Date.prototype.getUnixTime = function() {
   //     return (this.getTime() / 1000) | 0;
   // };
+
   // load RED app server and settings
   var app = RED.httpNode;
   // var settings = RED.settings;
@@ -357,7 +358,9 @@ module.exports = function(RED) {
               if (node.apipayloadType === "msg")
                 value = JSON.parse(RED.util.getMessageProperty(msg, node.apipayload));
               if (node.apipayloadType === "flow")
-                value = JSON.parse(RED.util.evaluateNodeProperty(node.apipayload,value,node,msg));
+                value = JSON.parse(
+                  RED.util.evaluateNodeProperty(node.apipayload, value, node, msg)
+                );
             }
             // special handling for since argument to convert to milliseconds
             if (param === "since") {
@@ -380,7 +383,6 @@ module.exports = function(RED) {
                 value = RED.util.evaluateNodeProperty(node.timeframe, value, node, msg);
               }
             }
-
 
             if (param === "symbol") {
               if (node.symbolType === "msg")

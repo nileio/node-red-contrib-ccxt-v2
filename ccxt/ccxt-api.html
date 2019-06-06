@@ -64,7 +64,11 @@
       // }
       //    var optionNothing = {value:"nul",label:this._("trigger.output.nothing"),hasValue:false};
 
-      //expermentation here
+      // initialise select2 on the exchange field ! this will load a nice long drop-down searable list interface
+      // based on select2. Note: select2 js&css must be added to nodered public vendor folders
+      // currenctly i loaded it under @node-red/editor-client/public/vendor/select2
+      // if nodered is installed globally then @node-red will be under /usr/local/lib/node_modules/
+      // TODO: need to find a way to automatically package select2 and  reference it with installed nodered
       $("#node-input-exchange").select2();
 
       $("#node-input-apipayload").typedInput({
@@ -136,29 +140,6 @@
           { value: "flow", label: "flow.", hasValue: true }
         ]
       });
-      //.typedInput("width", "30%");
-
-      /*             $("#node-input-payloadTypee").val(this.payloadTypee);
-          $("#node-input-payloadd").typedInput({
-              default: "str",
-              typeField: $("#node-input-payloadTypee"),
-              types: [
-                  {
-                      value: "str",
-                      label: "Date",
-                      icon: "red/images/typedInput/09.png",
-                      hasValue: true
-                  },
-                  "msg",
-                  { value: "flow", label: "flow.", hasValue: true },
-                  {
-                      value: "global",
-                      label: "global.",
-                      hasValue: true
-                  }
-              ]
-          }); */
-
       //utility function
       function isEmpty(obj) {
         for (var key in obj) {
@@ -578,12 +559,7 @@
           select2Container
             .find(".select2-selection")
             .attr("style", "border: none;height: 32px");
-          // select2Container
-          //     .find("#select2-id-input-select-symbol-container")
-          //     .attr("style", "line-height: 32px");
-          // select2Container
-          //     .find(".select2-selection__arrow")
-          //     .attr("style", "height: 32px");
+
 
           //find the button and hide it
           typedInputContainerElement.find(".red-ui-typedInput-option-trigger").hide();
@@ -703,12 +679,12 @@
 
       $("#node-input-limit").on("change", function() {
         //setting defaults here..
-        // if (
-        //     $("#node-input-limit").typedInput("type") === "msg" &&
-        //     $("#node-input-limit").typedInput("value") === ""
-        // ) {
-        //     $("#node-input-limit").typedInput("value", "payload");
-        // }
+        if (
+            $("#node-input-limit").typedInput("type") === "msg" &&
+            $("#node-input-limit").typedInput("value") === ""
+        ) {
+            $("#node-input-limit").typedInput("value", "payload");
+        }
       });
 
       // order type change event
@@ -746,315 +722,385 @@
   });
 </script>
 <script type="text/x-red" data-template-name="ccxt-api">
+    <div class="form-row">
+      <span
+        ><a href="#" target="_blank" id="id-img-display-exchange-homepage"
+          ><img
+            src="#"
+            alt=""
+            id="id-anchor-display-exchange-img"
+            style="max-width:68%;"/></a
+      ></span>
+      <span
+        ><img
+          src="spinning-circles.svg"
+          alt="retrieving data..."
+          id="id-loading-svg"
+          style="display:none;width:24px;"
+      /></span>
+    </div>
+    <div class="form-row">
+      <label for="node-input-exchange" class="tooltip"
+        ><i class="fa fa-shopping-cart"></i> Exchange
+        <div class="right">
+          <strong>Crypto Exchange</strong>
+          <p>
+            Select one of the supported exchanges by the included CCXT version "1.18.630".
+          </p>
+          <i></i>
+        </div>
+      </label>
 
-      <div class="form-row">
-  <span><a href='#' target="_blank" id="id-img-display-exchange-homepage"><img src="" alt="" id="id-anchor-display-exchange-img" style="max-width:68%;"></a></span>
-  <span><img src="spinning-circles.svg" alt="retrieving data..." id="id-loading-svg" style="display:none;width:24px;"></span>
-  </div>
-      <div class="form-row">
-
-        <label for="node-input-exchange" class="tooltip"><i class="fa fa-shopping-cart"></i> Exchange
-          <div class="right">
-              <strong>Crypto Exchange</strong>
-              <p>Select one of the supported exchanges by the included CCXT version "1.18.630".
-              </p>
-              <i></i>
-          </div>
-         </label>
-
-        <select type="text" id="node-input-exchange">
-        </select>
-        <span><a href='#' target="_blank" id="id-anchor-display-exchange-homepage"><i class="fa fa-globe"></i></a></span>
+      <select type="text" id="node-input-exchange"> </select>
+      <span
+        ><a href="#" target="_blank" id="id-anchor-display-exchange-homepage"
+          ><i class="fa fa-globe"></i></a
+      ></span>
     </div>
 
-      <div class="form-row">
-        <label for="node-input-apitype" class="tooltip"><i class="fa fa-dot-circle-o"></i> API Type
-          <div class="right">
-              <strong>API Type</strong>
-              <p>Unified API is a subset of methods common among the exchanges as provided by CCXT.
-                  Exchange API is a custom API specific to the exchange. All unified and custom APIs are supported.
-              </p>
-              <i></i>
-          </div>
-        </label>
-        <select type="text" id="node-input-apitype" style="width: auto;">
-          <option value="unifiedAPI">Unified API</option>
-          <option value="customAPI">Exchange API</option>
-        </select>
-      </div>
-
-      <div class="form-row">
-        <label for="node-input-api" class="tooltip"><i class="fa fa-code"></i> API Name
-          <div class="right">
-              <strong>API Name</strong>
-              <p>Select an API Name from the list. Only the supported APIs by the exchange are listed.
-                  Some of the Unified APIs are <a href="https://ccxt.readthedocs.io/en/latest/manual.html#exchange-structure" target="_blank">emulated</a> for the exchange.
-                  The required and optional parameters presented are based on the selected API.
-                  If the selected API is private, Secrets field will appear to configure the API Key and credentials. Clicking the information icon will take you to the docs.
-              </p>
-              <i></i>
-          </div>
-        </label>
-        <select type="text" id="node-input-api" style="width: auto;">
-        </select>
-        <span><a href='#' target="_blank" id="id-anchor-display-exchange-apidoc"><i class="fa fa-info-circle tooltip">
-      <div class="right">
-
-              <p>Click to read the docs of the selected API. <strong>Note:</strong> changing the API will delete any unmatched keys in your payload!
-              </p>
-              <i></i>
-          </div>
-
-
-        </i></a></span>
-        <input type="hidden" id="node-input-customapitype">
-      </div>
-
-      <div class="form-row node-input-private-api hidden">
-        <label for="node-input-apisecrets" class="tooltip"><i class="fa fa-user-secret"></i> Secrets
-              <div class="right">
-              <strong>Secrets</strong>
-              <p>Select a pre-configured secrets or click the button to configure a new API Key and Secret using the Configuration node.
-                  The API Key and Secret are encrypted by Node-RED <a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank">credentials</a> feature and stored locally on the runtime machine.
-              </p>
-              <i></i>
-          </div>
-      </label>
-        <input type="text" id="node-input-apisecrets" style="width: 70%">
-      </div>
-
-
-
-      <div class="form-row node-input-unified-api-load-markets hidden">
-         <label for="node-input-loadmarketsreload" class="tooltip"><i class="fa fa-refresh"></i> Reload
-                              <div class="right">
-              <strong>Reload</strong>
-              <p>Tick the box to force a reload of all exchange markets rather than using the cached list.
-              </p>
-              <i></i>
-          </div>
-      </label>
-         <input type="checkbox" id="node-input-loadmarketsreload">
-      </div>
-
-
-
-
-      <div class="form-row node-input-unified-api-symbol hidden">
-         <label for="node-input-symbol" class="tooltip"><i class="fa fa-exchange"></i> Symbol
-          <div class="right">
-              <strong>Symbol</strong>
-              <p>Select a market pair from the list. The list of symbols are loaded from the exchange.
-                  You can also enter a symbol manually by choosing the String type or via a property of flow, msg or global.
-                  If no symbols are available in the dropdown list, try entering the symbol manually or via a property.
-              </p>
-              <i></i>
-          </div>
-
-          </label>
-         <input type="text" id="node-input-symbol" style="width: 50%;">
-         <input type="hidden" id="node-input-symbolType">
-         <select type="text" id="id-input-select-symbol" style="display:none;">
-              <option></option>
-         </select>
-
-      </div>
-
-  <div class="form-row node-input-unified-api-since hidden">
-      <label for="node-input-since" class="tooltip"><i class="fa fa-table"></i> Since
-      <div class="right">
-              <strong>Since</strong>
-              <p>This parameter is used for date-based paginatin and is required in most cases.
-                  The user supplies a since timestamp in milliseconds and a number to limit results.
-                  Enter a date in the format yyyy-mm-dd or use a property which provides a date in this format.
-                  The date will be converted to milliseconds prior to invoking the API.
-              </p>
-              <i></i>
-          </div>
-
-      </label>
-      <input type="text" id="node-input-since" style="width:50%">
-      <input type="date" id="id-input-since" style="display:none;width:100%">
-      <input type="hidden" id="node-input-sinceType">
-  </div>
-
-
-
-      <div class="form-row node-input-unified-api-timeframe hidden">
-          <label for="node-input-timeframe" class="tooltip"><i class="fa fa-clock-o"></i> Time Frame
-
-          <div class="right">
-              <strong>Timeframe</strong>
-              <p>This parameter is used by the API fetching OHLCV data for a particular symbol based on a Candle size.
-                  The list of available timeframes for the exchange are listed in the drop-down list.
-                  If a list was not successfully retrieved from the exchange, it means that the API is emulated (indicated by the aeroplane icon) and in this case a default list is available in the dropdown list.
-                  Select a timeframe from the list or enter a timeframe manually or indicate a context flow or msg property containing the required value.
-              </p>
-              <i></i>
-          </div>
-
-          </label>
-          <input type="text" id="node-input-timeframe" style="width: 48%;>
-          <input type="hidden" id="node-input-timeframeType">
-          <img src="emulated.svg" alt="API is emulated" id="id-emulated-api" style="width:16px;">
-       </div>
-
-
-      <div class="form-row node-input-unified-api-limit hidden">
-            <label for="node-input-limit" class="tooltip"><i class="fa fa-filter"></i> Limit
-
-          <div class="right">
-              <strong>Limit</strong>
-              <p>This parameter is used to limit the number of results returned. This is mostly an optional parameter unless otherwise indicated.
-                  Enter a number to limit the results or indicate a context flow or msg property containing the required value.
-              </p>
-              <i></i>
-          </div>
-          </label>
-            <input type="text" id="node-input-limit" style="width: 30%;">
-            <input type="hidden" id="node-input-limitType">
-      </div>
-
-         <div class="form-row node-input-unified-api-ordertype hidden">
-                <label for="node-input-ordertype" class="tooltip"><i class="fa fa-handshake-o"></i> Type
-                    <div class="right">
-              <strong>Order Type</strong>
-              <p>Select either a Market or a Limit order type. There is no confirmations for orders. Always use Limit unless you know what you are doing!
-              </p>
-              <i></i>
-          </div>
-
-              </label>
-                <select type="text" id="node-input-ordertype" style="width: auto;">
-                   <option value="limit">Limit</option>
-                   <option value="market">Market</option>
-                </select>
+    <div class="form-row">
+      <label for="node-input-apitype" class="tooltip"
+        ><i class="fa fa-dot-circle-o"></i> API Type
+        <div class="right">
+          <strong>API Type</strong>
+          <p>
+            Unified API is a subset of methods common among the exchanges as provided by
+            CCXT. Exchange API is a custom API specific to the exchange. All unified and
+            custom APIs are supported.
+          </p>
+          <i></i>
         </div>
+      </label>
+      <select type="text" id="node-input-apitype" style="width: auto;">
+        <option value="unifiedAPI">Unified API</option>
+        <option value="customAPI">Exchange API</option>
+      </select>
+    </div>
 
-
-        <div class="form-row node-input-unified-api-orderside hidden">
-                <label for="node-input-orderside" class="tooltip"><i class="fa fa-balance-scale"></i> Side
-               <div class="right">
-              <strong>Side</strong>
-              <p>Select either a Buy or a Sell order.
-              </p>
-              <i></i>
-          </div>
-              </label>
-                <select type="text" id="node-input-orderside" style="width: auto;">
-                   <option value="buy">Buy</option>
-                   <option value="sell">Sell</option>
-                </select>
+    <div class="form-row">
+      <label for="node-input-api" class="tooltip"
+        ><i class="fa fa-code"></i> API Name
+        <div class="right">
+          <strong>API Name</strong>
+          <p>
+            Select an API Name from the list. Only the supported APIs by the exchange are
+            listed. Some of the Unified APIs are
+            <a
+              href="https://ccxt.readthedocs.io/en/latest/manual.html#exchange-structure"
+              target="_blank"
+              >emulated</a
+            >
+            for the exchange. The required and optional parameters presented are based on
+            the selected API. If the selected API is private, Secrets field will appear to
+            configure the API Key and credentials. Clicking the information icon will take
+            you to the docs.
+          </p>
+          <i></i>
         </div>
-
-        <div class="form-row node-input-unified-api-amount hidden">
-                <label for="node-input-amount" class="tooltip"><i class="fa fa-calculator"></i> Amount
-               <div class="right">
-              <strong>Order Amount</strong>
-              <p>Enter the asset quantity to sell or buy. More than 10 decimal places will be removed and rounded to 1 .
-                  You can also define the amount from a context flow or msg property. There is no confirmation provided for this (use at your own risk!!).
-              </p>
-              <i></i>
-          </div>
-
-              </label>
-                <input type="number" id="node-input-amount">
-             </div>
-
-        <div class="form-row node-input-unified-api-orderprice hidden">
-                    <label for="node-input-orderprice" class="tooltip"><i class="fa fa-dollar"></i> Price
-
-              <div class="right">
-              <strong>Price</strong>
-              <p>Enter the price in quote currency. This is a number field and will not show a currency symbol in the field. Check the label to confirm the details before running the flow.
-                  If the Symbol is BTC/USDT, the price is in USDT. You can also define the price from a context flow or msg property.
-                  There is no confirmation provided for this (use at your own risk!!).
-              </p>
-              <i></i>
-          </div>
-
-
-                  </label>
-                    <input type="number" id="node-input-orderprice">
-        </div>
-
-        <div class="form-row node-input-unified-api-orderid hidden">
-                <label for="node-input-orderid" class="tooltip"><i class="fa fa-id-badge"></i> ID
-
+      </label>
+      <select type="text" id="node-input-api" style="width: auto;"> </select>
+      <span
+        ><a href="#" target="_blank" id="id-anchor-display-exchange-apidoc"
+          ><i class="fa fa-info-circle tooltip">
             <div class="right">
-              <strong>Record ID</strong>
-              <p>Enter the Transaction or Order ID.
+              <p>
+                Click to read the docs of the selected API.
+                <strong>Note:</strong> changing the API will delete any unmatched keys in
+                your payload!
               </p>
               <i></i>
-          </div>
+            </div> </i></a
+      ></span>
+      <input type="hidden" id="node-input-customapitype" />
+    </div>
 
-              </label>
-                <input type="text" id="node-input-orderid" style="width: 50%">
+    <div class="form-row node-input-private-api hidden">
+      <label for="node-input-apisecrets" class="tooltip"
+        ><i class="fa fa-user-secret"></i> Secrets
+        <div class="right">
+          <strong>Secrets</strong>
+          <p>
+            Select a pre-configured secrets or click the button to configure a new API Key
+            and Secret using the Configuration node. The API Key and Secret are encrypted
+            by Node-RED
+            <a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank"
+              >credentials</a
+            >
+            feature and stored locally on the runtime machine.
+          </p>
+          <i></i>
         </div>
-
-        <div class="form-row node-input-unified-api-code hidden">
-                <label for="node-input-code" class="tooltip"><i class="fa fa-qrcode"></i> Currency
-
-              <div class="right">
-          <strong>Currency</strong>
-              <p>Enter or select the currency to deposit/withdraw or act on as required for the selected API.
-                  The list of currencies supported by the exchange are listed in the drop-down list.
-              </p>
-              <i></i>
-          </div>
-              </label>
-                <input type="text" id="node-input-code" style="width: 50%">
-        </div>
-        <div class="form-row node-input-unified-api-address hidden">
-                <label for="node-input-address" class="tooltip"><i class="fa fa-address-book"></i> Address
-          <div class="right">
-          <strong>Address</strong>
-              <p>Enter or select the deposit or withdrawal address as required for the selected API.
-              </p>
-              <i></i>
-          </div>
-
-
-              </label>
-                <input type="text" id="node-input-address" style="width: 70%">
-        </div>
-        <div class="form-row node-input-unified-api-tag hidden">
-                <label for="node-input-tag" class="tooltip"><i class="fa fa-comment"></i> Tag
-
-                                      <div class="right">
-          <strong>Tag</strong>
-              <p>Enter a description for the deposit or withdrawal as tag. This is an optional parameter. You can also define the value from a context
-                  flow or msg property.
-              </p>
-              <i></i>
-          </div>
-              </label>
-                <input type="text" id="node-input-tag" style="width: 70%">
-        </div>
-
-        <div class="form-row node-input-api-custom hidden">
-            <label for="node-input-apipayload" class="tooltip"><i class="fa fa-envelope"></i> Payload
-
-              <div class="right">
-          <strong>Payload</strong>
-              <p>The value entered in this parameter makes the "params" argument for the selected API. A custom API usually requires a payload and the field will automatically be filled with
-                  any query parameters required by the call.
-                  Unified APIs usually do not require a payload, however, consult the docs if in doubt.
-                  The accepted value is in JSON format and can be provided from a context msg property. Select None if you do not wish to send any additional parameters in the payload.
-              </p>
-              <i></i>
-          </div>
-
       </label>
-            <input type="json" id="node-input-apipayload" style="width:70%;" >
-            <input type="hidden" id="node-input-apipayloadType">
-          </div>
-          <div class="form-row">
-              <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
-              <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-            </div>
+      <input type="text" id="node-input-apisecrets" style="width: 70%" />
+    </div>
+
+    <div class="form-row node-input-unified-api-load-markets hidden">
+      <label for="node-input-loadmarketsreload" class="tooltip"
+        ><i class="fa fa-refresh"></i> Reload
+        <div class="right">
+          <strong>Reload</strong>
+          <p>
+            Tick the box to force a reload of all exchange markets rather than using the
+            cached list.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="checkbox" id="node-input-loadmarketsreload" />
+    </div>
+
+    <div class="form-row node-input-unified-api-symbol hidden">
+      <label for="node-input-symbol" class="tooltip"
+        ><i class="fa fa-exchange"></i> Symbol
+        <div class="right">
+          <strong>Symbol</strong>
+          <p>
+            Select a market pair from the list. The list of symbols are loaded from the
+            exchange. You can also enter a symbol manually by choosing the String type or
+            via a property of flow, msg. If no symbols are available in the dropdown list,
+            try entering the symbol manually or via a property.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-symbol" style="width: 50%;" />
+      <input type="hidden" id="node-input-symbolType" />
+      <select type="text" id="id-input-select-symbol" style="display:none;">
+        <option></option>
+      </select>
+    </div>
+
+    <div class="form-row node-input-unified-api-since hidden">
+      <label for="node-input-since" class="tooltip"
+        ><i class="fa fa-table"></i> Since
+        <div class="right">
+          <strong>Since</strong>
+          <p>
+            This parameter is used for date-based paginatin and is required in most cases.
+            The user supplies a since timestamp in milliseconds and a number to limit
+            results. Enter a date in the format yyyy-mm-dd or use a property which
+            provides a date in this format. The date will be converted to milliseconds
+            prior to invoking the API.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-since" style="width:50%" />
+      <input type="date" id="id-input-since" style="display:none;width:100%" />
+      <input type="hidden" id="node-input-sinceType" />
+    </div>
+
+    <div class="form-row node-input-unified-api-timeframe hidden">
+      <label for="node-input-timeframe" class="tooltip"
+        ><i class="fa fa-clock-o"></i> Time Frame
+
+        <div class="right">
+          <strong>Timeframe</strong>
+          <p>
+            This parameter is used by the API fetching OHLCV data for a particular symbol
+            based on a Candle size. The list of available timeframes for the exchange are
+            listed in the drop-down list. If a list was not successfully retrieved from
+            the exchange, it means that the API is emulated (indicated by the aeroplane
+            icon) and in this case a default list is available in the dropdown list.
+            Select a timeframe from the list or enter a timeframe manually or indicate a
+            context flow or msg property containing the required value.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-timeframe" style="width: 48%;" />
+      <input type="hidden" id="node-input-timeframeType" />
+      <img
+        src="emulated.svg"
+        alt="API is emulated"
+        id="id-emulated-api"
+        style="width:16px;"
+      />
+    </div>
+
+    <div class="form-row node-input-unified-api-limit hidden">
+      <label for="node-input-limit" class="tooltip"
+        ><i class="fa fa-filter"></i> Limit
+
+        <div class="right">
+          <strong>Limit</strong>
+          <p>
+            This parameter is used to limit the number of results returned. This is mostly
+            an optional parameter unless otherwise indicated. Enter a number to limit the
+            results or indicate a context flow or msg property containing the required
+            value.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-limit" style="width: 30%;" />
+      <input type="hidden" id="node-input-limitType" />
+    </div>
+
+    <div class="form-row node-input-unified-api-ordertype hidden">
+      <label for="node-input-ordertype" class="tooltip"
+        ><i class="fa fa-handshake-o"></i> Type
+        <div class="right">
+          <strong>Order Type</strong>
+          <p>
+            Select either a Market or a Limit order type. There is no confirmations for
+            orders. Always use Limit unless you know what you are doing!
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <select type="text" id="node-input-ordertype" style="width: auto;">
+        <option value="limit">Limit</option>
+        <option value="market">Market</option>
+      </select>
+    </div>
+
+    <div class="form-row node-input-unified-api-orderside hidden">
+      <label for="node-input-orderside" class="tooltip"
+        ><i class="fa fa-balance-scale"></i> Side
+        <div class="right">
+          <strong>Side</strong>
+          <p>Select either a Buy or a Sell order.</p>
+          <i></i>
+        </div>
+      </label>
+      <select type="text" id="node-input-orderside" style="width: auto;">
+        <option value="buy">Buy</option>
+        <option value="sell">Sell</option>
+      </select>
+    </div>
+
+    <div class="form-row node-input-unified-api-amount hidden">
+      <label for="node-input-amount" class="tooltip"
+        ><i class="fa fa-calculator"></i> Amount
+        <div class="right">
+          <strong>Order Amount</strong>
+          <p>
+            Enter the asset quantity to sell or buy. More than 10 decimal places will be
+            removed and rounded to 1 . You can also define the amount from a context flow
+            or msg property. There is no confirmation provided for this (use at your own
+            risk!!).
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="number" id="node-input-amount" />
+    </div>
+
+    <div class="form-row node-input-unified-api-orderprice hidden">
+      <label for="node-input-orderprice" class="tooltip"
+        ><i class="fa fa-dollar"></i> Price
+
+        <div class="right">
+          <strong>Price</strong>
+          <p>
+            Enter the price in quote currency. This is a number field and will not show a
+            currency symbol in the field. Check the label to confirm the details before
+            running the flow. If the Symbol is BTC/USDT, the price is in USDT. You can
+            also define the price from a context flow or msg property. There is no
+            confirmation provided for this (use at your own risk!!).
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="number" id="node-input-orderprice" />
+    </div>
+
+    <div class="form-row node-input-unified-api-orderid hidden">
+      <label for="node-input-orderid" class="tooltip"
+        ><i class="fa fa-id-badge"></i> ID
+
+        <div class="right">
+          <strong>Record ID</strong>
+          <p>Enter the Transaction or Order ID.</p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-orderid" style="width: 50%" />
+    </div>
+
+    <div class="form-row node-input-unified-api-code hidden">
+      <label for="node-input-code" class="tooltip"
+        ><i class="fa fa-qrcode"></i> Currency
+
+        <div class="right">
+          <strong>Currency</strong>
+          <p>
+            Enter or select the currency to deposit/withdraw or act on as required for the
+            selected API. The list of currencies supported by the exchange are listed in
+            the drop-down list.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-code" style="width: 50%" />
+    </div>
+    <div class="form-row node-input-unified-api-address hidden">
+      <label for="node-input-address" class="tooltip"
+        ><i class="fa fa-address-book"></i> Address
+        <div class="right">
+          <strong>Address</strong>
+          <p>
+            Enter or select the deposit or withdrawal address as required for the selected
+            API.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-address" style="width: 70%" />
+    </div>
+    <div class="form-row node-input-unified-api-tag hidden">
+      <label for="node-input-tag" class="tooltip"
+        ><i class="fa fa-comment"></i> Tag
+
+        <div class="right">
+          <strong>Tag</strong>
+          <p>
+            Enter a description for the deposit or withdrawal as tag. This is an optional
+            parameter. You can also define the value from a context flow or msg property.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="text" id="node-input-tag" style="width: 70%" />
+    </div>
+
+    <div class="form-row node-input-api-custom hidden">
+      <label for="node-input-apipayload" class="tooltip"
+        ><i class="fa fa-envelope"></i> Payload
+
+        <div class="right">
+          <strong>Payload</strong>
+          <p>
+            The value entered in this parameter makes the "params" argument for the
+            selected API. A custom API usually requires a payload and the field will
+            automatically be filled with any query parameters required by the call.
+            Unified APIs usually do not require a payload, however, consult the docs if in
+            doubt. The accepted value is in JSON format and can be provided from a context
+            msg property. Select None if you do not wish to send any additional parameters
+            in the payload.
+          </p>
+          <i></i>
+        </div>
+      </label>
+      <input type="json" id="node-input-apipayload" style="width:70%;" />
+      <input type="hidden" id="node-input-apipayloadType" />
+    </div>
+    <div class="form-row">
+      <label for="node-input-name"
+        ><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span
+      ></label>
+      <input
+        type="text"
+        id="node-input-name"
+        data-i18n="[placeholder]node-red:common.label.name"
+      />
+    </div>
+      
 </script>
 <style>
+
+    /* this style for select2-containers */
   .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 32px;
   }
@@ -1067,7 +1113,7 @@
     height: 32px;
   }
 
-  /* this is overriding .tooltip provided by bootstrap */
+  /* this is overriding .tooltip provided by bootstrap to show my own tooltip right sided*/
 
   .tooltip {
     display: inline-block;
@@ -1124,69 +1170,249 @@
   }
 </style>
 <script type="text/x-red" data-help-name="ccxt-api">
-  <p>CCXT API</p>
-  <h3>Inputs</h3>
-  <dl class="message-properties">
-     <dt>Exchange<span class="property-type">string</span></dt>
-  </dl>
+    <h3>Inputs</h3>
 
-  <dl class="message-properties">
-        <dt>API Type<span class="property-type">string</span></dt>
-        <p>API Custom Type</p>
-        <dd>Type list:
-           <ul>
-               <li>Public</li>
-               <li>Private</li>
-           </ul>
-        </dd>
-  </dl>
+    <dl class="message-properties">
+      <dt>Exchange<span class="property-type">string</span></dt>
+      <p>
+        Select one of the supported exchanges by the included CCXT version "1.18.630".
+      </p>
+    </dl>
 
-  <dl class="message-properties">
-        <dt>API Name<span class="property-type">string</span></dt>
-        <p>Each Exchange have a list of different APIs. Check the API dock for each Exchange to check it</p>
-  </dl>
+    <dl class="message-properties">
+      <dt>API Type<span class="property-type">string</span></dt>
 
-  <dl class="message-properties">
-    <dt>ApiKey<span class="property-type">string</span></dt>
-  </dl>
-  <dl class="message-properties">
-    <dt>Secret ApiKey<span class="property-type">string</span></dt>
-  </dl>
+      <dd>
+        Type list:
+        <ul>
+          <li>Unfiied API</li>
+          <li>Exchange API</li>
+        </ul>
+      </dd>
+      <p>
+        Unified API is a subset of methods common among the exchanges as provided by CCXT.
+        Exchange API is a custom API specific to the exchange. All unified and custom APIs
+        are supported.
+      </p>
+    </dl>
 
-  <h3>Outputs</h3>
-  <dl class="message-properties">
-     <dt>payload<span class="property-type">object</span></dt>
-     <dd>The payload result object.
+    <dl class="message-properties">
+      <dt>API Name<span class="property-type">string</span></dt>
+      <p>
+        Select an API Name from the list. Only the supported APIs by the exchange are
+        listed in the drop-down list. Note that some of the Unified APIs are
+        <a
+          href="https://ccxt.readthedocs.io/en/latest/manual.html#exchange-structure"
+          target="_blank"
+          >emulated</a
+        >
+        for the exchange. The required and optional parameters presented are based on the
+        selected API. If the selected API is private, Secrets field will appear to
+        configure the API Key and credentials. Clicking the information icon will take you
+        to the docs.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Secrets<span class="property-type">string</span></dt>
+      <p>
+        Select a pre-configured secrets or click the button to configure a new API Key and
+        Secret using the Configuration node. The API Key and Secret are encrypted by
+        Node-RED
+        <a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank"
+          >credentials</a
+        >
+        feature and stored locally on the runtime machine.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Payload<span class="property-type">string</span></dt>
+
+      <strong
+        ><p>
+          If the selected type is Exchange API, Payload parameter will be displayed.
+        </p></strong
+      >
+      <p>
+        The value entered in this parameter makes the "params" argument for the selected
+        API. A custom API usually requires a payload and the field will automatically be
+        filled with any query parameters required by the call. Unified APIs usually do not
+        require a payload, however, consult the docs if in doubt. The accepted value is in
+        JSON format and can be provided from a context msg property. Select None if you do
+        not wish to send any additional parameters in the payload.
+      </p>
+    </dl>
+
+    <strong
+      ><p>
+        If the selected API Type is Unified API and depending on the selected API, one or
+        more of the following parameters will be displayed:
+      </p></strong
+    >
+    <dl class="message-properties">
+      <dt>Symbol<span class="property-type">string</span></dt>
+      <p>
+        Select a market pair from the list. The list of symbols are loaded from the
+        exchange. You can also enter a symbol manually by choosing the String type or via
+        a property of flow, msg. If no symbols are available in the dropdown list, try
+        entering the symbol manually or via a property.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Since<span class="property-type">string</span></dt>
+      <p>
+        This parameter is used for date-based paginatin and is required in most cases. The
+        user supplies a since timestamp in milliseconds and a number to limit results.
+        Enter a date in the format yyyy-mm-dd or use a property which provides a date in
+        this format. The date will be converted to milliseconds prior to invoking the API.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Timeframe<span class="property-type">string</span></dt>
+      <p>
+        This parameter is used by the API fetching OHLCV data for a particular symbol
+        based on a Candle size. The list of available timeframes are loaded from the
+        exchange and listed in the drop-down list. If a list was not successfully
+        retrieved from the exchange, it means that the API is emulated (indicated by the
+        aeroplane icon) and in this case a default list is available in the dropdown list.
+        Select a timeframe from the list or enter a timeframe manually or indicate a
+        context flow or msg property containing the required value.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Limit<span class="property-type">string</span></dt>
+      <p>
+        This parameter is used to limit the number of results returned. This is mostly an
+        optional parameter unless otherwise indicated. Enter a number to limit the results
+        or indicate a context flow or msg property containing the required value.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Order Type<span class="property-type">string</span></dt>
+      <dd>
+        Type list:
+        <ul>
+          <li>Limit</li>
+          <li>Market</li>
+        </ul>
+      </dd>
+      <p>
+        Select either a Market or a Limit order type. There is no confirmations for
+        orders. Always use Limit unless you know what you are doing!
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Side<span class="property-type">string</span></dt>
+      <dd>
+        Type list:
+        <ul>
+          <li>Buy</li>
+          <li>Sell</li>
+        </ul>
+      </dd>
+      <p>Select either a Buy or a Sell order.</p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Amount<span class="property-type">string</span></dt>
+      <p>
+        Enter the asset quantity to sell or buy. More than 10 decimal places will be
+        removed and rounded to 1 . You can also define the amount from a context flow or
+        msg property. There is no confirmation provided for this (use at your own risk!!).
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Price<span class="property-type">string</span></dt>
+      <p>
+        Enter the price in quote currency. This is a number field and will not show a
+        currency symbol in the field. Check the label to confirm the details before
+        running the flow. If the Symbol is BTC/USDT, the price is in USDT. You can also
+        define the price from a context flow or msg property. There is no confirmation
+        provided for this (use at your own risk!!).
+      </p>
+    </dl>
+    <dl class="message-properties">
+      <dt>Record Id<span class="property-type">string</span></dt>
+      <p>Enter the Transaction or Order ID.</p>
+    </dl>
+    <dl class="message-properties">
+      <dt>Currency<span class="property-type">string</span></dt>
+      <p>
+        Enter or select the currency to deposit/withdraw or act on as required for the
+        selected API. The list of currencies supported by the exchange are listed in the
+        drop-down list.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Address<span class="property-type">string</span></dt>
+      <p>
+        Enter or select the deposit or withdrawal address as required for the selected
+        API.
+      </p>
+    </dl>
+
+    <dl class="message-properties">
+      <dt>Tag<span class="property-type">string</span></dt>
+      <p>
+        Enter a description for the deposit or withdrawal as tag. This is an optional
+        parameter. You can also define the value from a context flow or msg property.
+      </p>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+      <dt>payload<span class="property-type">object</span></dt>
+      <dd>
+        The payload result object.
         <p>Object Format:</p>
         <ul>
-           <li>error: error array</li>
-           <li>result: object result</li>
-         </ul>
-     </dd>
-  </dl>
+          <li>error: error array</li>
+          <li>result: object result</li>
+        </ul>
+      </dd>
+    </dl>
 
-  <h3>Error</h3>
-  <dl class="message-properties">
-     <dt>error<span class="property-type">string</span></dt>
-     <dd>The error string.</dd>
-  </dl>
-  <h3>Details</h3>
-  <p>The ccxt RED node is a collection of available crypto exchanges or exchange classes</p>
+    <h3>Error</h3>
+    <dl class="message-properties">
+      <dt>error<span class="property-type">string</span></dt>
+      <dd>The error string.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>
+      The ccxt RED node is a proxy node for all available crypto exchanges and APIs as
+      provided by the CCXT library
+    </p>
 </script>
 
 <script type="text/x-red" data-template-name="ccxt-exchange">
-  <div class="form-row">
+    <div class="form-row">
       <label for="node-config-input-name"><i class="fa fa-tag"></i>Name</label>
-      <input type="text" id="node-config-input-name" placeholder="Enter Exchange Name">
-  </div>
-  <div class="form-row">
+      <input type="text" id="node-config-input-name" placeholder="Enter Exchange Name" />
+    </div>
+    <div class="form-row">
       <label for="node-config-input-apikey"><i class="fa"></i>ApiKey</label>
-      <input type="text" id="node-config-input-apikey" placeholder="Enter Exchange ApiKey">
-  </div>
-  <div class="form-row">
+      <input
+        type="text"
+        id="node-config-input-apikey"
+        placeholder="Enter Exchange ApiKey"
+      />
+    </div>
+    <div class="form-row">
       <label for="node-config-input-secret"><i class="fa"></i>Secret</label>
-      <input type="text" id="node-config-input-secret" placeholder="Enter Exchange Secret">
-  </div>
+      <input
+        type="text"
+        id="node-config-input-secret"
+        placeholder="Enter Exchange Secret"
+      />
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="ccxt-exchange">
