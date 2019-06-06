@@ -2,7 +2,8 @@
 //depends on the following ccxt version
 //will be updated manually once an update to ccxt package is installed
 
-const version = "1.18.497";
+// binding to ccxt version
+const version = "1.18.630";
 
 //this list match the latest list from ccxt module. update as necessary
 
@@ -98,7 +99,7 @@ const exchanges = {
         "https://docs.bitfinex.com/v1/docs"
     ],
     bitfinex2: [
-        "Bitfinex",
+        "Bitfinex2",
         "https://www.bitfinex.com/.",
         "https://user-images.githubusercontent.com/1294454/27766244-e328a50c-5ed2-11e7-947b-041416579bb3.jpg",
         "https://docs.bitfinex.com/v2/docs"
@@ -415,12 +416,13 @@ const exchanges = {
         "https://user-images.githubusercontent.com/1294454/41334251-905b5a78-6eed-11e8-91b9-f3aa435078a1.jpg",
         "https://cryptonbtc.docs.apiary.io/"
     ],
-    cryptopia: [
-        "Cryptopia",
-        "https://www.cryptopia.co.nz/Register?referrer=kroitor",
-        "https://user-images.githubusercontent.com/1294454/29484394-7b4ea6e2-84c6-11e7-83e5-1fccf4b2dc81.jpg",
-        "https://support.cryptopia.co.nz/csm?id=kb_article&sys_id=a75703dcdbb9130084ed147a3a9619bc"
-    ],
+    //gone bankrupt on 15/05/2019
+    // cryptopia: [
+    //     "Cryptopia",
+    //     "https://www.cryptopia.co.nz/Register?referrer=kroitor",
+    //     "https://user-images.githubusercontent.com/1294454/29484394-7b4ea6e2-84c6-11e7-83e5-1fccf4b2dc81.jpg",
+    //     "https://support.cryptopia.co.nz/csm?id=kb_article&sys_id=a75703dcdbb9130084ed147a3a9619bc"
+    // ],
     deribit: [
         "Deribit",
         "https://www.deribit.com/reg-1189.4038",
@@ -733,12 +735,13 @@ const exchanges = {
         "https://user-images.githubusercontent.com/1294454/27991511-f0a50194-6481-11e7-99b5-8f02932424cc.jpg",
         "https://blinktrade.com/docs"
     ],
-    theocean: [
-        "The Ocean",
-        "https://theocean.trade/.",
-        "https://user-images.githubusercontent.com/1294454/43103756-d56613ce-8ed7-11e8-924e-68f9d4bcacab.jpg",
-        "https://docs.theocean.trade/."
-    ],
+    // // this is a DEX. It is not working atm so will disable it
+    // theocean: [
+    //     "The Ocean",
+    //     "https://theocean.trade/.",
+    //     "https://user-images.githubusercontent.com/1294454/43103756-d56613ce-8ed7-11e8-924e-68f9d4bcacab.jpg",
+    //     "https://docs.theocean.trade/."
+    // ],
     therock: [
         "TheRockTrading",
         "https://therocktrading.com/.",

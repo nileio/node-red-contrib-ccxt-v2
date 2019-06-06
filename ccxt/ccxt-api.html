@@ -1,845 +1,1212 @@
 <script type="text/javascript">
-    RED.nodes.registerType("ccxt-api", {
-        category: "CryptoExchange",
-        defaults: {
-            name: { value: "" },
-            exchange: { value: "", required: true },
-            apitype: { value: "", required: true },
-            customapitype: { value: "", required: false },
-            api: { value: "", required: true },
-            apiprivate: { value: "false", required: true },
-            loadmarketsreload: { value: false },
-            symbol: { value: "", required: false },
-            symbolType: { value: "str", required: false },
-            limit: { value: undefined, required: false },
-            since: { value: undefined },
-            timeframe: { value: "1m" },
-            ordertype: { value: "limit" },
-            orderside: { value: "buy" },
-            amount: { value: "" },
-            orderprice: { value: "" },
-            orderid: { value: "" },
-            code: { value: "" },
-            address: { value: "" },
-            tag: { value: "" },
+  RED.nodes.registerType("ccxt-api", {
+    category: "CryptoExchange",
+    defaults: {
+      name: { value: "" },
+      exchange: { value: "", required: true },
+      apitype: { value: "", required: true },
+      customapitype: { value: "", required: false },
+      api: { value: "", required: true },
+      apiprivate: { value: "false", required: true },
+      loadmarketsreload: { value: false },
+      symbol: { value: "", required: false },
+      symbolType: { value: "str", required: false },
+      limit: {
+        value: undefined,
+        required: false,
+        validate: RED.validators.typedInput("limitType")
+      },
+      limitType: { value: "num", required: false },
+      since: {
+        value: undefined,
+        validate: RED.validators.typedInput("sinceType")
+      },
+      sinceType: { value: "datepick", required: false },
+      timeframe: { value: "" },
+      timeframeType: { value: "timeframeList", required: false },
+      ordertype: { value: "limit" },
+      orderside: { value: "buy" },
+      amount: { value: "" },
+      orderprice: { value: "" },
+      orderid: { value: "" },
+      code: { value: "" },
+      address: { value: "" },
+      tag: { value: "" },
+      apisecrets: { type: "ccxt-exchange", required: false },
 
-            apisecrets: { type: "ccxt-exchange", required: false },
-            apipayloadType: { value: "none" },
-            //TODO: fix this problem. the validator is attached regardless of whether the api requires
-            //a payload or not
-            apipayload: {
-                value: "",
-                required: false
-                //validate: RED.node.vali
-                //         validate: function(v) {
-                //             console.log(
-                //                 "value is",
-                //                 v,
-                //                 "type is:",
-                //                 $("#node-input-payloadType").val()
-                //             );
-                //             if (!v) {
-                //                 $("#node-input-payloadType").val("none");
-                //                 return true;
-                //             }
-                //             if ($("#node-input-payloadType").val() === "json") {
-                //                 console.log("checking for valid json");
-                //                 try {
-                //                     JSON.parse(v);
-                //                 } catch (e) {
-                //                     console.log("bad json");
-                //                     return false;
-                //                 }
-                //                 return true;
-                //             }
-                //             if (this.payloadType === "json") {
-                //                 console.log("node value checking for valid json");
-                //                 try {
-                //                     JSON.parse(v);
-                //                 } catch (e) {
-                //                     return false;
-                //                 }
-                //                 return true;
-                //             }
+      apipayload: {
+        value: "",
+        required: false
+       
+      },
+      apipayloadType: { value: "none" }
+    },
+    outputs: 1,
+    inputs: 1,
+    color: "#D8BFD8",
+    icon: "bitcoin-symbol.png",
+    label: function() {
+      return this.name || "ccxt API";
+    },
+    oneditprepare: function() {
+      var node = this;
 
-                //             console.log("all failed returning true");
-                //             return true;
-                //         }
-                //     }
-            }
-        },
-        outputs: 1,
-        inputs: 1,
-        color: "#D8BFD8",
-        icon: "bitcoin-symbol.png",
-        label: function() {
-            return this.name || "ccxt API";
-        },
-        oneditprepare: function() {
-            var node = this;
+      //             // enhancements can be
+      //             // here you can set any defaults
+      //             // also create the typedInput options
+      //             // then you can just use the options in the respective typedInput
+      //              also you could possibly start by handling events, then typedInput then your functions
+      // if (this.op1type === 'val') {
+      //     $("#node-input-op1type").val('str');
+      // }
+      // if (this.op2type === 'val') {
+      //     $("#node-input-op2type").val('str');
+      // }
+      //    var optionNothing = {value:"nul",label:this._("trigger.output.nothing"),hasValue:false};
 
-            //expermentation here
-            $("#node-input-exchange").select2();
-            $("#id-input-select-symbol").select2();
+      //expermentation here
+      $("#node-input-exchange").select2();
 
-            $("#node-input-apipayload")
-                .typedInput({
-                    typeField: $("#node-input-apipayloadType"),
-                    types: [
-                        { value: "none", label: "None", hasValue: false },
-                        "json",
-                        "msg",
-                        "flow",
-                        "global"
-                    ]
-                })
-                .typedInput("width", "68%");
-            $("#node-input-symbol")
-                .typedInput({
-                    typeField: $("#node-input-symbolType"),
-                    //  default: ["symbolslist"],
-                    types: [
-                        {
-                            value: "symbolslist",
-                            label: "Symbol",
-                            icon: "red/images/typedInput/09.png",
-                            options: ["None"]
-                        },
-                        "str",
-                        "msg",
-                        "flow",
-                        "global"
-                    ]
-                })
-                .typedInput("width", "68%");
-            // $("#node-input-timeframe")
-            //     .typedInput({
-            //         //   typeField: $("#node-input-payloadType"),
-            //         types: ["str", "msg", "flow", "global"]
-            //     })
-            //     .typedInput("width", "68%");
-            function getSymbols(ex, callback) {
-                //return empty array if no exchange
-                let symbolslist = [];
+      $("#node-input-apipayload").typedInput({
+        typeField: $("#node-input-apipayloadType"),
+        types: [{ value: "none", label: "None", hasValue: false }, "json", "msg"]
+      });
+      //  .typedInput("width", "70%");
+      $("#node-input-symbol").typedInput({
+        typeField: $("#node-input-symbolType"),
+        types: [
+          {
+            value: "symbolList",
+            label: "Symbol",
+            hasValue: true,
+            icon: "red/images/typedInput/bitcoin-28.png",
+            options: ["None"]
+          },
+          "str",
+          "msg",
+          { value: "flow", label: "flow.", hasValue: true }
+        ]
+      });
+      // .typedInput("width", "70%");
+      $("#node-input-timeframe").typedInput({
+        typeField: $("#node-input-timeframeType"),
+        types: [
+          {
+            value: "timeframeList",
+            label: "Candle size",
+            //  hasValue: true,
+            icon: "red/images/typedInput/timeline.png",
+            //default list of values
+            options: ["1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1d"]
+          },
+          "str",
+          "msg",
+          "flow"
+        ]
+      });
+      //.typedInput("width", "70%");
 
-                // let exchange = ex;
-                let apitype = $(
-                    "#node-input-apitype option:selected"
-                ).val();
-                let api = $("#node-input-api option:selected").val();
-                console.log(
-                    "symbol typedinput function...",
-                    ex,
-                    apitype,
-                    api
-                );
-                if (ex === undefined || ex === "") return [];
-                $.getJSON("exchangesymbols", { exchange: ex }, function(
-                    result
-                ) {
-                    console.log(result.symbols);
-                    if (callback && typeof callback == "function") {
-                        console.log("will call back now..");
-                        callback(result.symbols);
-                    }
-                });
-                //return symbolslist;
-            }
-            let showhideInputFields = function() {
-                let exchange = $(
-                    "#node-input-exchange option:selected"
-                ).val();
-                let apitype = $(
-                    "#node-input-apitype option:selected"
-                ).val();
-                let api = $("#node-input-api option:selected").val();
-                console.log(
-                    "showhideinputfields for ...",
-                    exchange,
-                    apitype,
-                    api
-                );
-                if (!$("#id-input-apipayload").val())
-                    apitype === "customAPI"
-                        ? $("#id-input-apipayloadType").val("json")
-                        : $("#id-input-apipayloadType").val("none");
-                if (exchange !== undefined && exchange !== "") {
-                    if (apitype === "customAPI") {
-                        $("#id-anchor-display-exchange-apidoc").attr(
-                            "href",
-                            $("#node-input-exchange option:selected").attr(
-                                "apidoc"
-                            )
-                        );
-                    } else {
-                        $("#id-anchor-display-exchange-apidoc").attr(
-                            "href",
-                            "https://ccxt.readthedocs.io/en/latest/manual.html#api-methods-endpoints"
-                        );
-                    }
-                }
+      $("#node-input-since").typedInput({
+        typeField: $("#node-input-sinceType"),
+        default: "datepick",
+        types: [
+          {
+            value: "datepick",
+            label: "Date",
+            icon: "red/images/typedInput/date_range.png",
+            hasValue: true
+          },
+          "msg",
+          { value: "flow", label: "flow.", hasValue: true }
+        ]
+      });
 
-                if (exchange !== undefined && exchange !== "") {
-                    $("#id-img-display-exchange-homepage").attr(
-                        "href",
-                        $("#node-input-exchange option:selected").attr(
-                            "homepage"
-                        )
-                    );
-                    $("#id-anchor-display-exchange-homepage").attr(
-                        "href",
-                        $("#node-input-exchange option:selected").attr(
-                            "homepage"
-                        )
-                    );
-                    $("#id-anchor-display-exchange-img").attr(
-                        "src",
-                        $("#node-input-exchange option:selected").attr(
-                            "logo"
-                        )
-                    );
-                    $("#id-anchor-display-exchange-img").attr(
-                        "alt",
-                        $("#node-input-exchange option:selected").text()
-                    );
-                }
+      //  .typedInput("width", "70%");
+      $("#node-input-limit").typedInput({
+        typeField: $("#node-input-limitType"),
+        default: "num",
+        types: [
+          {
+            value: "num",
+            label: "number",
+            icon: "red/images/typedInput/09.png",
+            validate: /^[+-]?[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/
+          },
+          "msg",
+          { value: "flow", label: "flow.", hasValue: true }
+        ]
+      });
+      //.typedInput("width", "30%");
 
-                //hide all params by default
-                $(".node-input-private-api").hide();
-                $(".node-input-unified-api-symbol").hide();
-                $(".node-input-unified-api-load-markets").hide();
-                $(".node-input-unified-api-limit").hide();
-                $(".node-input-unified-api-since").hide();
-                $(".node-input-unified-api-ordertype").hide();
-                $(".node-input-unified-api-orderside").hide();
-                $(".node-input-unified-api-amount").hide();
-                $(".node-input-unified-api-orderprice").hide();
-                $(".node-input-unified-api-orderid").hide();
-                $(".node-input-unified-api-timeframe").hide();
-                $(".node-input-unified-api-code").hide();
-                $(".node-input-unified-api-address").hide();
-                $(".node-input-unified-api-tag").hide();
-                $(".node-input-api-custom").hide();
+      /*             $("#node-input-payloadTypee").val(this.payloadTypee);
+          $("#node-input-payloadd").typedInput({
+              default: "str",
+              typeField: $("#node-input-payloadTypee"),
+              types: [
+                  {
+                      value: "str",
+                      label: "Date",
+                      icon: "red/images/typedInput/09.png",
+                      hasValue: true
+                  },
+                  "msg",
+                  { value: "flow", label: "flow.", hasValue: true },
+                  {
+                      value: "global",
+                      label: "global.",
+                      hasValue: true
+                  }
+              ]
+          }); */
 
-                // for customAPI show the API Payload parameter only
-                if (apitype === "customAPI") {
-                    $(".node-input-api-custom").show();
-                    //console.log('isPrivate :', isPrivate);
-                }
-
-                // Get the params for the unified API if an API is selected
-                if (apitype === "unifiedAPI") {
-                    if (api !== undefined && api !== "") {
-                        console.log("calling ...for", api);
-                        $.getJSON("apiparams", { api: api }, function(
-                            result
-                        ) {
-                            result.apiparams.map(function(x) {
-                                if (x === "symbol") {
-                                    console.log("x is symbol");
-                                    // $("#node-input-symbolType").val(
-                                    //     "symbolslist"
-                                    // );
-                                    //var symbols = await getSymbols();
-                                    //  console.log("symbols are:", symbols);
-                                    getSymbols(exchange, function(
-                                        symbols
-                                    ) {
-                                        symbols.forEach(function(element) {
-                                            $(
-                                                "#id-input-select-symbol"
-                                            ).append(
-                                                $("<option>", {
-                                                    value: element,
-                                                    text: element
-                                                })
-                                            );
-                                        });
-
-                                        // $("#node-input-symbol").typedInput(
-                                        //     "types",
-                                        //     [
-                                        //         {
-                                        //             value: "symbolslist",
-                                        //             label: "Symbol",
-                                        //             icon:
-                                        //                 "red/images/typedInput/09.png",
-                                        //             options: symbols
-                                        //         },
-                                        //         "str",
-                                        //         "msg",
-                                        //         "flow",
-                                        //         "global"
-                                        //     ]
-                                        // );
-                                        // $("#node-input-symbolType").val(
-                                        //     "symbolslist"
-                                        // );
-                                    });
-                                }
-                                if (x === "apipayload")
-                                    $(".node-input-api-custom").show();
-                                else
-                                    $(
-                                        ".node-input-unified-api-" + x
-                                    ).show();
-                            });
-                            console.log(
-                                "all loaded unified api params are",
-                                result
-                            );
-                        });
-                    }
-                }
-                var isPrivate = $("#node-input-api option:selected").attr(
-                    "isprivate"
-                );
-                console.log("isPrivate : ", isPrivate);
-                if (isPrivate === "true")
-                    $(".node-input-private-api").show();
-                else $(".node-input-private-api").hide();
-            };
-            // retrieve Exchanges from CCXT node package
-            let getExchanges = function() {
-                var exchangeElement = $("#node-input-exchange");
-                $.getJSON("exchanges", function(result) {
-                    exchangeElement.empty();
-                    exchangeElement.append(
-                        $("<option>", {
-                            value: "",
-                            text: ""
-                        })
-                    );
-                    console.log("loading exchanges ...");
-                    $.each(result.exchange, function(key, value) {
-                        exchangeElement.append(
-                            $("<option />")
-                                .val(key)
-                                .text(value[0])
-                                .attr("homepage", value[1])
-                                .attr("logo", value[2])
-                                .attr("apidoc", value[3])
-                        );
-                    });
-                    console.log("node exchange is : " + node.exchange);
-                    exchangeElement.val(node.exchange);
-                    var exchange = $("#node-input-exchange").val();
-                    // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
-                    $("#node-input-exchange").trigger("change");
-                    // if (
-                    //     exchange === node.exchange &&
-                    //     // exchange !== node.exchange &&
-                    //     node.exchange !== undefined
-                    // ) {
-                    //     //$("#node-input-exchange").trigger("change");
-                    //     console.log("is it calling here??");
-                    //     var apitype = $("#node-input-apitype").val();
-                    //     if (apitype === "unifiedAPI")
-                    //         getunifiedAPIs(exchange);
-                    //     if (apitype === "customAPI")
-                    //         getcustomAPIs(exchange);
-                    // }
-                }).error(function(error) {
-                    console.log(error);
-                });
-            };
-            getExchanges();
-            // retrieve API types from CCXT node package
-
-            getunifiedAPIs = function(exchange) {
-                console.log("getUnifiedAPIs for exchange...", exchange);
-                var apiElement = $("#node-input-api");
-                apiElement.empty();
-                apiElement.append(
-                    $("<option />")
-                        .val("loadMarkets")
-                        .text("loadMarkets")
-                );
-                if (exchange === undefined || exchange === "") return;
-                $.getJSON("exchangecaps", { exchange: exchange }, function(
-                    result
-                ) {
-                    result.caps.forEach(function(element) {
-                        apiElement.append(
-                            $("<option>", {
-                                value: element[0],
-                                text: element[0],
-                                isprivate: element[1]
-                            })
-                        );
-
-                        //console.log(element);
-                    });
-                    // sort on text
-                    apiElement.html(
-                        apiElement.find("option").sort(function(x, y) {
-                            // to change to descending order switch "<" for ">"
-                            return $(x).text() > $(y).text() ? 1 : -1;
-                        })
-                    );
-
-                    apiElement.val(node.api);
-                    // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
-                    $("#node-input-api").trigger("change");
-                    //showhideInputFields();
-                }).error(function(error) {
-                    console.log(error);
-                });
-                //
-            };
-            // retrieve APIs from CCXT node package
-            getcustomAPIs = function(exchange) {
-                //$.getJSON('apis', { exchange: exchange, apitype: apiType }, function (result) {
-                // var i = 0;
-                //var apis = {};
-
-                console.log("getcustomAPIs for exchange...", exchange);
-                var apiElement = $("#node-input-api");
-                var api = $("#node-input-api option:selected").val();
-                apiElement.empty();
-                if (exchange === undefined || exchange === "") return;
-
-                $.getJSON("apis", { exchange: exchange }, function(
-                    result
-                ) {
-                    $.each(Object.keys(result.api), function(
-                        index,
-                        apitype
-                    ) {
-                        $.each(Object.keys(result.api[apitype]), function(
-                            index,
-                            verb
-                        ) {
-                            $.each(result.api[apitype][verb], function(
-                                index,
-                                api
-                            ) {
-                                apiElement.append(
-                                    $("<option>", {
-                                        value: verb + "_" + api,
-                                        text: verb + "_" + api,
-                                        customapitype: apitype,
-                                        isprivate: apitype === "private"
-                                    })
-                                );
-                            });
-                        });
-                    });
-                    // sort on text
-                    apiElement.html(
-                        apiElement.find("option").sort(function(x, y) {
-                            // to change to descending order switch "<" for ">"
-                            return $(x).text() > $(y).text() ? 1 : -1;
-                        })
-                    );
-                    // set actual value
-                    apiElement.val(node.api);
-                    // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
-                    if (api !== node.api)
-                        $("#node-input-api").trigger("change");
-                    // showhideInputFields();
-                }).error(function(error) {
-                    console.log(error);
-                });
-
-                //
-            };
-
-            // Exchange change event
-            $("#node-input-exchange").change(function() {
-                console.log("exchange change event ...");
-                //var api = $("#node-input-api option:selected").val();
-                var exchange = $(
-                    "#node-input-exchange option:selected"
-                ).val();
-                //  console.log('exchange selected:{}, api is: {}', exchange, api);
-                var apitype = $("#node-input-apitype").val();
-                var apiElement = $("#node-input-api");
-                apiElement.empty();
-
-                showhideInputFields();
-                if (
-                    //  exchange !== node.exchange &&
-                    exchange !== undefined &&
-                    exchange !== ""
-                ) {
-                    if (apitype === "unifiedAPI") getunifiedAPIs(exchange);
-                    if (apitype === "customAPI") getcustomAPIs(exchange);
-                }
-            });
-
-            // API type change event
-            $("#node-input-apitype").change(function() {
-                //   var api = $("#node-input-api option:selected").val();
-
-                var exchange = $(
-                    "#node-input-exchange option:selected"
-                ).val();
-                var apitype = $(
-                    "#node-input-apitype option:selected"
-                ).val();
-                console.log(
-                    "API type change event ...exchange&apitype",
-                    exchange,
-                    apitype
-                );
-                //empty the api because the type has changed
-                var apiElement = $("#node-input-api");
-                apiElement.empty();
-                showhideInputFields();
-
-                if (exchange !== undefined && exchange !== "") {
-                    if (apitype === "customAPI") getcustomAPIs(exchange);
-                    if (apitype === "unifiedAPI") getunifiedAPIs(exchange);
-                }
-            });
-
-            // API change event
-            $("#node-input-api").change(function() {
-                console.log("API change event ..");
-                showhideInputFields();
-            });
-
-            $("#node-input-symbolType").on("change", function() {
-                console.log("detected a change in symbol type");
-            });
-            //value="flow" dir="" style="display: none;">
-
-            $("#node-input-symbolType").change(function() {
-                console.log("Node Input Symbol1 change detected");
-            });
-
-            // Symbol change event
-            $("#node-input-symbol").on("change", function(type, value) {
-                console.log("Node Input Symbol4 change is: ", type, value);
-                if (value === "symbolslist") {
-                    //hide the symbolslist typedInput
-                    let typedInputContainerElement = $(
-                        ".node-input-unified-api-symbol > .red-ui-typedInput-container"
-                    );
-                    let divselectSymbolElement = $(
-                        ".node-input-select-symbol"
-                    );
-
-                    divselectSymbolElement.appendTo(
-                        typedInputContainerElement
-                    );
-
-                    //find the button and hide it
-                    let btnsymboltypedInput = typedInputContainerElement.find(
-                        ".red-ui-typedInput-option-trigger"
-                    );
-                    //  btnsymboltypedInput.
-
-                    // hide the typedInput button
-                    btnsymboltypedInput.hide();
-                    //show my select2 input
-                    divselectSymbolElement.show();
-
-                    //select the type drop down button
-                    //$(".node-input-unified-api-symbol > .red-ui-typedInput-container > button").first();
-
-                    //$(".node-input-unified-api-symbol").find(".red-ui-typedInput-container").find("button")
-                } else {
-                    let divselectSymbolElement = $(
-                        ".node-input-select-symbol"
-                    );
-                    divselectSymbolElement.remove();
-                    //divselectSymbolElement.hide();
-                }
-            });
-
-            // order type change event
-            $("#node-input-ordertype").change(function() {
-                $("#node-input-ordertype option:selected").val() ===
-                "market"
-                    ? $("#node-input-orderprice").attr("readonly", true)
-                    : $("#node-input-orderprice").attr("readonly", false);
-            });
-        },
-        oneditsave: function() {
-            var node = this;
-            console.log("oneditsave ...");
-            // this.exchange.value = $("#node-input-exchange option:selected").val();
-            // node.exchange = $("#node-input-exchange option:selected").val();
-
-            console.log("node exhange: " + node.exchange);
-            console.log(
-                "this selected: " +
-                    $("#node-input-exchange option:selected").val()
-            );
-            console.log("node api: " + node.api);
-            console.log(
-                "this selected: " +
-                    $("#node-input-api option:selected").val()
-            );
-            // make sure you save the dynamic fields
-            node.exchange = $(
-                "#node-input-exchange option:selected"
-            ).val();
-            node.api = $("#node-input-api option:selected").val();
-            node.apiprivate = $("#node-input-api option:selected").attr(
-                "isprivate"
-            );
-            if (
-                $("#node-input-apitype option:selected").val() ===
-                "customAPI"
-            )
-                if (
-                    node.customapitype !==
-                    $("#node-input-api option:selected").attr(
-                        "customapitype"
-                    )
-                )
-                    $("#node-input-customapitype").val(
-                        $("#node-input-api option:selected").attr(
-                            "customapitype"
-                        )
-                    );
-            console.log("node exhange: " + node.customapitype);
-            console.log(
-                "this selected: " +
-                    $("#node-input-exchange option:selected").val()
-            );
-            console.log("node api: " + node.api);
-            console.log(
-                "this selected: " +
-                    $("#node-input-api option:selected").val()
-            );
-            console.log("this private", node.apiprivate);
+      //utility function
+      function isEmpty(obj) {
+        for (var key in obj) {
+          if (obj.hasOwnProperty(key)) return false;
         }
-    });
+        return true;
+      }
+      let getTimeframes = function(ex, callback) {
+        //timeframes supported by the exchange
+        //only relevant to the api fetchOHLCV is supported by ex
+
+        // let timeframslist = [];
+        let api = $("#node-input-api option:selected").val();
+
+        if (ex === undefined || ex === "") return [];
+        if (api !== "fetchOHLCV") return [];
+
+        //show spinner
+        $("#id-loading-svg").show();
+        $.getJSON("fetchOHLCVTimeframes", { exchange: ex }, function(result) {
+         
+          if (callback && typeof callback == "function") {
+            //note: we could get an empty list if the api is emulated and not directly supported
+            //by the api
+            if (isEmpty(result)) callback([]);
+            else callback(Object.keys(result.timeframes));
+          }
+          //hide spinner
+          $("#id-loading-svg").hide();
+        }).error(function(error) {
+          console.log(error);
+        });
+      };
+      function getSymbols(ex, callback) {
+        //return empty array if no exchange
+        let symbolslist = [];
+
+        if (ex === undefined || ex === "") return [];
+        //show spinner
+        $("#id-loading-svg").show();
+        $.getJSON("exchangesymbols", { exchange: ex }, function(result) {
+          if (callback && typeof callback == "function") {
+            callback(result.symbols);
+          }
+          //hide spinner
+          $("#id-loading-svg").hide();
+        });
+      }
+      let showhideInputFields = function() {
+        // there is a nice shortcut to show and hide using jQuery
+        // .toggle (true/false)
+        // you could use it based on what params are returned
+        // or can be used with typedInput check on type value for instance
+        let exchange = $("#node-input-exchange option:selected").val();
+        let apitype = $("#node-input-apitype option:selected").val();
+        let api = $("#node-input-api option:selected").val();
+
+        if (!$("#id-input-apipayload").val())
+          apitype === "customAPI"
+            ? $("#id-input-apipayloadType").val("json")
+            : $("#id-input-apipayloadType").val("none");
+        if (exchange !== undefined && exchange !== "") {
+          if (apitype === "customAPI") {
+            $("#id-anchor-display-exchange-apidoc").attr(
+              "href",
+              $("#node-input-exchange option:selected").attr("apidoc")
+            );
+          } else {
+            $("#id-anchor-display-exchange-apidoc").attr(
+              "href",
+              "https://ccxt.readthedocs.io/en/latest/manual.html#api-methods-endpoints"
+            );
+          }
+        }
+
+        if (exchange !== undefined && exchange !== "") {
+          $("#id-img-display-exchange-homepage").attr(
+            "href",
+            $("#node-input-exchange option:selected").attr("homepage")
+          );
+          $("#id-anchor-display-exchange-homepage").attr(
+            "href",
+            $("#node-input-exchange option:selected").attr("homepage")
+          );
+          $("#id-anchor-display-exchange-img").attr(
+            "src",
+            $("#node-input-exchange option:selected").attr("logo")
+          );
+          $("#id-anchor-display-exchange-img").attr(
+            "alt",
+            $("#node-input-exchange option:selected").text()
+          );
+        }
+
+        //hide all params by default
+        $(".hidden").hide();
+
+        // for customAPI show the API Payload parameter only
+        if (apitype === "customAPI") {
+          $(".node-input-api-custom").show();
+
+        }
+
+        // Get the params for the unified API if an API is selected
+        if (apitype === "unifiedAPI") {
+          if (api !== undefined && api !== "") {
+            $.getJSON("apiparams", { api: api }, function(result) {
+              result.apiparams.map(function(x) {
+                //special handling for some params
+                if (x === "symbol") {
+                  
+                  $("#node-input-symbol").trigger(
+                    "change",
+                    $("#node-input-symbolType").val()
+                  );
+                }
+                if (x === "timeframe") {
+                  
+                  $("#node-input-timeframe").trigger("change", "timeframes");
+                }
+
+                // parameter is api payload then custom api
+                if (x === "apipayload") $(".node-input-api-custom").show();
+                // it is unified api. show the parameter field
+                else {
+                  $(".node-input-unified-api-" + x).show();
+
+                  // this is just insane! the following style is added. could not otherwise do it
+                  // so that the input is displayed nicely next to the icon of the typedInput
+                  // no idea why the typedInput when adding a class gets shifted to the left a little
+                  // and makes the icon of the typedInput disapper
+                  // to workaround this I had to set the left attribute manually
+                  // since 40px is the fixed width of the typedInput icon
+                  // i am strill struggling with the issue that for msg & flow also the margin-left is not set propertly.
+                  $(".node-input-unified-api-" + x + " .red-ui-typedInput-input").attr(
+                    "style",
+                    "left:40px"
+                  );
+                }
+              });
+            });
+          }
+        }
+        var isPrivate = $("#node-input-api option:selected").attr("isprivate");
+
+        if (isPrivate === "true") $(".node-input-private-api").show();
+        else $(".node-input-private-api").hide();
+      };
+
+      // retrieve Exchanges from server
+      let getExchanges = function() {
+        var exchangeElement = $("#node-input-exchange");
+        //show spinner
+        $("#id-loading-svg").show();
+        $.getJSON("exchanges", function(result) {
+          exchangeElement.empty();
+          exchangeElement.append(
+            $("<option>", {
+              value: "",
+              text: ""
+            })
+          );
+          
+          $.each(result.exchange, function(key, value) {
+            exchangeElement.append(
+              $("<option />")
+                .val(key)
+                .text(value[0])
+                .attr("homepage", value[1])
+                .attr("logo", value[2])
+                .attr("apidoc", value[3])
+            );
+          });
+          
+          //setting the saved node value
+          exchangeElement.val(node.exchange);
+          var exchange = $("#node-input-exchange").val();
+          // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
+          $("#node-input-exchange").trigger("change");
+
+          //hide spinner
+          $("#id-loading-svg").hide();
+        }).error(function(error) {
+          console.log(error);
+        });
+      };
+      getExchanges();
+      // retrieve all supported unified APIs by the exchange
+
+      getunifiedAPIs = function(exchange) {
+        
+        var apiElement = $("#node-input-api");
+        apiElement.empty();
+        apiElement.append(
+          $("<option />")
+            .val("loadMarkets")
+            .text("loadMarkets")
+        );
+        if (exchange === undefined || exchange === "") return;
+        //show spinner
+        $("#id-loading-svg").show();
+        $.getJSON("exchangecaps", { exchange: exchange }, function(result) {
+          result.caps.forEach(function(element) {
+            apiElement.append(
+              $("<option>", {
+                value: element[0],
+                text: element[0],
+                isprivate: element[1]
+              })
+            );
+
+            
+          });
+          // sort on text
+          apiElement.html(
+            apiElement.find("option").sort(function(x, y) {
+              // to change to descending order switch "<" for ">"
+              return $(x).text() > $(y).text() ? 1 : -1;
+            })
+          );
+          //set the value
+          apiElement.val(node.api);
+          // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
+          $("#node-input-api").trigger("change");
+
+          //hide spinner
+          $("#id-loading-svg").hide();
+        }).error(function(error) {
+          console.log(error);
+        });
+        //
+      };
+      // retrieve all supported custom APIs by the exchange
+      getcustomAPIs = function(exchange) {
+        
+        var apiElement = $("#node-input-api");
+        var api = $("#node-input-api option:selected").val();
+        apiElement.empty();
+        if (exchange === undefined || exchange === "") return;
+
+        //show spinner
+        $("#id-loading-svg").show();
+        $.getJSON("apis", { exchange: exchange }, function(result) {
+          $.each(Object.keys(result.api), function(index, apitype) {
+            $.each(Object.keys(result.api[apitype]), function(index, verb) {
+              $.each(result.api[apitype][verb], function(index, api) {
+                apiElement.append(
+                  $("<option>", {
+                    value: verb + "_" + api,
+                    text: verb + "_" + api,
+                    customapitype: apitype,
+                    isprivate: apitype === "private"
+                  })
+                );
+              });
+            });
+          });
+          // sort on text
+          apiElement.html(
+            apiElement.find("option").sort(function(x, y) {
+              // to change to descending order switch "<" for ">"
+              return $(x).text() > $(y).text() ? 1 : -1;
+            })
+          );
+          // set actual value
+          apiElement.val(node.api);
+          // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
+          if (api !== node.api) $("#node-input-api").trigger("change");
+          //hide spinner
+          $("#id-loading-svg").hide();
+        }).error(function(error) {
+          console.log(error);
+        });
+
+        //
+      };
+
+      //Handling Events
+
+      // Exchange change event
+      $("#node-input-exchange").change(function() {
+        
+        var exchange = $("#node-input-exchange option:selected").val();
+        
+        var apitype = $("#node-input-apitype").val();
+        var apiElement = $("#node-input-api");
+        apiElement.empty();
+
+        showhideInputFields();
+        if (
+          //  exchange !== node.exchange &&
+          exchange !== undefined &&
+          exchange !== ""
+        ) {
+          if (apitype === "unifiedAPI") getunifiedAPIs(exchange);
+          if (apitype === "customAPI") getcustomAPIs(exchange);
+        }
+      });
+
+      // API type change event
+      $("#node-input-apitype").change(function() {
+        //   var api = $("#node-input-api option:selected").val();
+
+        var exchange = $("#node-input-exchange option:selected").val();
+        var apitype = $("#node-input-apitype option:selected").val();
+
+        //empty the api because the type has changed
+        var apiElement = $("#node-input-api");
+        apiElement.empty();
+        showhideInputFields();
+
+        if (exchange !== undefined && exchange !== "") {
+          if (apitype === "customAPI") getcustomAPIs(exchange);
+          if (apitype === "unifiedAPI") getunifiedAPIs(exchange);
+        }
+      });
+
+      // API change event
+      $("#node-input-api").change(function() {
+        if ($("#node-input-apitype").val() === "customAPI") {
+          var api = $("#node-input-api").val();
+          if (api) {
+            // api = api.toLowerCase();
+            var params = null;
+            var currValue = $("#node-input-apipayload").typedInput("value")
+              ? JSON.parse($("#node-input-apipayload").typedInput("value"))
+              : {};
+            var newValue = {};
+            //match {queryparameteranyWordorNumber}
+            params = api.match(/{((?:[a-zA-Z0-9\_][a-zA-Z0-9\_]+))}/g);
+
+            if (params !== null) {
+              $("#node-input-apipayload").typedInput("type", "json");
+
+              //   if (currValue !== "") currValue = JSON.parse(currValue);
+
+              var arr = [];
+              var apipayload = "";
+              var paramKey = "";
+              var x = "";
+              params.map(function(x) {
+                paramKey = x.replace("{", "").replace("}", "");
+                arr.push(paramKey);
+              });
+              if (arr.length > 0) {
+                x = arr.shift();
+                while (x) {
+                  if (currValue[x]) newValue[x] = currValue[x];
+                  else newValue[x] = "your_value_here";
+
+                  x = arr.shift();
+                }
+              }
+              //  apipayload = "{\n" + apipayload + "\n}";
+              //if ($("#node-input-apipayload").typedInput("value") === "") {
+              $("#node-input-apipayload").typedInput("value", JSON.stringify(newValue));
+            } else $("#node-input-apipayload").typedInput("type", "none");
+          }
+        }
+        showhideInputFields();
+      });
+
+      // Symbol change event
+      $("#node-input-symbol").on("change", function(type, value) {
+        //Initialise select2 on field
+        //&show hide the right elements
+
+        //value is true if at first load and no change
+        
+        if (value === "symbolList") {
+          var exchange = $("#node-input-exchange option:selected").val() || node.exchange;
+          var inputSelectSymbolElem = $("#id-input-select-symbol");
+
+          //
+          inputSelectSymbolElem.empty();
+
+          inputSelectSymbolElem.append(
+            $("<option />")
+              .val("")
+              .text(" ")
+          );
+
+          getSymbols(exchange, function(symbols) {
+
+            symbols.forEach(function(element) {
+              inputSelectSymbolElem.append(
+                $("<option>", {
+                  value: element,
+                  text: element
+                })
+              );
+            });
+
+            //set the value of the field
+            if ($("#node-input-symbol").val())
+              inputSelectSymbolElem.val($("#node-input-symbol").val());
+            else inputSelectSymbolElem.val(node.symbol);
+
+            //should i trigger the change event ?
+          });
+          //   let select2InputSymbol = $("#id-input-select-symbol");
+
+          //hide the symbolslist typedInput
+          let typedInputContainerElement = $(
+            ".node-input-unified-api-symbol > .red-ui-typedInput-container"
+          );
+
+          //init select2
+          inputSelectSymbolElem.select2();
+          //append and style the element
+          let select2Container = inputSelectSymbolElem.siblings(".select2-container");
+
+          select2Container
+            .appendTo(typedInputContainerElement)
+            .attr("style", "left:40px;width: calc(100% - 40px);");
+
+          select2Container
+            .find(".select2-selection")
+            .attr("style", "border: none;height: 32px");
+          // select2Container
+          //     .find("#select2-id-input-select-symbol-container")
+          //     .attr("style", "line-height: 32px");
+          // select2Container
+          //     .find(".select2-selection__arrow")
+          //     .attr("style", "height: 32px");
+
+          //find the button and hide it
+          typedInputContainerElement.find(".red-ui-typedInput-option-trigger").hide();
+          typedInputContainerElement.find(".red-ui-typedInput-input").hide();
+        } else {
+          let typedInputContainerElement = $(
+            ".node-input-unified-api-symbol > .red-ui-typedInput-container"
+          );
+
+          let select2Container = typedInputContainerElement.children(
+            ".select2-container"
+          );
+          select2Container.remove();
+          typedInputContainerElement.find(".red-ui-typedInput-input").show();
+        }
+      });
+
+      $("#node-input-since").on("change", function(type, value) {
+        // the trick here is that I show the date field instead of a text so that
+        // the browser can show a nice date picker for the field
+        // whereas when choosing msg or flow .. it is expecting a string
+        // and so i just hide my custom date picker field.
+        // the change of date on my custom input date field is captured and value is copied to the actual node field
+        if (value === true)
+          $("#id-input-since").appendTo(
+            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input"
+          );
+        else if (value === "datepick") {
+          $(
+            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]"
+          ).hide();
+          $("#id-input-since").show();
+        } else if (value === "msg" || value === "flow") {
+          $("#id-input-since").hide();
+          $(
+            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]"
+          ).show();
+        }
+        if (
+          value === true &&
+          ($("#node-input-sinceType").val() === "datepick" ||
+            node.sinceType === "datepick")
+        ) {
+          $("#id-input-since").val($("#node-input-since").val() || node.since);
+          $(
+            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]"
+          ).hide();
+
+          $("#id-input-since").show();
+        }
+      });
+
+      $("#id-input-since").change(function() {
+        if (
+          $("#node-input-sinceType").val() === "datepick" &&
+          $("#node-input-since").val() !== $("#id-input-since").val()
+        ) {
+          $("#node-input-since").val($("#id-input-since").val());
+        }
+      });
+      // select2 input field replacing the ootb TypedInput select
+      $("#id-input-select-symbol").change(function() {
+        
+        if (
+          $("#node-input-symbolType").val() === "symbolList" &&
+          $("#node-input-symbol").val() !== $("#id-input-select-symbol").val()
+        )
+          $("#node-input-symbol").val($("#id-input-select-symbol").val());
+      });
+
+      // timeframe change event
+      $("#node-input-timeframe").on("change", function(type, value) {
+
+        if (value === true && $("#node-input-timeframe").val() !== node.timeframe) {
+          $("#node-input-timeframe").typedInput("value", node.timeframe);
+        }
+        // the value contains timeframeType
+        if (value === "timeframes") {
+          var exchange = $("#node-input-exchange option:selected").val();
+          if (exchange) {
+            getTimeframes(exchange, function(timeframes) {
+              
+              if (timeframes.length === 0) {
+                // if timeframes are not returned from the exchange
+                // this means that the OHLV is an emulated api
+                // read about emulated api. here is a list of possible values for timeframe
+                // you could also try setting the value manually using string as the type then enter
+                // the value you want to be sent to the api
+                $("#id-emulated-api").show();
+                timeframes = ["1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1d"];
+              } else $("#id-emulated-api").hide();
+              $("#node-input-timeframe")
+                .typedInput("types", [
+                  {
+                    value: "timeframeList",
+                    label: "Candle size",
+                    //  hasValue: true,
+                    icon: "red/images/typedInput/timeline.png",
+                    options: timeframes
+                  },
+                  "str",
+                  "msg",
+                  "flow"
+                  //if you want to recieve events hasValue: true somehow needed!
+                ])
+                .typedInput("width", "48%");
+              //after loading new options, it is important to try set the configured value or the saved value
+              //if the value doe not exist in the list
+              $("#node-input-timeframe").typedInput(
+                "value",
+                $("#node-input-timeframe").val() || node.timeframe
+              );
+            });
+          }
+        }
+      });
+
+      $("#node-input-limit").on("change", function() {
+        //setting defaults here..
+        // if (
+        //     $("#node-input-limit").typedInput("type") === "msg" &&
+        //     $("#node-input-limit").typedInput("value") === ""
+        // ) {
+        //     $("#node-input-limit").typedInput("value", "payload");
+        // }
+      });
+
+      // order type change event
+      $("#node-input-ordertype").change(function() {
+        $("#node-input-ordertype option:selected").val() === "market"
+          ? $("#node-input-orderprice").attr("readonly", true)
+          : $("#node-input-orderprice").attr("readonly", false);
+      });
+    },
+    oneditsave: function() {
+      var node = this;
+      
+      node.exchange = $("#node-input-exchange option:selected").val();
+      node.api = $("#node-input-api option:selected").val();
+      node.apiprivate = $("#node-input-api option:selected").attr("isprivate");
+      if (
+        $("#node-input-symbolType").val() === "symbolList" &&
+        node.symbol !== $("#id-input-select-symbol").val()
+      )
+        node.symbol = $("#id-input-select-symbol").val();
+      if (
+        $("#node-input-timeframeType").val() === "timeframeList" &&
+        node.timeframe !== $("#node-input-timeframe").val()
+      )
+        node.timeframe = $("#node-input-timeframe").val();
+      if ($("#node-input-apitype option:selected").val() === "customAPI")
+        if (
+          node.customapitype !==
+          $("#node-input-api option:selected").attr("customapitype")
+        )
+          $("#node-input-customapitype").val(
+            $("#node-input-api option:selected").attr("customapitype")
+          );
+    }
+  });
 </script>
 <script type="text/x-red" data-template-name="ccxt-api">
-        <div class="form-row">
-        <span><a href='#' target="_blank" id="id-img-display-exchange-homepage"><img src="" alt="" id="id-anchor-display-exchange-img" style="max-width:68%;"></a></span>
+
+      <div class="form-row">
+  <span><a href='#' target="_blank" id="id-img-display-exchange-homepage"><img src="" alt="" id="id-anchor-display-exchange-img" style="max-width:68%;"></a></span>
+  <span><img src="spinning-circles.svg" alt="retrieving data..." id="id-loading-svg" style="display:none;width:24px;"></span>
+  </div>
+      <div class="form-row">
+
+        <label for="node-input-exchange" class="tooltip"><i class="fa fa-shopping-cart"></i> Exchange
+          <div class="right">
+              <strong>Crypto Exchange</strong>
+              <p>Select one of the supported exchanges by the included CCXT version "1.18.630".
+              </p>
+              <i></i>
+          </div>
+         </label>
+
+        <select type="text" id="node-input-exchange">
+        </select>
+        <span><a href='#' target="_blank" id="id-anchor-display-exchange-homepage"><i class="fa fa-globe"></i></a></span>
     </div>
 
+      <div class="form-row">
+        <label for="node-input-apitype" class="tooltip"><i class="fa fa-dot-circle-o"></i> API Type
+          <div class="right">
+              <strong>API Type</strong>
+              <p>Unified API is a subset of methods common among the exchanges as provided by CCXT.
+                  Exchange API is a custom API specific to the exchange. All unified and custom APIs are supported.
+              </p>
+              <i></i>
+          </div>
+        </label>
+        <select type="text" id="node-input-apitype" style="width: auto;">
+          <option value="unifiedAPI">Unified API</option>
+          <option value="customAPI">Exchange API</option>
+        </select>
+      </div>
 
-            <div class="form-row">
+      <div class="form-row">
+        <label for="node-input-api" class="tooltip"><i class="fa fa-code"></i> API Name
+          <div class="right">
+              <strong>API Name</strong>
+              <p>Select an API Name from the list. Only the supported APIs by the exchange are listed.
+                  Some of the Unified APIs are <a href="https://ccxt.readthedocs.io/en/latest/manual.html#exchange-structure" target="_blank">emulated</a> for the exchange.
+                  The required and optional parameters presented are based on the selected API.
+                  If the selected API is private, Secrets field will appear to configure the API Key and credentials. Clicking the information icon will take you to the docs.
+              </p>
+              <i></i>
+          </div>
+        </label>
+        <select type="text" id="node-input-api" style="width: auto;">
+        </select>
+        <span><a href='#' target="_blank" id="id-anchor-display-exchange-apidoc"><i class="fa fa-info-circle tooltip">
+      <div class="right">
 
-              <label for="node-input-exchange"><i class="fa fa-shopping-cart"></i> Exchange</label>
-              <select type="text" id="node-input-exchange"
-              data-toggle="tooltip" data-placement="right" data-animation="true"
-              data-html="true" data-trigger="hover"
-              title="select the exchange from the drop down list">
-
-              </select>
-              <span><a href='#' target="_blank" id="id-anchor-display-exchange-homepage"><i class="fa fa-globe"></i></a></span>
-
+              <p>Click to read the docs of the selected API. <strong>Note:</strong> changing the API will delete any unmatched keys in your payload!
+              </p>
+              <i></i>
           </div>
 
 
-            <div class="form-row">
-              <label for="node-input-apitype"><i class="fa fa-dot-circle-o"></i> API Type</label>
-              <select type="text" id="node-input-apitype" style="width: auto;">
-                <option value="unifiedAPI">Unified API</option>
-                <option value="customAPI">Exchange API</option>
-              </select>
+        </i></a></span>
+        <input type="hidden" id="node-input-customapitype">
+      </div>
 
-
-            </div>
-
-
-            <div class="form-row">
-              <label for="node-input-api"><i class="fa fa-code"></i> API Name</label>
-              <select type="text" id="node-input-api" style="width: auto;">
-              </select>
-              <span><a href='#' target="_blank" id="id-anchor-display-exchange-apidoc"><i class="fa fa-info-circle"></i></a></span>
-              <input type="hidden" id="node-input-customapitype">
-            </div>
-
-
-            <div class="form-row node-input-private-api" style="display: none;width:auto;">
-              <label for="node-input-apisecrets"><i class="fa fa-user-secret"></i> Secrets</label>
-              <input type="text" id="node-input-apisecrets">
-            </div>
+      <div class="form-row node-input-private-api hidden">
+        <label for="node-input-apisecrets" class="tooltip"><i class="fa fa-user-secret"></i> Secrets
+              <div class="right">
+              <strong>Secrets</strong>
+              <p>Select a pre-configured secrets or click the button to configure a new API Key and Secret using the Configuration node.
+                  The API Key and Secret are encrypted by Node-RED <a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank">credentials</a> feature and stored locally on the runtime machine.
+              </p>
+              <i></i>
+          </div>
+      </label>
+        <input type="text" id="node-input-apisecrets" style="width: 70%">
+      </div>
 
 
 
-            <div class="form-row node-input-unified-api-load-markets" style="display: none;">
-               <label for="node-input-loadmarketsreload"><i class="fa fa-refresh"></i> Reload</label>
-               <input type="checkbox" id="node-input-loadmarketsreload">
-            </div>
+      <div class="form-row node-input-unified-api-load-markets hidden">
+         <label for="node-input-loadmarketsreload" class="tooltip"><i class="fa fa-refresh"></i> Reload
+                              <div class="right">
+              <strong>Reload</strong>
+              <p>Tick the box to force a reload of all exchange markets rather than using the cached list.
+              </p>
+              <i></i>
+          </div>
+      </label>
+         <input type="checkbox" id="node-input-loadmarketsreload">
+      </div>
 
 
 
 
-            <div class="form-row node-input-unified-api-symbol" style="display: none;">
-               <label for="node-input-symbol"><i class="fa fa-exchange"></i> Symbol</label>
-               <input type="text" id="node-input-symbol">
-               <input type="hidden" id="node-input-symbolType">
-            </div>
+      <div class="form-row node-input-unified-api-symbol hidden">
+         <label for="node-input-symbol" class="tooltip"><i class="fa fa-exchange"></i> Symbol
+          <div class="right">
+              <strong>Symbol</strong>
+              <p>Select a market pair from the list. The list of symbols are loaded from the exchange.
+                  You can also enter a symbol manually by choosing the String type or via a property of flow, msg or global.
+                  If no symbols are available in the dropdown list, try entering the symbol manually or via a property.
+              </p>
+              <i></i>
+          </div>
+
+          </label>
+         <input type="text" id="node-input-symbol" style="width: 50%;">
+         <input type="hidden" id="node-input-symbolType">
+         <select type="text" id="id-input-select-symbol" style="display:none;">
+              <option></option>
+         </select>
+
+      </div>
+
+  <div class="form-row node-input-unified-api-since hidden">
+      <label for="node-input-since" class="tooltip"><i class="fa fa-table"></i> Since
+      <div class="right">
+              <strong>Since</strong>
+              <p>This parameter is used for date-based paginatin and is required in most cases.
+                  The user supplies a since timestamp in milliseconds and a number to limit results.
+                  Enter a date in the format yyyy-mm-dd or use a property which provides a date in this format.
+                  The date will be converted to milliseconds prior to invoking the API.
+              </p>
+              <i></i>
+          </div>
+
+      </label>
+      <input type="text" id="node-input-since" style="width:50%">
+      <input type="date" id="id-input-since" style="display:none;width:100%">
+      <input type="hidden" id="node-input-sinceType">
+  </div>
 
 
-              <select type="text" id="id-input-select-symbol">
-                  <option>1</option>
-              </select>
-         <!--    <div class="form-row class-input-select-symbol">
 
-          </div> -->
+      <div class="form-row node-input-unified-api-timeframe hidden">
+          <label for="node-input-timeframe" class="tooltip"><i class="fa fa-clock-o"></i> Time Frame
 
-            <div class="form-row node-input-unified-api-timeframe" style="display: none;">
-                <label for="node-input-timeframe"><i class="fa fa-clock-o"></i> Time Frame</label>
-                <select type="text" id="node-input-timeframe" style="width: auto;">
-                   <option value="1m">1 Min</option>
-                   <option value="5m">5 Min</option>
-                   <option value="30m">30 Min</option>
-                   <option value="1h">1 Hour</option>
-                   <option value="1d">1 Day</option>
+          <div class="right">
+              <strong>Timeframe</strong>
+              <p>This parameter is used by the API fetching OHLCV data for a particular symbol based on a Candle size.
+                  The list of available timeframes for the exchange are listed in the drop-down list.
+                  If a list was not successfully retrieved from the exchange, it means that the API is emulated (indicated by the aeroplane icon) and in this case a default list is available in the dropdown list.
+                  Select a timeframe from the list or enter a timeframe manually or indicate a context flow or msg property containing the required value.
+              </p>
+              <i></i>
+          </div>
+
+          </label>
+          <input type="text" id="node-input-timeframe" style="width: 48%;>
+          <input type="hidden" id="node-input-timeframeType">
+          <img src="emulated.svg" alt="API is emulated" id="id-emulated-api" style="width:16px;">
+       </div>
+
+
+      <div class="form-row node-input-unified-api-limit hidden">
+            <label for="node-input-limit" class="tooltip"><i class="fa fa-filter"></i> Limit
+
+          <div class="right">
+              <strong>Limit</strong>
+              <p>This parameter is used to limit the number of results returned. This is mostly an optional parameter unless otherwise indicated.
+                  Enter a number to limit the results or indicate a context flow or msg property containing the required value.
+              </p>
+              <i></i>
+          </div>
+          </label>
+            <input type="text" id="node-input-limit" style="width: 30%;">
+            <input type="hidden" id="node-input-limitType">
+      </div>
+
+         <div class="form-row node-input-unified-api-ordertype hidden">
+                <label for="node-input-ordertype" class="tooltip"><i class="fa fa-handshake-o"></i> Type
+                    <div class="right">
+              <strong>Order Type</strong>
+              <p>Select either a Market or a Limit order type. There is no confirmations for orders. Always use Limit unless you know what you are doing!
+              </p>
+              <i></i>
+          </div>
+
+              </label>
+                <select type="text" id="node-input-ordertype" style="width: auto;">
+                   <option value="limit">Limit</option>
+                   <option value="market">Market</option>
                 </select>
+        </div>
+
+
+        <div class="form-row node-input-unified-api-orderside hidden">
+                <label for="node-input-orderside" class="tooltip"><i class="fa fa-balance-scale"></i> Side
+               <div class="right">
+              <strong>Side</strong>
+              <p>Select either a Buy or a Sell order.
+              </p>
+              <i></i>
+          </div>
+              </label>
+                <select type="text" id="node-input-orderside" style="width: auto;">
+                   <option value="buy">Buy</option>
+                   <option value="sell">Sell</option>
+                </select>
+        </div>
+
+        <div class="form-row node-input-unified-api-amount hidden">
+                <label for="node-input-amount" class="tooltip"><i class="fa fa-calculator"></i> Amount
+               <div class="right">
+              <strong>Order Amount</strong>
+              <p>Enter the asset quantity to sell or buy. More than 10 decimal places will be removed and rounded to 1 .
+                  You can also define the amount from a context flow or msg property. There is no confirmation provided for this (use at your own risk!!).
+              </p>
+              <i></i>
+          </div>
+
+              </label>
+                <input type="number" id="node-input-amount">
              </div>
 
-             <div class="form-row node-input-unified-api-since" style="display: none;">
-                <label for="node-input-since"><i class="fa fa-table"></i> Since</label>
-                <input type="date" id="node-input-since">
-             </div>
+        <div class="form-row node-input-unified-api-orderprice hidden">
+                    <label for="node-input-orderprice" class="tooltip"><i class="fa fa-dollar"></i> Price
 
-            <div class="form-row node-input-unified-api-limit" style="display: none;">
-                  <label for="node-input-limit"><i class="fa fa-filter"></i> Limit</label>
-                  <input type="number" id="node-input-limit">
+              <div class="right">
+              <strong>Price</strong>
+              <p>Enter the price in quote currency. This is a number field and will not show a currency symbol in the field. Check the label to confirm the details before running the flow.
+                  If the Symbol is BTC/USDT, the price is in USDT. You can also define the price from a context flow or msg property.
+                  There is no confirmation provided for this (use at your own risk!!).
+              </p>
+              <i></i>
+          </div>
+
+
+                  </label>
+                    <input type="number" id="node-input-orderprice">
+        </div>
+
+        <div class="form-row node-input-unified-api-orderid hidden">
+                <label for="node-input-orderid" class="tooltip"><i class="fa fa-id-badge"></i> ID
+
+            <div class="right">
+              <strong>Record ID</strong>
+              <p>Enter the Transaction or Order ID.
+              </p>
+              <i></i>
+          </div>
+
+              </label>
+                <input type="text" id="node-input-orderid" style="width: 50%">
+        </div>
+
+        <div class="form-row node-input-unified-api-code hidden">
+                <label for="node-input-code" class="tooltip"><i class="fa fa-qrcode"></i> Currency
+
+              <div class="right">
+          <strong>Currency</strong>
+              <p>Enter or select the currency to deposit/withdraw or act on as required for the selected API.
+                  The list of currencies supported by the exchange are listed in the drop-down list.
+              </p>
+              <i></i>
+          </div>
+              </label>
+                <input type="text" id="node-input-code" style="width: 50%">
+        </div>
+        <div class="form-row node-input-unified-api-address hidden">
+                <label for="node-input-address" class="tooltip"><i class="fa fa-address-book"></i> Address
+          <div class="right">
+          <strong>Address</strong>
+              <p>Enter or select the deposit or withdrawal address as required for the selected API.
+              </p>
+              <i></i>
+          </div>
+
+
+              </label>
+                <input type="text" id="node-input-address" style="width: 70%">
+        </div>
+        <div class="form-row node-input-unified-api-tag hidden">
+                <label for="node-input-tag" class="tooltip"><i class="fa fa-comment"></i> Tag
+
+                                      <div class="right">
+          <strong>Tag</strong>
+              <p>Enter a description for the deposit or withdrawal as tag. This is an optional parameter. You can also define the value from a context
+                  flow or msg property.
+              </p>
+              <i></i>
+          </div>
+              </label>
+                <input type="text" id="node-input-tag" style="width: 70%">
+        </div>
+
+        <div class="form-row node-input-api-custom hidden">
+            <label for="node-input-apipayload" class="tooltip"><i class="fa fa-envelope"></i> Payload
+
+              <div class="right">
+          <strong>Payload</strong>
+              <p>The value entered in this parameter makes the "params" argument for the selected API. A custom API usually requires a payload and the field will automatically be filled with
+                  any query parameters required by the call.
+                  Unified APIs usually do not require a payload, however, consult the docs if in doubt.
+                  The accepted value is in JSON format and can be provided from a context msg property. Select None if you do not wish to send any additional parameters in the payload.
+              </p>
+              <i></i>
+          </div>
+
+      </label>
+            <input type="json" id="node-input-apipayload" style="width:70%;" >
+            <input type="hidden" id="node-input-apipayloadType">
+          </div>
+          <div class="form-row">
+              <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+              <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
             </div>
-
-               <div class="form-row node-input-unified-api-ordertype" style="display: none;">
-                      <label for="node-input-ordertype"><i class="fa fa-handshake-o"></i> Type</label>
-                      <select type="text" id="node-input-ordertype" style="width: auto;">
-                         <option value="limit">Limit</option>
-                         <option value="market">Market</option>
-                      </select>
-              </div>
-
-
-              <div class="form-row node-input-unified-api-orderside" style="display: none;">
-                      <label for="node-input-orderside"><i class="fa fa-balance-scale"></i> Side</label>
-                      <select type="text" id="node-input-orderside" style="width: auto;">
-                         <option value="buy">Buy</option>
-                         <option value="sell">Sell</option>
-                      </select>
-              </div>
-
-              <div class="form-row node-input-unified-api-amount" style="display: none;">
-                      <label for="node-input-amount"><i class="fa fa-calculator"></i> Amount</label>
-                      <input type="number" id="node-input-amount">
-                   </div>
-
-              <div class="form-row node-input-unified-api-orderprice" style="display: none;">
-                          <label for="node-input-orderprice"><i class="fa fa-dollar"></i> Price</label>
-                          <input type="number" id="node-input-orderprice">
-              </div>
-
-              <div class="form-row node-input-unified-api-orderid" style="display: none;">
-                      <label for="node-input-orderid"><i class="fa fa-id-badge"></i> ID</label>
-                      <input type="text" id="node-input-orderid">
-              </div>
-
-              <div class="form-row node-input-unified-api-code" style="display: none;">
-                      <label for="node-input-code"><i class="fa fa-qrcode"></i> Currency</label>
-                      <input type="text" id="node-input-code">
-              </div>
-              <div class="form-row node-input-unified-api-address" style="display: none;">
-                      <label for="node-input-address"><i class="fa fa-address-book"></i> Address</label>
-                      <input type="text" id="node-input-address">
-              </div>
-              <div class="form-row node-input-unified-api-tag" style="display: none;">
-                      <label for="node-input-tag"><i class="fa fa-comment"></i> Tag</label>
-                      <input type="text" id="node-input-tag">
-              </div>
-
-              <div class="form-row node-input-api-custom" style="display: none;">
-                  <label for="node-input-apipayload"><i class="fa fa-envelope"></i> Payload</label>
-                  <input type="json" id="node-input-apipayload" style="width:68%;" >
-                  <input type="hidden" id="node-input-apipayloadType">
-                </div>
-                <div class="form-row">
-                    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-                    <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
-                  </div>
 </script>
+<style>
+  .select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 32px;
+  }
 
+  .select2-container .select2-selection--single {
+    height: 32px;
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 32px;
+  }
+
+  /* this is overriding .tooltip provided by bootstrap */
+
+  .tooltip {
+    display: inline-block;
+    position: relative;
+    border-bottom: 1px dotted #666;
+    text-align: left;
+    font-size: unset;
+    opacity: unset;
+  }
+
+  .tooltip .right {
+    min-width: 200px;
+    top: 50%;
+    left: 100%;
+    margin-left: 20px;
+    transform: translate(0, -50%);
+    padding: 10px 20px;
+    color: #444444;
+    background-color: #eeeeee;
+    font-weight: normal;
+    font-size: 13px;
+    border-radius: 8px;
+    position: absolute;
+    z-index: 99999999;
+    box-sizing: border-box;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+    display: none;
+  }
+
+  .tooltip:hover .right {
+    display: block;
+  }
+
+  .tooltip .right i {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -12px;
+    width: 12px;
+    height: 24px;
+    overflow: hidden;
+  }
+
+  .tooltip .right i::after {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    left: 0;
+    top: 50%;
+    transform: translate(50%, -50%) rotate(-45deg);
+    background-color: #eeeeee;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  }
+</style>
 <script type="text/x-red" data-help-name="ccxt-api">
-    <p>CCXT API</p>
-    <h3>Inputs</h3>
-    <dl class="message-properties">
-       <dt>Exchange<span class="property-type">string</span></dt>
-    </dl>
+  <p>CCXT API</p>
+  <h3>Inputs</h3>
+  <dl class="message-properties">
+     <dt>Exchange<span class="property-type">string</span></dt>
+  </dl>
 
-    <dl class="message-properties">
-          <dt>API Type<span class="property-type">string</span></dt>
-          <p>API Custom Type</p>
-          <dd>Type list:
-             <ul>
-                 <li>Public</li>
-                 <li>Private</li>
-             </ul>
-          </dd>
-    </dl>
-
-    <dl class="message-properties">
-          <dt>API Name<span class="property-type">string</span></dt>
-          <p>Each Exchange have a list of different APIs. Check the API dock for each Exchange to check it</p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>ApiKey<span class="property-type">string</span></dt>
-    </dl>
-    <dl class="message-properties">
-      <dt>Secret ApiKey<span class="property-type">string</span></dt>
-    </dl>
-
-    <h3>Outputs</h3>
-    <dl class="message-properties">
-       <dt>payload<span class="property-type">object</span></dt>
-       <dd>The payload result object.
-          <p>Object Format:</p>
-          <ul>
-             <li>error: error array</li>
-             <li>result: object result</li>
+  <dl class="message-properties">
+        <dt>API Type<span class="property-type">string</span></dt>
+        <p>API Custom Type</p>
+        <dd>Type list:
+           <ul>
+               <li>Public</li>
+               <li>Private</li>
            </ul>
-       </dd>
-    </dl>
+        </dd>
+  </dl>
 
-    <h3>Error</h3>
-    <dl class="message-properties">
-       <dt>error<span class="property-type">string</span></dt>
-       <dd>The error string.</dd>
-    </dl>
-    <h3>Details</h3>
-    <p>The ccxt RED node is a collection of available crypto exchanges or exchange classes</p>
+  <dl class="message-properties">
+        <dt>API Name<span class="property-type">string</span></dt>
+        <p>Each Exchange have a list of different APIs. Check the API dock for each Exchange to check it</p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>ApiKey<span class="property-type">string</span></dt>
+  </dl>
+  <dl class="message-properties">
+    <dt>Secret ApiKey<span class="property-type">string</span></dt>
+  </dl>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+     <dt>payload<span class="property-type">object</span></dt>
+     <dd>The payload result object.
+        <p>Object Format:</p>
+        <ul>
+           <li>error: error array</li>
+           <li>result: object result</li>
+         </ul>
+     </dd>
+  </dl>
+
+  <h3>Error</h3>
+  <dl class="message-properties">
+     <dt>error<span class="property-type">string</span></dt>
+     <dd>The error string.</dd>
+  </dl>
+  <h3>Details</h3>
+  <p>The ccxt RED node is a collection of available crypto exchanges or exchange classes</p>
 </script>
 
 <script type="text/x-red" data-template-name="ccxt-exchange">
-    <div class="form-row">
-        <label for="node-config-input-name"><i class="fa fa-tag"></i>Name</label>
-        <input type="text" id="node-config-input-name" placeholder="Enter Exchange Name">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-apikey"><i class="fa"></i>ApiKey</label>
-        <input type="text" id="node-config-input-apikey" placeholder="Enter Exchange ApiKey">
-    </div>
-    <div class="form-row">
-        <label for="node-config-input-secret"><i class="fa"></i>Secret</label>
-        <input type="text" id="node-config-input-secret" placeholder="Enter Exchange Secret">
-    </div>
+  <div class="form-row">
+      <label for="node-config-input-name"><i class="fa fa-tag"></i>Name</label>
+      <input type="text" id="node-config-input-name" placeholder="Enter Exchange Name">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-apikey"><i class="fa"></i>ApiKey</label>
+      <input type="text" id="node-config-input-apikey" placeholder="Enter Exchange ApiKey">
+  </div>
+  <div class="form-row">
+      <label for="node-config-input-secret"><i class="fa"></i>Secret</label>
+      <input type="text" id="node-config-input-secret" placeholder="Enter Exchange Secret">
+  </div>
 </script>
 
 <script type="text/x-red" data-help-name="ccxt-exchange">
-    <p>Configuration for a connection to an CCXT exchange.</p>
+  <p>Configuration for a connection to an CCXT exchange.</p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType("ccxt-exchange", {
-        category: "config",
-        defaults: {
-            name: { value: "" }
-        },
-        credentials: {
-            apikey: { value: "" },
-            secret: { value: "" }
-        },
-        label: function() {
-            if (this.name) {
-                return this.name;
-            }
-        }
-    });
+  RED.nodes.registerType("ccxt-exchange", {
+    category: "config",
+    defaults: {
+      name: { value: "" }
+    },
+    credentials: {
+      apikey: { value: "" },
+      secret: { value: "" }
+    },
+    label: function() {
+      if (this.name) {
+        return this.name;
+      }
+    }
+  });
 </script>
