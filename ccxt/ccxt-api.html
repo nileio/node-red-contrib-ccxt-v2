@@ -1,5 +1,5 @@
 <script type="text/javascript">
-  RED.nodes.registerType("ccxt-api", {
+  RED.nodes.registerType("ccxt-api-v2", {
     category: "Crypto API",
     defaults: {
       name: { value: "" },
@@ -32,7 +32,7 @@
       code: { value: "" },
       address: { value: "" },
       tag: { value: "" },
-      apisecrets: { type: "ccxt-exchange", required: false },
+      apisecrets: { type: "ccxt-exchange-v2", required: false },
 
       apipayload: {
         value: "",
@@ -46,7 +46,7 @@
     color: "#D8BFD8",
     icon: "bitcoin-symbol.png",
     label: function() {
-      return this.name || "ccxt API";
+      return this.name || "ccxt API v2";
     },
     oneditprepare: function() {
       var node = this;
@@ -721,7 +721,7 @@
     }
   });
 </script>
-<script type="text/x-red" data-template-name="ccxt-api">
+<script type="text/x-red" data-template-name="ccxt-api-v2">
     <div class="form-row">
       <span
         ><a href="#" target="_blank" id="id-img-display-exchange-homepage"
@@ -741,7 +741,7 @@
     </div>
     <div class="form-row">
       <label for="node-input-exchange" class="tooltip"
-        ><i class="fa fa-shopping-cart"></i> Exchange
+        ><i class="fa fa-shopping-cart"></i> <span data-i18n="CCXT.label.exchange"></span>
         <div class="right">
           <strong>Crypto Exchange</strong>
           <p>
@@ -760,7 +760,7 @@
 
     <div class="form-row">
       <label for="node-input-apitype" class="tooltip"
-        ><i class="fa fa-dot-circle-o"></i> API Type
+        ><i class="fa fa-dot-circle-o"></i> <span data-i18n="CCXT.label.apitype"></span>
         <div class="right">
           <strong>API Type</strong>
           <p>
@@ -831,7 +831,7 @@
           <i></i>
         </div>
       </label>
-      <input type="text" id="node-input-apisecrets" style="width: 70%" />
+      <input type="text" id="node-input-apisecrets" style="width: 70%" data-i18n="[placeholder]CCXT.parameters.apisecrets"/>
     </div>
 
     <div class="form-row node-input-unified-api-load-markets hidden">
@@ -1169,7 +1169,7 @@
     box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   }
 </style>
-<script type="text/x-red" data-help-name="ccxt-api">
+<script type="text/x-red" data-help-name="ccxt-api-v2">
     <h3>Inputs</h3>
 
     <dl class="message-properties">
@@ -1392,7 +1392,27 @@
     </p>
 </script>
 
-<script type="text/x-red" data-template-name="ccxt-exchange">
+
+
+
+<script type="text/javascript">
+  RED.nodes.registerType("ccxt-exchange-v2", {
+    category: "config",
+    defaults: {
+      name: { value: "" }
+    },
+    credentials: {
+      apikey: { value: "" },
+      secret: { value: "" }
+    },
+    label: function() {
+      if (this.name) {
+        return this.name;
+      }
+    }
+  });
+</script>
+<script type="text/x-red" data-template-name="ccxt-exchange-v2">
     <div class="form-row">
       <label for="node-config-input-name"><i class="fa fa-tag"></i>Name</label>
       <input type="text" id="node-config-input-name" placeholder="Enter Exchange Name" />
@@ -1414,25 +1434,6 @@
       />
     </div>
 </script>
-
-<script type="text/x-red" data-help-name="ccxt-exchange">
+<script type="text/x-red" data-help-name="ccxt-exchange-v2">
   <p>Configuration for a connection to an CCXT exchange.</p>
-</script>
-
-<script type="text/javascript">
-  RED.nodes.registerType("ccxt-exchange", {
-    category: "config",
-    defaults: {
-      name: { value: "" }
-    },
-    credentials: {
-      apikey: { value: "" },
-      secret: { value: "" }
-    },
-    label: function() {
-      if (this.name) {
-        return this.name;
-      }
-    }
-  });
 </script>

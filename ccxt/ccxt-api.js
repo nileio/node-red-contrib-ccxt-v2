@@ -463,14 +463,14 @@ module.exports = function(RED) {
     });
   }
 
-  RED.nodes.registerType("ccxt-api", CcxtApi);
+  RED.nodes.registerType("ccxt-api-v2", CcxtApi);
 
   //config node implementation
   function CcxtExchange(config) {
     RED.nodes.createNode(this, config);
   }
 
-  RED.nodes.registerType("ccxt-exchange", CcxtExchange, {
+  RED.nodes.registerType("ccxt-exchange-v2", CcxtExchange, {
     credentials: {
       apikey: { type: "text" },
       secret: { type: "text" }

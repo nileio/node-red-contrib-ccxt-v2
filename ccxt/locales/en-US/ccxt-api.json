@@ -1,0 +1,22 @@
+{
+  "CCXT": {
+    "label": {
+      "exchange": "Exchange",
+      "apitype": "API Type",
+      "apiname": "API"
+    },
+    "labeltooltip": {
+      "exchange": "",
+      "apitype": "",
+      "apiname": ""
+    },
+    "status": {
+      "requesting": "requesting"
+    },
+    "parameters": {
+      "exchange": "Select Exchange name",
+      "apitype": "Select API Type",
+      "apiname": "Select API"
+    }
+  }
+}

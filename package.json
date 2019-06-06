@@ -19,7 +19,7 @@
   },
   "node-red": {
     "nodes": {
-      "ccxt-api": "ccxt/ccxt-api.js"
+      "ccxt-api-v2": "ccxt/ccxt-api.js"
     }
   },
   "devDependencies": {

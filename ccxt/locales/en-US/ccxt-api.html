@@ -1,0 +1,222 @@
+<script type="text/x-red" data-help-name="ccxt-api-v2">
+  <h3>Inputs</h3>
+
+  <dl class="message-properties">
+    <dt>Exchange<span class="property-type">string</span></dt>
+    <p>
+      Select one of the supported exchanges by the included CCXT version "1.18.630".
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>API Type<span class="property-type">string</span></dt>
+
+    <dd>
+      Type list:
+      <ul>
+        <li>Unfiied API</li>
+        <li>Exchange API</li>
+      </ul>
+    </dd>
+    <p>
+      Unified API is a subset of methods common among the exchanges as provided by CCXT.
+      Exchange API is a custom API specific to the exchange. All unified and custom APIs
+      are supported.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>API Name<span class="property-type">string</span></dt>
+    <p>
+      Select an API Name from the list. Only the supported APIs by the exchange are
+      listed in the drop-down list. Note that some of the Unified APIs are
+      <a
+        href="https://ccxt.readthedocs.io/en/latest/manual.html#exchange-structure"
+        target="_blank"
+        >emulated</a
+      >
+      for the exchange. The required and optional parameters presented are based on the
+      selected API. If the selected API is private, Secrets field will appear to
+      configure the API Key and credentials. Clicking the information icon will take you
+      to the docs.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Secrets<span class="property-type">string</span></dt>
+    <p>
+      Select a pre-configured secrets or click the button to configure a new API Key and
+      Secret using the Configuration node. The API Key and Secret are encrypted by
+      Node-RED
+      <a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank"
+        >credentials</a
+      >
+      feature and stored locally on the runtime machine.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Payload<span class="property-type">string</span></dt>
+
+    <strong
+      ><p>
+        If the selected type is Exchange API, Payload parameter will be displayed.
+      </p></strong
+    >
+    <p>
+      The value entered in this parameter makes the "params" argument for the selected
+      API. A custom API usually requires a payload and the field will automatically be
+      filled with any query parameters required by the call. Unified APIs usually do not
+      require a payload, however, consult the docs if in doubt. The accepted value is in
+      JSON format and can be provided from a context msg property. Select None if you do
+      not wish to send any additional parameters in the payload.
+    </p>
+  </dl>
+
+  <strong
+    ><p>
+      If the selected API Type is Unified API and depending on the selected API, one or
+      more of the following parameters will be displayed:
+    </p></strong
+  >
+  <dl class="message-properties">
+    <dt>Symbol<span class="property-type">string</span></dt>
+    <p>
+      Select a market pair from the list. The list of symbols are loaded from the
+      exchange. You can also enter a symbol manually by choosing the String type or via
+      a property of flow, msg. If no symbols are available in the dropdown list, try
+      entering the symbol manually or via a property.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Since<span class="property-type">string</span></dt>
+    <p>
+      This parameter is used for date-based paginatin and is required in most cases. The
+      user supplies a since timestamp in milliseconds and a number to limit results.
+      Enter a date in the format yyyy-mm-dd or use a property which provides a date in
+      this format. The date will be converted to milliseconds prior to invoking the API.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Timeframe<span class="property-type">string</span></dt>
+    <p>
+      This parameter is used by the API fetching OHLCV data for a particular symbol
+      based on a Candle size. The list of available timeframes are loaded from the
+      exchange and listed in the drop-down list. If a list was not successfully
+      retrieved from the exchange, it means that the API is emulated (indicated by the
+      aeroplane icon) and in this case a default list is available in the dropdown list.
+      Select a timeframe from the list or enter a timeframe manually or indicate a
+      context flow or msg property containing the required value.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Limit<span class="property-type">string</span></dt>
+    <p>
+      This parameter is used to limit the number of results returned. This is mostly an
+      optional parameter unless otherwise indicated. Enter a number to limit the results
+      or indicate a context flow or msg property containing the required value.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Order Type<span class="property-type">string</span></dt>
+    <dd>
+      Type list:
+      <ul>
+        <li>Limit</li>
+        <li>Market</li>
+      </ul>
+    </dd>
+    <p>
+      Select either a Market or a Limit order type. There is no confirmations for
+      orders. Always use Limit unless you know what you are doing!
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Side<span class="property-type">string</span></dt>
+    <dd>
+      Type list:
+      <ul>
+        <li>Buy</li>
+        <li>Sell</li>
+      </ul>
+    </dd>
+    <p>Select either a Buy or a Sell order.</p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Amount<span class="property-type">string</span></dt>
+    <p>
+      Enter the asset quantity to sell or buy. More than 10 decimal places will be
+      removed and rounded to 1 . You can also define the amount from a context flow or
+      msg property. There is no confirmation provided for this (use at your own risk!!).
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Price<span class="property-type">string</span></dt>
+    <p>
+      Enter the price in quote currency. This is a number field and will not show a
+      currency symbol in the field. Check the label to confirm the details before
+      running the flow. If the Symbol is BTC/USDT, the price is in USDT. You can also
+      define the price from a context flow or msg property. There is no confirmation
+      provided for this (use at your own risk!!).
+    </p>
+  </dl>
+  <dl class="message-properties">
+    <dt>Record Id<span class="property-type">string</span></dt>
+    <p>Enter the Transaction or Order ID.</p>
+  </dl>
+  <dl class="message-properties">
+    <dt>Currency<span class="property-type">string</span></dt>
+    <p>
+      Enter or select the currency to deposit/withdraw or act on as required for the
+      selected API. The list of currencies supported by the exchange are listed in the
+      drop-down list.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Address<span class="property-type">string</span></dt>
+    <p>
+      Enter or select the deposit or withdrawal address as required for the selected
+      API.
+    </p>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>Tag<span class="property-type">string</span></dt>
+    <p>
+      Enter a description for the deposit or withdrawal as tag. This is an optional
+      parameter. You can also define the value from a context flow or msg property.
+    </p>
+  </dl>
+
+  <h3>Outputs</h3>
+  <dl class="message-properties">
+    <dt>payload<span class="property-type">object</span></dt>
+    <dd>
+      The payload result object.
+      <p>Object Format:</p>
+      <ul>
+        <li>error: error array</li>
+        <li>result: object result</li>
+      </ul>
+    </dd>
+  </dl>
+
+  <h3>Error</h3>
+  <dl class="message-properties">
+    <dt>error<span class="property-type">string</span></dt>
+    <dd>The error string.</dd>
+  </dl>
+  <h3>Details</h3>
+  <p>
+    The ccxt RED node is a proxy node for all available crypto exchanges and APIs as
+    provided by the CCXT library
+  </p>
+</script>
