@@ -60,3 +60,4 @@ In the **Example folder** of the node you have the flow of these two cases. Of c
 - support an option to retrieve all exchanges as an list.
 - dynamic show of CCXT version used
 - Additional feature requests
+- Submit to node-red-contrib repo
