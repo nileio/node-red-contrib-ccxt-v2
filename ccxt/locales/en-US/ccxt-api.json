@@ -1,14 +1,45 @@
 {
-  "CCXT": {
+  "ccxt": {
     "label": {
       "exchange": "Exchange",
       "apitype": "API Type",
-      "apiname": "API"
+      "apiname": "API",
+      "secrets": "Secrets",
+      "reload": "Reload",
+      "symbol": "Symbol",
+      "since": "Since",
+      "timeframe": "Timeframe",
+      "limit": "Limit",
+      "ordertype": "Type",
+      "orderside": "Side",
+      "orderamount": "Amount",
+      "price": "Price",
+      "txid": "ID",
+      "currency": "Currency",
+      "address": "Address",
+      "tag": "Tag",
+      "payload": "Payload"
     },
     "labeltooltip": {
-      "exchange": "",
-      "apitype": "",
-      "apiname": ""
+      "exchange": "The Crypto Exchange to use. Select one of the supported exchanges",
+      "apitype": "Unified API is a subset of methods common among the exchanges as provided by CCXT. Exchange API is a custom API specific to the exchange. All unified and custom APIs are supported.",
+      "apiname": "The API to use. Select a supported API Name from the list. Some of the Unified APIs are emulated for the exchange. The required and optional parameters presented are based on the selected API. If the selected API is private, Secrets field will appear to configure the API Key and credentials. Clicking the information icon will take you to the docs.",
+      "apiinfo": "Click to read the docs of the selected API. Note: changing the API will delete any unmatched keys in your payload!",
+      "secrets": "Select a pre-configured secrets or click the button to configure a new API Key and Secret using the Configuration node. The API Key and Secret are encrypted by Node-RED credentials feature and stored locally on the runtime machine.",
+      "reload": "Force a reload of all exchange markets rather than using the cached list.",
+      "symbol": "The market to use. Select a market pair from the list. The list of symbols are loaded from the exchange. You can also enter a symbol manually by choosing the String type or via a property of flow, msg. If no symbols are available in the dropdown list, try entering the symbol manually or via a property.",
+      "since": "This parameter is used for date-based pagination and is required in most cases. The user supplies a since timestamp in milliseconds and a number to limit results. Enter a date in the format yyyy-mm-dd or use a property which provides a date in this format. The date will be converted to milliseconds prior to invoking the API.",
+      "timeframe": "This parameter is used by the API fetching OHLCV data for a particular symbol based on a Candle size. The list of available timeframes for the exchange are listed in the drop-down list. If a list was not successfully retrieved from the exchange, it means that the API is emulated (indicated by the aeroplane icon) and in this case a default list is available in the dropdown list. Select a timeframe from the list or enter a timeframe manually or indicate a context flow or msg property containing the required value.",
+      "limit": "This parameter is used to limit the number of results returned. This is mostly an optional parameter unless otherwise indicated. Enter a number to limit the results or indicate a context flow or msg property containing the required value.",
+      "ordertype": "Select either a Market or a Limit order type. There is no confirmations for orders. Always use Limit order unless you know what you are doing!",
+      "orderside": "Select either a Buy or a Sell order.",
+      "orderamount": "The asset quantity to sell or buy. More than 10 decimal places will be removed and rounded to 1 . You can also define the amount from a context flow or msg property. There is no confirmation provided for this (use at your own risk!!).",
+      "price": "The price in quote currency. This is a number field and will not show a currency symbol in the field. Check the label to confirm the details before running the flow. If the Symbol is BTC/USDT, the price is in USDT. You can also define the price from a context flow or msg property. There is no confirmation provided for this (use at your own risk!!).",
+      "txid": "The Transaction or Order ID.",
+      "currency": "The currency to deposit/withdraw or act on as required for the selected API. The list of currencies supported by the exchange are listed in the drop-down list.",
+      "address": "The deposit or withdrawal address as required for the selected API.",
+      "tag": "A description for the deposit or withdrawal as tag. This is an optional parameter. You can also define the value from a context flow or msg property.",
+      "payload": "The value entered in this parameter makes the params argument for the selected API. A custom API usually requires a payload and the field will automatically be filled with any query parameters required by the call. Unified APIs usually do not require a payload, however, consult the docs if in doubt. The accepted value is in JSON format and can be provided from a context msg property. Select None if you do not wish to send any additional parameters in the payload."
     },
     "status": {
       "requesting": "requesting"
@@ -16,7 +47,31 @@
     "parameters": {
       "exchange": "Select Exchange name",
       "apitype": "Select API Type",
-      "apiname": "Select API"
+      "apiname": "Select API",
+      "secrets": "Select an API Secret and Key configuration",
+      "symbol": "Enter a supported Symbol pair e.g. BTCETH",
+      "symbolselect": "Select a supported Symbol",
+      "since": "Enter a date in the format yyyy-mm-dd ",
+      "timeframe": "1m, 1h, etc.",
+      "limit": "A number",
+      "orderamount": "Enter the amount",
+      "price": "Enter the price in quote curency",
+      "txid": "Enter the Transaction or Order ID",
+      "currency": "Enter the currency",
+      "address": "Enter the deposit or withdrawal address",
+      "tag": "Enter a description for the transaction"
+    }
+  },
+  "ccxt-exchange": {
+    "label": {
+      "name": "Name",
+      "apikey": "API Key",
+      "apisecret": "API Secret"
+    },
+    "parameters": {
+      "name": "Enter exchange Name",
+      "apikey": "Enter your API Key",
+      "apisecret": "Enter your API Secret"
     }
   }
 }

@@ -1,3 +1,367 @@
+<!--
+  Copyright NileIO.io and other contributors, https://github.com/nileio/node-red-contrib-ccxt-v2
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/x-red" data-template-name="ccxt-api-v2">
+    <div class="form-row">
+    <span
+      ><a href="#" target="_blank" id="id-img-display-exchange-homepage"
+        ><img
+          src="#"
+          alt=""
+          id="id-anchor-display-exchange-img"
+          style="max-width:68%;"/></a
+    ></span>
+    <span
+      ><img
+        src="spinning-circles.svg"
+        alt="retrieving data..."
+        id="id-loading-svg"
+        style="display:none;width:24px;"
+    /></span>
+  </div>
+  <div class="form-row">
+    <label for="node-input-exchange" class="tooltip"
+      ><i class="fa fa-shopping-cart"></i> <span data-i18n="ccxt.label.exchange"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.exchange"></strong>
+        <p data-i18n="ccxt.labeltooltip.exchange"></p>
+        <i></i>
+      </div>
+    </label>
+
+    <select type="text" id="node-input-exchange"> </select>
+    <span
+      ><a href="#" target="_blank" id="id-anchor-display-exchange-homepage"
+        ><i class="fa fa-globe"></i></a
+    ></span>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-apitype" class="tooltip"
+      ><i class="fa fa-dot-circle-o"></i> <span data-i18n="ccxt.label.apitype"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.apitype"></strong>
+        <p data-i18n="ccxt.labeltooltip.apitype"></p>
+        <i></i>
+      </div>
+    </label>
+    <select type="text" id="node-input-apitype" style="width: auto;">
+      <option value="unifiedAPI">Unified API</option>
+      <option value="customAPI">Exchange API</option>
+    </select>
+  </div>
+
+  <div class="form-row">
+    <label for="node-input-api" class="tooltip"
+      ><i class="fa fa-code"></i> <span data-i18n="ccxt.label.apiname"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.apiname"></strong>
+        <p data-i18n="ccxt.labeltooltip.apiname"></p>
+        <i></i>
+      </div>
+    </label>
+    <select type="text" id="node-input-api" style="width: auto;"> </select>
+    <span
+      ><a href="#" target="_blank" id="id-anchor-display-exchange-apidoc"
+        ><i class="fa fa-info-circle tooltip">
+          <div class="right">
+            <p data-i18n="ccxt.labeltooltip.apiinfo">
+            </p>
+            <i></i>
+          </div> </i></a
+    ></span>
+    <input type="hidden" id="node-input-customapitype" />
+  </div>
+
+  <div class="form-row node-input-private-api hidden">
+    <label for="node-input-apisecrets" class="tooltip"
+      ><i class="fa fa-user-secret"></i> <span data-i18n="ccxt.label.secrets"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.secrets"></strong>
+        <p data-i18n="ccxt.labeltooltip.secrets"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-apisecrets"
+      data-i18n="[placeholder]ccxt.parameters.secrets"
+      style="width: 70%"
+    />
+  </div>
+
+  <div class="form-row node-input-unified-api-load-markets hidden">
+    <label for="node-input-loadmarketsreload" class="tooltip"
+      ><i class="fa fa-refresh"></i> <span data-i18n="ccxt.label.reload"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.reload"></strong>
+        <p data-i18n="ccxt.labeltooltip.reload"></p>
+        <i></i>
+      </div>
+    </label>
+    <input type="checkbox" id="node-input-loadmarketsreload" />
+  </div>
+
+  <div class="form-row node-input-unified-api-symbol hidden">
+    <label for="node-input-symbol" class="tooltip"
+      ><i class="fa fa-exchange"></i> <span data-i18n="ccxt.label.symbol"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.symbol"></strong>
+        <p data-i18n="ccxt.labeltooltip.symbol"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-symbol"
+      data-i18n="[placeholder]ccxt.parameters.symbol"
+      style="width: 50%;"
+    />
+    <input type="hidden" id="node-input-symbolType" />
+    <select
+      type="text"
+      id="id-input-select-symbol"
+      data-i18n="[placeholder]ccxt.parameters.symbolselect"
+      style="display:none;"
+    >
+      <option></option>
+    </select>
+  </div>
+
+  <div class="form-row node-input-unified-api-since hidden">
+    <label for="node-input-since" class="tooltip"
+      ><i class="fa fa-table"></i> <span data-i18n="ccxt.label.since"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.since"></strong>
+        <p data-i18n="ccxt.labeltooltip.since"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-since"
+      data-i18n="[placeholder]ccxt.parameters.since"
+      style="width:50%"
+    />
+    <input type="date" id="id-input-since" style="display:none;width:100%" />
+    <input type="hidden" id="node-input-sinceType" />
+  </div>
+
+  <div class="form-row node-input-unified-api-timeframe hidden">
+    <label for="node-input-timeframe" class="tooltip"
+      ><i class="fa fa-clock-o"></i> <span data-i18n="ccxt.label.timeframe"></span>
+
+      <div class="right">
+        <strong data-i18n="ccxt.label.timeframe"></strong>
+        <p data-i18n="ccxt.labeltooltip.timeframe"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-timeframe"
+      data-i18n="[placeholder]ccxt.parameters.timeframe"
+      style="width: 48%;"
+    />
+    <input type="hidden" id="node-input-timeframeType" />
+    <img
+      src="emulated.svg"
+      alt="API is emulated"
+      id="id-emulated-api"
+      style="width:16px;"
+    />
+  </div>
+
+  <div class="form-row node-input-unified-api-limit hidden">
+    <label for="node-input-limit" class="tooltip"
+      ><i class="fa fa-filter"></i> <span data-i18n="ccxt.label.limit"></span>
+
+      <div class="right">
+        <strong data-i18n="ccxt.label.limit"></strong>
+        <p data-i18n="ccxt.labeltooltip.limit"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-limit"
+      data-i18n="[placeholder]ccxt.parameters.limit"
+      style="width: 30%;"
+    />
+    <input type="hidden" id="node-input-limitType" />
+  </div>
+
+  <div class="form-row node-input-unified-api-ordertype hidden">
+    <label for="node-input-ordertype" class="tooltip"
+      ><i class="fa fa-handshake-o"></i> <span data-i18n="ccxt.label.ordertype"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.ordertype"></strong>
+        <p data-i18n="ccxt.labeltooltip.ordertype"></p>
+        <i></i>
+      </div>
+    </label>
+    <select type="text" id="node-input-ordertype" style="width: auto;">
+      <option value="limit">Limit</option>
+      <option value="market">Market</option>
+    </select>
+  </div>
+
+  <div class="form-row node-input-unified-api-orderside hidden">
+    <label for="node-input-orderside" class="tooltip"
+      ><i class="fa fa-balance-scale"></i>
+      <span data-i18n="ccxt.label.orderside"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.orderside"></strong>
+        <p data-i18n="ccxt.labeltooltip.orderside"></p>
+        <i></i>
+      </div>
+    </label>
+    <select type="text" id="node-input-orderside" style="width: auto;">
+      <option value="buy">Buy</option>
+      <option value="sell">Sell</option>
+    </select>
+  </div>
+
+  <div class="form-row node-input-unified-api-amount hidden">
+    <label for="node-input-amount" class="tooltip"
+      ><i class="fa fa-calculator"></i> <span data-i18n="ccxt.label.orderamount"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.orderamount"></strong>
+        <p data-i18n="ccxt.labeltooltip.orderamount"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="number"
+      id="node-input-amount"
+      data-i18n="[placeholder]ccxt.parameters.orderamount"
+    />
+  </div>
+
+  <div class="form-row node-input-unified-api-orderprice hidden">
+    <label for="node-input-orderprice" class="tooltip"
+      ><i class="fa fa-dollar"></i> <span data-i18n="ccxt.label.price"></span>
+
+      <div class="right">
+        <strong data-i18n="ccxt.label.price"></strong>
+        <p data-i18n="ccxt.labeltooltip.price"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="number"
+      id="node-input-orderprice"
+      data-i18n="[placeholder]ccxt.parameters.price"
+    />
+  </div>
+
+  <div class="form-row node-input-unified-api-orderid hidden">
+    <label for="node-input-orderid" class="tooltip"
+      ><i class="fa fa-id-badge"></i> <span data-i18n="ccxt.label.txid"></span>
+
+      <div class="right">
+        <strong data-i18n="ccxt.label.txid"></strong>
+        <p data-i18n="ccxt.labeltooltip.txid"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-orderid"
+      data-i18n="[placeholder]ccxt.parameters.txid"
+      style="width: 50%"
+    />
+  </div>
+
+  <div class="form-row node-input-unified-api-code hidden">
+    <label for="node-input-code" class="tooltip"
+      ><i class="fa fa-dollar"></i> <span data-i18n="ccxt.label.currency"></span>
+
+      <div class="right">
+        <strong data-i18n="ccxt.label.currency"></strong>
+        <p data-i18n="ccxt.labeltooltip.currency"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-code"
+      data-i18n="[placeholder]ccxt.parameters.currency"
+      style="width: 50%"
+    />
+  </div>
+  <div class="form-row node-input-unified-api-address hidden">
+    <label for="node-input-address" class="tooltip"
+      ><i class="fa fa-address-book"></i> <span data-i18n="ccxt.label.address"></span>
+      <div class="right">
+        <strong data-i18n="ccxt.label.address"></strong>
+        <p data-i18n="ccxt.labeltooltip.address"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-address"
+      data-i18n="[placeholder]ccxt.parameters.address"
+      style="width: 70%"
+    />
+  </div>
+  <div class="form-row node-input-unified-api-tag hidden">
+    <label for="node-input-tag" class="tooltip"
+      ><i class="fa fa-comment"></i> <span data-i18n="ccxt.label.tag"></span>
+
+      <div class="right">
+        <strong data-i18n="ccxt.label.tag"></strong>
+        <p data-i18n="ccxt.labeltooltip.tag"></p>
+        <i></i>
+      </div>
+    </label>
+    <input
+      type="text"
+      id="node-input-tag"
+      data-i18n="[placeholder]ccxt.parameters.tag"
+      style="width: 70%"
+    />
+  </div>
+
+  <div class="form-row node-input-api-custom hidden">
+    <label for="node-input-apipayload" class="tooltip"
+      ><i class="fa fa-envelope"></i> <span data-i18n="ccxt.label.payload"></span>
+
+      <div class="right">
+        <strong data-i18n="ccxt.label.payload"></strong>
+        <p data-i18n="ccxt.labeltooltip.payload"></p>
+        <i></i>
+      </div>
+    </label>
+    <input type="json" id="node-input-apipayload" style="width:70%;" />
+    <input type="hidden" id="node-input-apipayloadType" />
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"
+      ><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span
+    ></label>
+    <input
+      type="text"
+      id="node-input-name"
+      data-i18n="[placeholder]node-red:common.label.name"
+    />
+  </div>
+</script>
+
 <script type="text/javascript">
   RED.nodes.registerType("ccxt-api-v2", {
     category: "Crypto API",
@@ -37,7 +401,6 @@
       apipayload: {
         value: "",
         required: false
-       
       },
       apipayloadType: { value: "none" }
     },
@@ -160,7 +523,6 @@
         //show spinner
         $("#id-loading-svg").show();
         $.getJSON("fetchOHLCVTimeframes", { exchange: ex }, function(result) {
-         
           if (callback && typeof callback == "function") {
             //note: we could get an empty list if the api is emulated and not directly supported
             //by the api
@@ -186,6 +548,10 @@
           }
           //hide spinner
           $("#id-loading-svg").hide();
+        }).error(function(error) {
+          //hide spinner
+          $("#id-loading-svg").hide();
+          console.log(error);
         });
       }
       let showhideInputFields = function() {
@@ -240,7 +606,6 @@
         // for customAPI show the API Payload parameter only
         if (apitype === "customAPI") {
           $(".node-input-api-custom").show();
-
         }
 
         // Get the params for the unified API if an API is selected
@@ -250,14 +615,12 @@
               result.apiparams.map(function(x) {
                 //special handling for some params
                 if (x === "symbol") {
-                  
                   $("#node-input-symbol").trigger(
                     "change",
                     $("#node-input-symbolType").val()
                   );
                 }
                 if (x === "timeframe") {
-                  
                   $("#node-input-timeframe").trigger("change", "timeframes");
                 }
 
@@ -302,7 +665,7 @@
               text: ""
             })
           );
-          
+
           $.each(result.exchange, function(key, value) {
             exchangeElement.append(
               $("<option />")
@@ -313,7 +676,7 @@
                 .attr("apidoc", value[3])
             );
           });
-          
+
           //setting the saved node value
           exchangeElement.val(node.exchange);
           var exchange = $("#node-input-exchange").val();
@@ -330,7 +693,6 @@
       // retrieve all supported unified APIs by the exchange
 
       getunifiedAPIs = function(exchange) {
-        
         var apiElement = $("#node-input-api");
         apiElement.empty();
         apiElement.append(
@@ -350,8 +712,6 @@
                 isprivate: element[1]
               })
             );
-
-            
           });
           // sort on text
           apiElement.html(
@@ -374,7 +734,6 @@
       };
       // retrieve all supported custom APIs by the exchange
       getcustomAPIs = function(exchange) {
-        
         var apiElement = $("#node-input-api");
         var api = $("#node-input-api option:selected").val();
         apiElement.empty();
@@ -421,9 +780,8 @@
 
       // Exchange change event
       $("#node-input-exchange").change(function() {
-        
         var exchange = $("#node-input-exchange option:selected").val();
-        
+
         var apitype = $("#node-input-apitype").val();
         var apiElement = $("#node-input-api");
         apiElement.empty();
@@ -508,7 +866,7 @@
         //&show hide the right elements
 
         //value is true if at first load and no change
-        
+
         if (value === "symbolList") {
           var exchange = $("#node-input-exchange option:selected").val() || node.exchange;
           var inputSelectSymbolElem = $("#id-input-select-symbol");
@@ -523,7 +881,6 @@
           );
 
           getSymbols(exchange, function(symbols) {
-
             symbols.forEach(function(element) {
               inputSelectSymbolElem.append(
                 $("<option>", {
@@ -537,8 +894,6 @@
             if ($("#node-input-symbol").val())
               inputSelectSymbolElem.val($("#node-input-symbol").val());
             else inputSelectSymbolElem.val(node.symbol);
-
-            
           });
           //   let select2InputSymbol = $("#id-input-select-symbol");
 
@@ -559,7 +914,6 @@
           select2Container
             .find(".select2-selection")
             .attr("style", "border: none;height: 32px");
-
 
           //find the button and hide it
           typedInputContainerElement.find(".red-ui-typedInput-option-trigger").hide();
@@ -622,7 +976,6 @@
       });
       // select2 input field replacing the ootb TypedInput select
       $("#id-input-select-symbol").change(function() {
-        
         if (
           $("#node-input-symbolType").val() === "symbolList" &&
           $("#node-input-symbol").val() !== $("#id-input-select-symbol").val()
@@ -632,7 +985,6 @@
 
       // timeframe change event
       $("#node-input-timeframe").on("change", function(type, value) {
-
         if (value === true && $("#node-input-timeframe").val() !== node.timeframe) {
           $("#node-input-timeframe").typedInput("value", node.timeframe);
         }
@@ -641,7 +993,6 @@
           var exchange = $("#node-input-exchange option:selected").val();
           if (exchange) {
             getTimeframes(exchange, function(timeframes) {
-              
               if (timeframes.length === 0) {
                 // if timeframes are not returned from the exchange
                 // this means that the OHLV is an emulated api
@@ -680,10 +1031,10 @@
       $("#node-input-limit").on("change", function() {
         //setting defaults here..
         if (
-            $("#node-input-limit").typedInput("type") === "msg" &&
-            $("#node-input-limit").typedInput("value") === ""
+          $("#node-input-limit").typedInput("type") === "msg" &&
+          $("#node-input-limit").typedInput("value") === ""
         ) {
-            $("#node-input-limit").typedInput("value", "payload");
+          $("#node-input-limit").typedInput("value", "payload");
         }
       });
 
@@ -696,7 +1047,7 @@
     },
     oneditsave: function() {
       var node = this;
-      
+
       node.exchange = $("#node-input-exchange option:selected").val();
       node.api = $("#node-input-api option:selected").val();
       node.apiprivate = $("#node-input-api option:selected").attr("isprivate");
@@ -721,386 +1072,9 @@
     }
   });
 </script>
-<script type="text/x-red" data-template-name="ccxt-api-v2">
-    <div class="form-row">
-      <span
-        ><a href="#" target="_blank" id="id-img-display-exchange-homepage"
-          ><img
-            src="#"
-            alt=""
-            id="id-anchor-display-exchange-img"
-            style="max-width:68%;"/></a
-      ></span>
-      <span
-        ><img
-          src="spinning-circles.svg"
-          alt="retrieving data..."
-          id="id-loading-svg"
-          style="display:none;width:24px;"
-      /></span>
-    </div>
-    <div class="form-row">
-      <label for="node-input-exchange" class="tooltip"
-        ><i class="fa fa-shopping-cart"></i> <span data-i18n="CCXT.label.exchange"></span>
-        <div class="right">
-          <strong>Crypto Exchange</strong>
-          <p>
-            Select one of the supported exchanges by the included CCXT version "1.18.630".
-          </p>
-          <i></i>
-        </div>
-      </label>
 
-      <select type="text" id="node-input-exchange"> </select>
-      <span
-        ><a href="#" target="_blank" id="id-anchor-display-exchange-homepage"
-          ><i class="fa fa-globe"></i></a
-      ></span>
-    </div>
-
-    <div class="form-row">
-      <label for="node-input-apitype" class="tooltip"
-        ><i class="fa fa-dot-circle-o"></i> <span data-i18n="CCXT.label.apitype"></span>
-        <div class="right">
-          <strong>API Type</strong>
-          <p>
-            Unified API is a subset of methods common among the exchanges as provided by
-            CCXT. Exchange API is a custom API specific to the exchange. All unified and
-            custom APIs are supported.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <select type="text" id="node-input-apitype" style="width: auto;">
-        <option value="unifiedAPI">Unified API</option>
-        <option value="customAPI">Exchange API</option>
-      </select>
-    </div>
-
-    <div class="form-row">
-      <label for="node-input-api" class="tooltip"
-        ><i class="fa fa-code"></i> API Name
-        <div class="right">
-          <strong>API Name</strong>
-          <p>
-            Select an API Name from the list. Only the supported APIs by the exchange are
-            listed. Some of the Unified APIs are
-            <a
-              href="https://ccxt.readthedocs.io/en/latest/manual.html#exchange-structure"
-              target="_blank"
-              >emulated</a
-            >
-            for the exchange. The required and optional parameters presented are based on
-            the selected API. If the selected API is private, Secrets field will appear to
-            configure the API Key and credentials. Clicking the information icon will take
-            you to the docs.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <select type="text" id="node-input-api" style="width: auto;"> </select>
-      <span
-        ><a href="#" target="_blank" id="id-anchor-display-exchange-apidoc"
-          ><i class="fa fa-info-circle tooltip">
-            <div class="right">
-              <p>
-                Click to read the docs of the selected API.
-                <strong>Note:</strong> changing the API will delete any unmatched keys in
-                your payload!
-              </p>
-              <i></i>
-            </div> </i></a
-      ></span>
-      <input type="hidden" id="node-input-customapitype" />
-    </div>
-
-    <div class="form-row node-input-private-api hidden">
-      <label for="node-input-apisecrets" class="tooltip"
-        ><i class="fa fa-user-secret"></i> Secrets
-        <div class="right">
-          <strong>Secrets</strong>
-          <p>
-            Select a pre-configured secrets or click the button to configure a new API Key
-            and Secret using the Configuration node. The API Key and Secret are encrypted
-            by Node-RED
-            <a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank"
-              >credentials</a
-            >
-            feature and stored locally on the runtime machine.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-apisecrets" style="width: 70%" data-i18n="[placeholder]CCXT.parameters.apisecrets"/>
-    </div>
-
-    <div class="form-row node-input-unified-api-load-markets hidden">
-      <label for="node-input-loadmarketsreload" class="tooltip"
-        ><i class="fa fa-refresh"></i> Reload
-        <div class="right">
-          <strong>Reload</strong>
-          <p>
-            Tick the box to force a reload of all exchange markets rather than using the
-            cached list.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="checkbox" id="node-input-loadmarketsreload" />
-    </div>
-
-    <div class="form-row node-input-unified-api-symbol hidden">
-      <label for="node-input-symbol" class="tooltip"
-        ><i class="fa fa-exchange"></i> Symbol
-        <div class="right">
-          <strong>Symbol</strong>
-          <p>
-            Select a market pair from the list. The list of symbols are loaded from the
-            exchange. You can also enter a symbol manually by choosing the String type or
-            via a property of flow, msg. If no symbols are available in the dropdown list,
-            try entering the symbol manually or via a property.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-symbol" style="width: 50%;" />
-      <input type="hidden" id="node-input-symbolType" />
-      <select type="text" id="id-input-select-symbol" style="display:none;">
-        <option></option>
-      </select>
-    </div>
-
-    <div class="form-row node-input-unified-api-since hidden">
-      <label for="node-input-since" class="tooltip"
-        ><i class="fa fa-table"></i> Since
-        <div class="right">
-          <strong>Since</strong>
-          <p>
-            This parameter is used for date-based paginatin and is required in most cases.
-            The user supplies a since timestamp in milliseconds and a number to limit
-            results. Enter a date in the format yyyy-mm-dd or use a property which
-            provides a date in this format. The date will be converted to milliseconds
-            prior to invoking the API.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-since" style="width:50%" />
-      <input type="date" id="id-input-since" style="display:none;width:100%" />
-      <input type="hidden" id="node-input-sinceType" />
-    </div>
-
-    <div class="form-row node-input-unified-api-timeframe hidden">
-      <label for="node-input-timeframe" class="tooltip"
-        ><i class="fa fa-clock-o"></i> Time Frame
-
-        <div class="right">
-          <strong>Timeframe</strong>
-          <p>
-            This parameter is used by the API fetching OHLCV data for a particular symbol
-            based on a Candle size. The list of available timeframes for the exchange are
-            listed in the drop-down list. If a list was not successfully retrieved from
-            the exchange, it means that the API is emulated (indicated by the aeroplane
-            icon) and in this case a default list is available in the dropdown list.
-            Select a timeframe from the list or enter a timeframe manually or indicate a
-            context flow or msg property containing the required value.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-timeframe" style="width: 48%;" />
-      <input type="hidden" id="node-input-timeframeType" />
-      <img
-        src="emulated.svg"
-        alt="API is emulated"
-        id="id-emulated-api"
-        style="width:16px;"
-      />
-    </div>
-
-    <div class="form-row node-input-unified-api-limit hidden">
-      <label for="node-input-limit" class="tooltip"
-        ><i class="fa fa-filter"></i> Limit
-
-        <div class="right">
-          <strong>Limit</strong>
-          <p>
-            This parameter is used to limit the number of results returned. This is mostly
-            an optional parameter unless otherwise indicated. Enter a number to limit the
-            results or indicate a context flow or msg property containing the required
-            value.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-limit" style="width: 30%;" />
-      <input type="hidden" id="node-input-limitType" />
-    </div>
-
-    <div class="form-row node-input-unified-api-ordertype hidden">
-      <label for="node-input-ordertype" class="tooltip"
-        ><i class="fa fa-handshake-o"></i> Type
-        <div class="right">
-          <strong>Order Type</strong>
-          <p>
-            Select either a Market or a Limit order type. There is no confirmations for
-            orders. Always use Limit unless you know what you are doing!
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <select type="text" id="node-input-ordertype" style="width: auto;">
-        <option value="limit">Limit</option>
-        <option value="market">Market</option>
-      </select>
-    </div>
-
-    <div class="form-row node-input-unified-api-orderside hidden">
-      <label for="node-input-orderside" class="tooltip"
-        ><i class="fa fa-balance-scale"></i> Side
-        <div class="right">
-          <strong>Side</strong>
-          <p>Select either a Buy or a Sell order.</p>
-          <i></i>
-        </div>
-      </label>
-      <select type="text" id="node-input-orderside" style="width: auto;">
-        <option value="buy">Buy</option>
-        <option value="sell">Sell</option>
-      </select>
-    </div>
-
-    <div class="form-row node-input-unified-api-amount hidden">
-      <label for="node-input-amount" class="tooltip"
-        ><i class="fa fa-calculator"></i> Amount
-        <div class="right">
-          <strong>Order Amount</strong>
-          <p>
-            Enter the asset quantity to sell or buy. More than 10 decimal places will be
-            removed and rounded to 1 . You can also define the amount from a context flow
-            or msg property. There is no confirmation provided for this (use at your own
-            risk!!).
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="number" id="node-input-amount" />
-    </div>
-
-    <div class="form-row node-input-unified-api-orderprice hidden">
-      <label for="node-input-orderprice" class="tooltip"
-        ><i class="fa fa-dollar"></i> Price
-
-        <div class="right">
-          <strong>Price</strong>
-          <p>
-            Enter the price in quote currency. This is a number field and will not show a
-            currency symbol in the field. Check the label to confirm the details before
-            running the flow. If the Symbol is BTC/USDT, the price is in USDT. You can
-            also define the price from a context flow or msg property. There is no
-            confirmation provided for this (use at your own risk!!).
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="number" id="node-input-orderprice" />
-    </div>
-
-    <div class="form-row node-input-unified-api-orderid hidden">
-      <label for="node-input-orderid" class="tooltip"
-        ><i class="fa fa-id-badge"></i> ID
-
-        <div class="right">
-          <strong>Record ID</strong>
-          <p>Enter the Transaction or Order ID.</p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-orderid" style="width: 50%" />
-    </div>
-
-    <div class="form-row node-input-unified-api-code hidden">
-      <label for="node-input-code" class="tooltip"
-        ><i class="fa fa-qrcode"></i> Currency
-
-        <div class="right">
-          <strong>Currency</strong>
-          <p>
-            Enter or select the currency to deposit/withdraw or act on as required for the
-            selected API. The list of currencies supported by the exchange are listed in
-            the drop-down list.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-code" style="width: 50%" />
-    </div>
-    <div class="form-row node-input-unified-api-address hidden">
-      <label for="node-input-address" class="tooltip"
-        ><i class="fa fa-address-book"></i> Address
-        <div class="right">
-          <strong>Address</strong>
-          <p>
-            Enter or select the deposit or withdrawal address as required for the selected
-            API.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-address" style="width: 70%" />
-    </div>
-    <div class="form-row node-input-unified-api-tag hidden">
-      <label for="node-input-tag" class="tooltip"
-        ><i class="fa fa-comment"></i> Tag
-
-        <div class="right">
-          <strong>Tag</strong>
-          <p>
-            Enter a description for the deposit or withdrawal as tag. This is an optional
-            parameter. You can also define the value from a context flow or msg property.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="text" id="node-input-tag" style="width: 70%" />
-    </div>
-
-    <div class="form-row node-input-api-custom hidden">
-      <label for="node-input-apipayload" class="tooltip"
-        ><i class="fa fa-envelope"></i> Payload
-
-        <div class="right">
-          <strong>Payload</strong>
-          <p>
-            The value entered in this parameter makes the "params" argument for the
-            selected API. A custom API usually requires a payload and the field will
-            automatically be filled with any query parameters required by the call.
-            Unified APIs usually do not require a payload, however, consult the docs if in
-            doubt. The accepted value is in JSON format and can be provided from a context
-            msg property. Select None if you do not wish to send any additional parameters
-            in the payload.
-          </p>
-          <i></i>
-        </div>
-      </label>
-      <input type="json" id="node-input-apipayload" style="width:70%;" />
-      <input type="hidden" id="node-input-apipayloadType" />
-    </div>
-    <div class="form-row">
-      <label for="node-input-name"
-        ><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span
-      ></label>
-      <input
-        type="text"
-        id="node-input-name"
-        data-i18n="[placeholder]node-red:common.label.name"
-      />
-    </div>
-      
-</script>
 <style>
-
-    /* this style for select2-containers */
+  /* this style for select2-containers */
   .select2-container--default .select2-selection--single .select2-selection__rendered {
     line-height: 32px;
   }
@@ -1169,231 +1143,29 @@
     box-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
   }
 </style>
-<script type="text/x-red" data-help-name="ccxt-api-v2">
-    <h3>Inputs</h3>
 
-    <dl class="message-properties">
-      <dt>Exchange<span class="property-type">string</span></dt>
-      <p>
-        Select one of the supported exchanges by the included CCXT version "1.18.630".
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>API Type<span class="property-type">string</span></dt>
-
-      <dd>
-        Type list:
-        <ul>
-          <li>Unfiied API</li>
-          <li>Exchange API</li>
-        </ul>
-      </dd>
-      <p>
-        Unified API is a subset of methods common among the exchanges as provided by CCXT.
-        Exchange API is a custom API specific to the exchange. All unified and custom APIs
-        are supported.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>API Name<span class="property-type">string</span></dt>
-      <p>
-        Select an API Name from the list. Only the supported APIs by the exchange are
-        listed in the drop-down list. Note that some of the Unified APIs are
-        <a
-          href="https://ccxt.readthedocs.io/en/latest/manual.html#exchange-structure"
-          target="_blank"
-          >emulated</a
-        >
-        for the exchange. The required and optional parameters presented are based on the
-        selected API. If the selected API is private, Secrets field will appear to
-        configure the API Key and credentials. Clicking the information icon will take you
-        to the docs.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Secrets<span class="property-type">string</span></dt>
-      <p>
-        Select a pre-configured secrets or click the button to configure a new API Key and
-        Secret using the Configuration node. The API Key and Secret are encrypted by
-        Node-RED
-        <a href="https://nodered.org/docs/creating-nodes/credentials" target="_blank"
-          >credentials</a
-        >
-        feature and stored locally on the runtime machine.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Payload<span class="property-type">string</span></dt>
-
-      <strong
-        ><p>
-          If the selected type is Exchange API, Payload parameter will be displayed.
-        </p></strong
-      >
-      <p>
-        The value entered in this parameter makes the "params" argument for the selected
-        API. A custom API usually requires a payload and the field will automatically be
-        filled with any query parameters required by the call. Unified APIs usually do not
-        require a payload, however, consult the docs if in doubt. The accepted value is in
-        JSON format and can be provided from a context msg property. Select None if you do
-        not wish to send any additional parameters in the payload.
-      </p>
-    </dl>
-
-    <strong
-      ><p>
-        If the selected API Type is Unified API and depending on the selected API, one or
-        more of the following parameters will be displayed:
-      </p></strong
-    >
-    <dl class="message-properties">
-      <dt>Symbol<span class="property-type">string</span></dt>
-      <p>
-        Select a market pair from the list. The list of symbols are loaded from the
-        exchange. You can also enter a symbol manually by choosing the String type or via
-        a property of flow, msg. If no symbols are available in the dropdown list, try
-        entering the symbol manually or via a property.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Since<span class="property-type">string</span></dt>
-      <p>
-        This parameter is used for date-based paginatin and is required in most cases. The
-        user supplies a since timestamp in milliseconds and a number to limit results.
-        Enter a date in the format yyyy-mm-dd or use a property which provides a date in
-        this format. The date will be converted to milliseconds prior to invoking the API.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Timeframe<span class="property-type">string</span></dt>
-      <p>
-        This parameter is used by the API fetching OHLCV data for a particular symbol
-        based on a Candle size. The list of available timeframes are loaded from the
-        exchange and listed in the drop-down list. If a list was not successfully
-        retrieved from the exchange, it means that the API is emulated (indicated by the
-        aeroplane icon) and in this case a default list is available in the dropdown list.
-        Select a timeframe from the list or enter a timeframe manually or indicate a
-        context flow or msg property containing the required value.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Limit<span class="property-type">string</span></dt>
-      <p>
-        This parameter is used to limit the number of results returned. This is mostly an
-        optional parameter unless otherwise indicated. Enter a number to limit the results
-        or indicate a context flow or msg property containing the required value.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Order Type<span class="property-type">string</span></dt>
-      <dd>
-        Type list:
-        <ul>
-          <li>Limit</li>
-          <li>Market</li>
-        </ul>
-      </dd>
-      <p>
-        Select either a Market or a Limit order type. There is no confirmations for
-        orders. Always use Limit unless you know what you are doing!
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Side<span class="property-type">string</span></dt>
-      <dd>
-        Type list:
-        <ul>
-          <li>Buy</li>
-          <li>Sell</li>
-        </ul>
-      </dd>
-      <p>Select either a Buy or a Sell order.</p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Amount<span class="property-type">string</span></dt>
-      <p>
-        Enter the asset quantity to sell or buy. More than 10 decimal places will be
-        removed and rounded to 1 . You can also define the amount from a context flow or
-        msg property. There is no confirmation provided for this (use at your own risk!!).
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Price<span class="property-type">string</span></dt>
-      <p>
-        Enter the price in quote currency. This is a number field and will not show a
-        currency symbol in the field. Check the label to confirm the details before
-        running the flow. If the Symbol is BTC/USDT, the price is in USDT. You can also
-        define the price from a context flow or msg property. There is no confirmation
-        provided for this (use at your own risk!!).
-      </p>
-    </dl>
-    <dl class="message-properties">
-      <dt>Record Id<span class="property-type">string</span></dt>
-      <p>Enter the Transaction or Order ID.</p>
-    </dl>
-    <dl class="message-properties">
-      <dt>Currency<span class="property-type">string</span></dt>
-      <p>
-        Enter or select the currency to deposit/withdraw or act on as required for the
-        selected API. The list of currencies supported by the exchange are listed in the
-        drop-down list.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Address<span class="property-type">string</span></dt>
-      <p>
-        Enter or select the deposit or withdrawal address as required for the selected
-        API.
-      </p>
-    </dl>
-
-    <dl class="message-properties">
-      <dt>Tag<span class="property-type">string</span></dt>
-      <p>
-        Enter a description for the deposit or withdrawal as tag. This is an optional
-        parameter. You can also define the value from a context flow or msg property.
-      </p>
-    </dl>
-
-    <h3>Outputs</h3>
-    <dl class="message-properties">
-      <dt>payload<span class="property-type">object</span></dt>
-      <dd>
-        The payload result object.
-        <p>Object Format:</p>
-        <ul>
-          <li>error: error array</li>
-          <li>result: object result</li>
-        </ul>
-      </dd>
-    </dl>
-
-    <h3>Error</h3>
-    <dl class="message-properties">
-      <dt>error<span class="property-type">string</span></dt>
-      <dd>The error string.</dd>
-    </dl>
-    <h3>Details</h3>
-    <p>
-      The ccxt RED node is a proxy node for all available crypto exchanges and APIs as
-      provided by the CCXT library
-    </p>
+<script type="text/x-red" data-template-name="ccxt-exchange-v2">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="ccxt-exchange.label.name"></span></label>
+    <input type="text" id="node-config-input-name" data-i18n="[placeholder]ccxt-exchange.parameters.name" />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-apikey"><i class="fa"></i> <span data-i18n="ccxt-exchange.label.apikey"></span></label>
+    <input
+      type="text"
+      id="node-config-input-apikey"
+      data-i18n="[placeholder]ccxt-exchange.parameters.apikey"
+    />
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-secret"><i class="fa"></i> <span data-i18n="ccxt-exchange.label.apisecret"></span></label>
+    <input
+      type="text"
+      id="node-config-input-secret"
+      data-i18n="[placeholder]ccxt-exchange.parameters.apisecret"
+    />
+  </div>
 </script>
-
-
-
 
 <script type="text/javascript">
   RED.nodes.registerType("ccxt-exchange-v2", {
@@ -1411,29 +1183,4 @@
       }
     }
   });
-</script>
-<script type="text/x-red" data-template-name="ccxt-exchange-v2">
-    <div class="form-row">
-      <label for="node-config-input-name"><i class="fa fa-tag"></i>Name</label>
-      <input type="text" id="node-config-input-name" placeholder="Enter Exchange Name" />
-    </div>
-    <div class="form-row">
-      <label for="node-config-input-apikey"><i class="fa"></i>ApiKey</label>
-      <input
-        type="text"
-        id="node-config-input-apikey"
-        placeholder="Enter Exchange ApiKey"
-      />
-    </div>
-    <div class="form-row">
-      <label for="node-config-input-secret"><i class="fa"></i>Secret</label>
-      <input
-        type="text"
-        id="node-config-input-secret"
-        placeholder="Enter Exchange Secret"
-      />
-    </div>
-</script>
-<script type="text/x-red" data-help-name="ccxt-exchange-v2">
-  <p>Configuration for a connection to an CCXT exchange.</p>
 </script>
