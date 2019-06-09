@@ -47,8 +47,17 @@ npm install node-red-contrib-ccxt-v2 --save
 In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the secrets.
 
 **To Do**
-- Include locale and multiple languages support. At the moment it is only english.
-- Testing of all new features
 - Testing of dynamic configuration based on msg or flow
 - Testing of trade APIs
+- update ReadMe and docs
+- include one additional language
+- package select2 and test whole package
+- better error handling for jquery get calls.
+- review all error handling
+- adding Currencies typedInput list
+- support using msg & flow properties for amount & price
+- supporting dynamic Exchange name
+- support an option to retrieve all exchanges as an list.
+- dynamic show of CCXT version used
 - Additional feature requests
+- Submit to node-red-contrib repo
