@@ -347,9 +347,10 @@
         <i></i>
       </div>
     </label>
-    <input type="json" id="node-input-apipayload" style="width:70%;" />
+    <input type="text" id="node-input-apipayload" style="width: 68%;"/>
     <input type="hidden" id="node-input-apipayloadType" />
   </div>
+  <hr>
   <div class="form-row">
     <label for="node-input-name"
       ><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span
@@ -434,11 +435,12 @@
       // TODO: need to find a way to automatically package select2 and  reference it with installed nodered
       $("#node-input-exchange").select2();
 
-      $("#node-input-apipayload").typedInput({
-        typeField: $("#node-input-apipayloadType"),
-        types: [{ value: "none", label: "None", hasValue: false }, "json", "msg"]
-      });
-      //  .typedInput("width", "70%");
+      $("#node-input-apipayload")
+        .typedInput({
+          typeField: $("#node-input-apipayloadType"),
+          types: [{ value: "none", label: "None", hasValue: false }, "json", "msg"]
+        })
+        .typedInput("width", "68%");
       $("#node-input-symbol").typedInput({
         typeField: $("#node-input-symbolType"),
         types: [
@@ -563,10 +565,11 @@
         let apitype = $("#node-input-apitype option:selected").val();
         let api = $("#node-input-api option:selected").val();
 
-        if (!$("#id-input-apipayload").val())
+        /*         if (!$("#id-input-apipayload").val())
           apitype === "customAPI"
             ? $("#id-input-apipayloadType").val("json")
-            : $("#id-input-apipayloadType").val("none");
+            : $("#id-input-apipayloadType").val("none"); */
+
         if (exchange !== undefined && exchange !== "") {
           if (apitype === "customAPI") {
             $("#id-anchor-display-exchange-apidoc").attr(
@@ -816,10 +819,10 @@
       });
 
       // API change event
-      $("#node-input-api").change(function() {
+      $("#node-input-api").change(function(type, value) {
         if ($("#node-input-apitype").val() === "customAPI") {
           var api = $("#node-input-api").val();
-          if (api) {
+          if (api && $("#node-input-apipayload").typedInput("type") === "json") {
             // api = api.toLowerCase();
             var params = null;
             var currValue = $("#node-input-apipayload").typedInput("value")
@@ -828,9 +831,9 @@
             var newValue = {};
             //match {queryparameteranyWordorNumber}
             params = api.match(/{((?:[a-zA-Z0-9\_][a-zA-Z0-9\_]+))}/g);
-
+            //if we found queryparams in the api
             if (params !== null) {
-              $("#node-input-apipayload").typedInput("type", "json");
+              //$("#node-input-apipayload").typedInput("type", "json");
 
               //   if (currValue !== "") currValue = JSON.parse(currValue);
 
@@ -851,12 +854,16 @@
                   x = arr.shift();
                 }
               }
+              //TODO: fix
+              // add currvalue to newvalue so any keys which existed only on current value are retained - how would i know if the key is valid for the api or not though ?
+              // the key maybe valid for another api
               //  apipayload = "{\n" + apipayload + "\n}";
               //if ($("#node-input-apipayload").typedInput("value") === "") {
               $("#node-input-apipayload").typedInput("value", JSON.stringify(newValue));
-            } else $("#node-input-apipayload").typedInput("type", "none");
+            }
           }
         }
+
         showhideInputFields();
       });
 
@@ -1068,6 +1075,14 @@
         )
           $("#node-input-customapitype").val(
             $("#node-input-api option:selected").attr("customapitype")
+          );
+      // set Name if undefined
+      if (!$("#node-input-name").val())
+        if (node.exchange && node.api)
+          $("#node-input-name").val(
+            $("#node-input-exchange option:selected").text() +
+              " : " +
+              $("#node-input-api option:selected").text()
           );
     }
   });

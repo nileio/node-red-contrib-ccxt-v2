@@ -356,9 +356,9 @@ module.exports = function(RED) {
               if (node.apipayloadType === "none") value = undefined;
               if (node.apipayloadType === "json") value = JSON.parse(value);
               if (node.apipayloadType === "msg")
-                value = JSON.parse(RED.util.getMessageProperty(msg, node.apipayload));
+                value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
               if (node.apipayloadType === "flow")
-                value = JSON.parse(
+                value = JSON.stringify(
                   RED.util.evaluateNodeProperty(node.apipayload, value, node, msg)
                 );
             }
@@ -423,10 +423,12 @@ module.exports = function(RED) {
             else if (node.apipayloadType === "json")
               result = await exchange[xcall](JSON.parse(node.apipayload));
             //TODO : test msg
-            else if (node.apipayloadType === "msg")
-              result = await exchange[xcall](
-                JSON.parse(RED.util.getMessageProperty(msg, node.apipayload))
+            else if (node.apipayloadType === "msg") {
+              let value = JSON.stringify(
+                RED.util.getMessageProperty(msg, node.apipayload)
               );
+              result = await exchange[xcall](JSON.parse(value));
+            }
             //todo : handle msg and flow
             else result = await exchange[xcall]();
           } else {
@@ -450,7 +452,7 @@ module.exports = function(RED) {
           node.status({
             fill: "red",
             shape: "ring",
-            text: err.message
+            text: "server err:" + err.message
           });
 
           node.error(err.message, msg);
