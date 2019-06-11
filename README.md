@@ -47,6 +47,7 @@ npm install node-red-contrib-ccxt-v2 --save
 In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the secrets.
 
 **To Do**
+- have node.status for different stages
 - Testing of all dynamic configuration based on msg or flow
 - Testing of trade APIs
 - update ReadMe and docs
