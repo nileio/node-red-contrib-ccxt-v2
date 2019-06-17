@@ -369,6 +369,7 @@
     defaults: {
       name: { value: "" },
       exchange: { value: "", required: true },
+      // exchangeType: {value: "exchangeList", required: true},
       apitype: { value: "", required: true },
       customapitype: { value: "", required: false },
       api: { value: "", required: true },
@@ -415,6 +416,26 @@
     oneditprepare: function() {
       var node = this;
 
+      /*  $("#node-input-exchange").typedInput({
+        typeField: $("#node-input-exchangeType"),
+        types: [
+          {
+            value: "exchangeList",
+            label: "Exchange",
+            hasValue: true,
+            icon: "red/images/typedInput/bitcoin-28.png",
+            options: ["None"]
+          },
+          {
+            value: "all",
+            label: "All",
+            hasValue: false
+          },
+          "str",
+          "msg",
+          { value: "flow", label: "flow.", hasValue: true }
+        ]
+      }); */
       //             // enhancements can be
       //             // here you can set any defaults
       //             // also create the typedInput options
@@ -444,6 +465,7 @@
       $("#node-input-symbol").typedInput({
         typeField: $("#node-input-symbolType"),
         types: [
+          "str",
           {
             value: "symbolList",
             label: "Symbol",
@@ -451,7 +473,6 @@
             icon: "red/images/typedInput/bitcoin-28.png",
             options: ["None"]
           },
-          "str",
           "msg",
           { value: "flow", label: "flow.", hasValue: true }
         ]
@@ -640,10 +661,19 @@
                   // to workaround this I had to set the left attribute manually
                   // since 40px is the fixed width of the typedInput icon
                   // i am strill struggling with the issue that for msg & flow also the margin-left is not set propertly.
-                  $(".node-input-unified-api-" + x + " .red-ui-typedInput-input").attr(
-                    "style",
-                    "left:40px"
-                  );
+                  if (
+                    $("#node-input-" + x).typedInput("type") === "msg" ||
+                    $("#node-input-" + x).typedInput("type") === "flow"
+                  )
+                    $(".node-input-unified-api-" + x + " .red-ui-typedInput-input").attr(
+                      "style",
+                      "left:54px"
+                    );
+                  else
+                    $(".node-input-unified-api-" + x + " .red-ui-typedInput-input").attr(
+                      "style",
+                      "left:40px"
+                    );
                 }
               });
             });
@@ -1161,41 +1191,179 @@
 
 <script type="text/x-red" data-template-name="ccxt-exchange-v2">
   <div class="form-row">
-    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="ccxt-exchange.label.name"></span></label>
-    <input type="text" id="node-config-input-name" data-i18n="[placeholder]ccxt-exchange.parameters.name" />
-  </div>
-  <div class="form-row">
-    <label for="node-config-input-apikey"><i class="fa"></i> <span data-i18n="ccxt-exchange.label.apikey"></span></label>
-    <input
-      type="text"
-      id="node-config-input-apikey"
-      data-i18n="[placeholder]ccxt-exchange.parameters.apikey"
-    />
-  </div>
-  <div class="form-row">
-    <label for="node-config-input-secret"><i class="fa"></i> <span data-i18n="ccxt-exchange.label.apisecret"></span></label>
-    <input
-      type="text"
-      id="node-config-input-secret"
-      data-i18n="[placeholder]ccxt-exchange.parameters.apisecret"
-    />
-  </div>
+        <label for="node-config-input-exchange" class="tooltip"
+          ><i class="fa fa-shopping-cart"></i> <span data-i18n="ccxt.label.exchange"></span>
+          <div class="right">
+            <strong data-i18n="ccxt.label.exchange"></strong>
+            <p data-i18n="ccxt.labeltooltip.exchange"></p>
+            <i></i>
+          </div>
+        </label>
+
+        <select type="text" id="node-config-input-exchange"> </select>
+      </div>
+
+      <div class="form-row">
+        <label for="node-config-input-name"
+          ><i class="fa fa-tag"></i> <span data-i18n="ccxt-exchange.label.name"></span
+        ></label>
+        <input
+          type="text"
+          id="node-config-input-name"
+          data-i18n="[placeholder]ccxt-exchange.parameters.name"
+        />
+      </div>
+      <div class="form-row">
+        <label for="node-config-input-apikey"
+          ><i class="fa"></i> <span data-i18n="ccxt-exchange.label.apikey"></span
+        ></label>
+        <input
+          type="text"
+          id="node-config-input-apikey"
+          data-i18n="[placeholder]ccxt-exchange.parameters.apikey"
+        />
+      </div>
+      <div class="form-row">
+        <label for="node-config-input-secret"
+          ><i class="fa"></i> <span data-i18n="ccxt-exchange.label.apisecret"></span
+        ></label>
+        <input
+          type="text"
+          id="node-config-input-secret"
+          data-i18n="[placeholder]ccxt-exchange.parameters.apisecret"
+        />
+      </div>
+      <div class="form-row node-config-uid hidden">
+        <label for="node-config-input-uid"
+          ><i class="fa"></i> <span data-i18n="ccxt-exchange.label.uid"></span
+        ></label>
+        <input
+          type="text"
+          id="node-config-input-uid"
+          data-i18n="[placeholder]ccxt-exchange.parameters.uid"
+        />
+      </div>
+
+      <div class="form-row node-config-login hidden">
+        <label for="node-config-input-login"
+          ><i class="fa"></i> <span data-i18n="ccxt-exchange.label.login"></span
+        ></label>
+        <input
+          type="text"
+          id="node-config-input-login"
+          data-i18n="[placeholder]ccxt-exchange.parameters.login"
+        />
+      </div>
+      <div class="form-row node-config-password hidden">
+        <label for="node-config-input-password"
+          ><i class="fa"></i> <span data-i18n="ccxt-exchange.label.password"></span
+        ></label>
+        <input
+          type="password"
+          id="node-config-input-password"
+          data-i18n="[placeholder]ccxt-exchange.parameters.password"
+        />
+      </div>
 </script>
 
 <script type="text/javascript">
   RED.nodes.registerType("ccxt-exchange-v2", {
     category: "config",
     defaults: {
+      exchange: { value: "", required: false },
       name: { value: "" }
     },
     credentials: {
       apikey: { value: "" },
-      secret: { value: "" }
+      secret: { value: "" },
+      uid: { value: "" },
+      login: { value: "" },
+      password: { value: "" }
     },
     label: function() {
       if (this.name) {
         return this.name;
       }
+    },
+    oneditprepare: function() {
+      var config = this;
+
+      console.log("does it have password set is:", config.credentials.has_password);
+      $("#node-config-input-exchange").select2();
+      // retrieve Exchanges from server
+      let getExchanges = function() {
+        var exchangeElement = $("#node-config-input-exchange");
+        //show spinner
+        //$("#id-loading-svg").show();
+        $.getJSON("exchanges", function(result) {
+          exchangeElement.empty();
+          exchangeElement.append(
+            $("<option>", {
+              value: "",
+              text: ""
+            })
+          );
+
+          $.each(result.exchange, function(key, value) {
+            exchangeElement.append(
+              $("<option />")
+                .val(key)
+                .text(value[0])
+                .attr("homepage", value[1])
+                .attr("logo", value[2])
+                .attr("apidoc", value[3])
+            );
+          });
+
+          //setting the saved node value
+          exchangeElement.val(config.exchange);
+          var exchange = $("#node-config-input-exchange").val();
+          // Setting the dropdown value from javascript (using val()), won't trigger the change-event automatically
+          exchangeElement.trigger("change");
+
+          //hide spinner
+          // $("#id-loading-svg").hide();
+        }).error(function(error) {
+          console.log(error);
+        });
+      };
+      getExchanges();
+      let showhideInputFields = function() {
+        // console.log("password is set:", this.credentials.apikey);
+        //hide all params by default
+        $(".hidden").hide();
+
+        let exchange = $("#node-config-input-exchange option:selected").val();
+        if (exchange !== undefined && exchange !== "") {
+          $.getJSON("exchangereqcreds", { exchange: exchange }, function(result) {
+            $.each(result.exchangereqcreds, function(key, value) {
+              //show-hide based on req creds
+
+              if (value[0] === "uid") $(".node-config-uid").show();
+              if (value[0] === "login") $(".node-config-login").show();
+              if (value[0] === "password") {
+                $(".node-config-password").show();
+                if (config.credentials.has_password === true)
+                  $("#node-config-input-password").attr(
+                    "placeholder",
+                    "Value Exists! Enter a new Value to update"
+                  );
+              }
+            });
+          }).error(function(error) {
+            console.log(error);
+          });
+        }
+      };
+      $("#node-config-input-exchange").change(function() {
+        showhideInputFields();
+      });
+    },
+    oneditsave: function() {
+      var config = this;
+
+      config.exchange = $("#node-config-input-exchange option:selected").val();
+      console.log("does it have password set is:", config.credentials.has_password);
     }
   });
 </script>

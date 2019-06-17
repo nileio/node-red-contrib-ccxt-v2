@@ -224,6 +224,30 @@
     </dd>
   </dl>
 
+  <dl class="message-properties">
+    <dt>cryptoexchange<span class="property-type">object</span></dt>
+    <dd>
+      The Crypto Exchange object. It can be accessed using <code>msg.cryptoexchange</code>
+      <p>Object Format:</p>
+      <ul>
+        <li>id: crypto exchange id. Access it using <code>msg.cryptoexchange.id</code></li>
+        <li>name: crypto exchange name. Access it using <code>msg.cryptoexchange.name</code></li>
+      </ul>
+    </dd>
+  </dl>
+
+  <dl class="message-properties">
+    <dt>cryptoapi<span class="property-type">string</span></dt>
+    <dd>
+      The API used. Access it using <code>msg.cryptoapi</code>
+    </dd>
+  </dl>
+    <dl class="message-properties">
+    <dt>cryptoapitype<span class="property-type">string</span></dt>
+    <dd>
+      The API type, either UnifiedAPI or CustomAPI (Exchange API). It can be accessed using <code>msg.cryptoapitype</code>
+    </dd>
+  </dl>
   <h3>Error</h3>
   <dl class="message-properties">
     <dt>error<span class="property-type">string</span></dt>

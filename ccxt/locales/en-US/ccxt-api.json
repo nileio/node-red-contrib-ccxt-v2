@@ -66,12 +66,18 @@
     "label": {
       "name": "Name",
       "apikey": "API Key",
-      "apisecret": "API Secret"
+      "apisecret": "API Secret",
+      "uid": "User Id",
+      "login": "Login",
+      "password": "Password"
     },
     "parameters": {
       "name": "Enter exchange Name",
       "apikey": "Enter your API Key",
-      "apisecret": "Enter your API Secret"
+      "apisecret": "Enter your API Secret",
+      "uid": "User ID",
+      "login":"Login",
+      "password": "Password or a passphrase"
     }
   }
 }

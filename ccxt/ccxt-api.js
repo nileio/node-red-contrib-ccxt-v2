@@ -99,6 +99,7 @@ module.exports = function(RED) {
             })
             .map(function(v) {
               //slice out and return only the name
+              // console.log("checking for capability: ", v);
               var modarr = v.slice(0, 1);
               //lookup if the api is private : return true or false
               // then add to the temp array and return the final array
@@ -277,7 +278,10 @@ module.exports = function(RED) {
 
             exchange = new ccxt[node.exchange]({
               apiKey: node.apisecrets.credentials.apikey,
-              secret: node.apisecrets.credentials.secret
+              secret: node.apisecrets.credentials.secret,
+              uid: node.apisecrets.credentials.uid,
+              login: node.apisecrets.credentials.login,
+              password: node.apisecrets.credentials.password
             });
           } else exchange = new ccxt[node.exchange]();
 
@@ -446,6 +450,11 @@ module.exports = function(RED) {
 
           // send api result
           msg.payload = result;
+          msg.cryptoexchange = {};
+          msg.cryptoexchange.id = exchange.id;
+          msg.cryptoexchange.name = exchange.name;
+          msg.cryptoapi = node.api;
+          msg.cryptoapitype = node.apitype;
 
           node.send(msg);
         } catch (err) {
@@ -470,12 +479,81 @@ module.exports = function(RED) {
   //config node implementation
   function CcxtExchange(config) {
     RED.nodes.createNode(this, config);
+    var node = this;
+    if (RED.settings.httpNodeRoot !== false) {
+      node.errorHandler = function(err, req, res, next) {
+        node.warn(err);
+
+        res.send(500);
+      };
+
+      node.callbackExchanges = function(req, res) {
+        // get my own exchange collection which includes the friendly name of the exchange too
+        // avoiding to create exchange objects for all exchanges
+
+        // get all exchanges
+        res.setHeader("Content-Type", "application/json");
+        res.send(JSON.stringify({ exchange: exchanges.exchanges }));
+      };
+
+      node.callbackExchangerequiredCredentials = function(req, res) {
+        var exchange = req.query.exchange;
+
+        //TODO: fix bug The Ocean exchange cannot be instantiated
+
+        // create the exchange object passing in exchange id
+        exchange = new ccxt[exchange]();
+        let arr = [];
+        //("requiredCredentials");
+        if (exchange.requiredCredentials !== undefined) {
+          arr = Object.entries(exchange.requiredCredentials)
+            // return requiredCredentials = true
+
+            .filter(function(x) {
+              if (x[1] === true) {
+                return x;
+              }
+            })
+            .map(function(v) {
+              //slice out and return only the name
+              var modarr = v.slice(0, 1);
+              //lookup if the api is private : return true or false
+              // then add to the temp array and return the final array
+              //Note: error will be Cannot read property 'filter' of undefined
+              // when the capability does not exist onmy list. fix by adding the cap
+
+              return modarr;
+            });
+          //each element of the array includes the name of the api
+          // and whether the api is private
+        }
+        res.setHeader("Content-Type", "application/json");
+        // send out the array of all supported unified APIs of the exchange
+        // including true or false for private apis
+        res.send(JSON.stringify({ exchangereqcreds: arr }));
+      };
+
+      node.corsHandler = function(req, res, next) {
+        next();
+      };
+    }
+    // bind get apiMethods
+    app.get("/exchanges", node.corsHandler, node.callbackExchanges, node.errorHandler);
+    app.get(
+      "/exchangereqcreds",
+      node.corsHandler,
+      node.callbackExchangerequiredCredentials,
+      node.errorHandler
+    );
   }
 
   RED.nodes.registerType("ccxt-exchange-v2", CcxtExchange, {
     credentials: {
       apikey: { type: "text" },
-      secret: { type: "text" }
+      secret: { type: "text" },
+      uid: { type: "text" },
+      login: { type: "text" },
+      password: { type: "password" }
     }
   });
 };
