@@ -538,9 +538,6 @@
         placeholder: node._("ccxt.parameters.exchange")
       });
 
-      //hide all params by default
-      //  $(".hidden").hide();
-
       $("#node-input-apipayload")
         .typedInput({
           typeField: $("#node-input-apipayloadType"),
@@ -1433,10 +1430,8 @@
         } else if (node.symbol !== "") node.symbol = "";
       }
 
-      if ($("#node-input-symbolType").val() === "allSymbols") {
-        // console.log("will save node all symbols now..");
+      if ($("#node-input-symbolType").val() === "allSymbols" && node.symbol !== "all") {
         node.symbol = "all";
-        // console.log("node symbol is ", node.symbol);
       }
       // timeframe storage handling
       if (

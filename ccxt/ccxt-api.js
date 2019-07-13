@@ -62,17 +62,6 @@ module.exports = function(RED) {
     this.apipayload = config.apipayload;
     this.apipayloadType = config.apipayloadType || "none";
     var node = this;
-    // now you got config
-    // and also you got node=this
-
-    // here you should set all defaults for this node like this
-    // node.x = y;
-
-    // this.bytopic = n.bytopic || "all";
-    // this.op1 = n.op1 || "1";
-    // this.op2 = n.op2 || "0";
-    // this.op1type = n.op1type || "str";
-    // this.op2type = n.op2type || "str";
 
     if (RED.settings.httpNodeRoot !== false) {
       node.errorHandler = function(err, req, res, next) {
@@ -412,10 +401,7 @@ module.exports = function(RED) {
               text: exchange.name + " : " + node.api
             });
 
-            //  var payload;
-
             var getVal = function(param) {
-              // well
               // the parameter name should always match the parameter name in the definitions file exchanges.js .
               // if no param match undefined would be returned
 
