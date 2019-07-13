@@ -18,20 +18,21 @@ const exchanges = function() {
     let name = "";
     try {
       //try to instantiate the exchange, it will throw error if exchange cant be instantiated
-      let exch = new ccxt[id]();
-      //this is super cool :)
-      // i check if the name is duplicate then beatuifully just add the last char from id which is usually a number
-      // in order to avoid duplicated name
-      try {
-        if (arrNames.indexOf(exch.name) >= 0)
-          name = exch.name + id.charAt(id.toString().length - 1);
-        else name = exch.name;
-      } catch (err) {
-        console.log("name duplicated error for:", exch.name);
-        //in case of fallback error, the duplicate name will appear in the menu, however the id is different.
-        name = exch.name;
-      }
       if (!unsupportedExchanges[id]) {
+        let exch = new ccxt[id]();
+        //this is super cool :)
+        // i check if the name is duplicate then beatuifully just add the last char from id which is usually a number
+        // in order to avoid duplicated name
+        try {
+          if (arrNames.indexOf(exch.name) >= 0)
+            name = exch.name + id.charAt(id.toString().length - 1);
+          else name = exch.name;
+        } catch (err) {
+          console.log("name duplicated error for:", exch.name);
+          //in case of fallback error, the duplicate name will appear in the menu, however the id is different.
+          name = exch.name;
+        }
+
         arrNames.push(name);
         arrValues.push(name);
         arrValues.push(exch.urls.www);
@@ -50,22 +51,46 @@ const exchanges = function() {
 // list of any exchanges I would like to exclude for any reason such as untested, unreliable, buggy,etc.
 
 const unsupportedExchanges = {
-  // crypton: "Crypton",
+  theocean: "The Ocean", // DEX currently require some specific modules that i cant get to work
+  // gives errors in this version on trying to loadmarkets or other apis
+  // most probably their public api requires an apiKey. some of them explicity reported the requirement for an apikey
+  allcoin: "Allcoin",
+  anybits: "Anybits",
+  bcex: "BCEX",
+  bitsane: "Bitsane",
+  bitz: "Bitz",
+  btcchina: "BTCChina",
+  btcexchange: "BTCExchange",
+  btctradeim: "BTCTradeim",
+  ccex: "CCEX",
+  chbtc: "CHBtc",
+  coingi: "Coingi",
+  cointiger: "Cointiger", // require api key for public
+  coolcoin: "Coolcoin",
+  flowbtc: "Flowbtc",
+  liqui: "Liqui",
+  mandala: "Mandala", // require api key for public
+  okcoincny: "OkCoin Cny", // require api key for public
+  stronghold: "Stronghold",
+  uex: "UEX",
+  xbtce: "XBTCE" // xbtce requires apiKey for all requests, their public API is always busy
 };
 // in most cases payload (refered to as params in ccxt docs is not required)
 // for some exchanges this parameter maybe needed but is usually optional
 // consult with exchange docs
-const allunifiedAPIs = {
-  fetchMarkets: [],
 
-  //Currently i am not having any special handling for required vs optional. will be in the next release to add an indication to required params
-  loadMarkets: [["load-markets"]],
+//Currently i am not having any special handling for required vs optional. will be in the next release to add an indication to required params
+const allunifiedAPIs = {
+  //both fetchMarkets and loadMarkets have special handling. they both return markets (in object and array formats).
+  //optionally a filter can be provided as an array or comma separated list to return only the filtered markets
+  fetchMarkets: [["filtermarkets"]], // returns an array
+  loadMarkets: [["filtermarkets"]], // returns an object with key being market pair
   fetchTicker: ["symbol", ["apipayload"]],
   fetchTickers: ["symbol", ["apipayload"]],
   fetchOrderBook: ["symbol", ["limit", "apipayload"]],
   fetchOrderBooks: ["symbol", ["apipayload"]],
   fetchL2OrderBook: ["symbol", ["limit", "apipayload"]],
-  fetchTrades: ["private", "symbol", ["since", "limit", "apipayload"]],
+  fetchTrades: ["symbol", ["since", "limit", "apipayload"]],
   fetchOHLCV: ["symbol", ["timeframe", "since", "limit", "apipayload"]],
   fetchBalance: ["private", ["apipayload"]],
   createOrder: [
@@ -104,7 +129,7 @@ const allunifiedAPIs = {
   fetchMySells: ["private", ["symbol", "since", "limit", "apipayload"]],
   fetchMyBuys: ["private", ["symbol", "since", "limit", "apipayload"]],
   fetchCurrencies: ["apipayload"],
-  fetchAccounts: ["apipayload"],
+  fetchAccounts: ["private",["apipayload"]],
   fetchDepositAddress: ["private", "code", ["apipayload"]],
   fetchDepositAddresses: ["private", ["codes", "apipayload"]],
   fetchDeposits: ["private", "code", ["since", "limit", "apipayload"]],

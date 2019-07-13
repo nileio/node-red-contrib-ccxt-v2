@@ -2,11 +2,13 @@
   "ccxt": {
     "label": {
       "exchange": "Exchange",
+      "allexchanges": "All Exchanges",
       "apitype": "API Type",
       "apiname": "API",
-      "secrets": "Secrets",
+      "secrets": "API Keys",
       "reload": "Reload",
-      "symbol": "Symbol",
+      "filtermarkets": "Filter",
+      "symbol": "Market",
       "since": "Since",
       "timeframe": "Timeframe",
       "limit": "Limit",
@@ -21,12 +23,14 @@
       "payload": "Payload"
     },
     "labeltooltip": {
-      "exchange": "The Crypto Exchange to use. Select one of the supported exchanges",
+      "exchange": "The Exchange to use for the call. Select one or more exchanges.",
+      "allexchanges": "If selected, loadMarkets API can be used against all exchanges. It returns a list of all marekts from the exchange.",
       "apitype": "Unified API is a subset of methods common among the exchanges as provided by CCXT. Exchange API is a custom API specific to the exchange. All unified and custom APIs are supported.",
       "apiname": "The API to use. Select a supported API Name from the list. Some of the Unified APIs are emulated for the exchange. The required and optional parameters presented are based on the selected API. If the selected API is private, Secrets field will appear to configure the API Key and credentials. Clicking the information icon will take you to the docs.",
       "apiinfo": "Click to read the docs of the selected API. Note: changing the API will delete any unmatched keys in your payload!",
-      "secrets": "Select a pre-configured secrets or click the button to configure a new API Key and Secret using the Configuration node. The API Key and Secret are encrypted by Node-RED credentials feature and stored locally on the runtime machine.",
-      "reload": "Force a reload of all exchange markets rather than using the cached list.",
+      "secrets": "Select a pre-configured keys or click the button to configure a new API Key and Secret using the Configuration node. The API Key and Secret are encrypted by Node-RED credentials feature and stored locally on the runtime machine.",
+      "reload": "If checked, forces a reload to retrieve all exchange markets rather than using the cached list.",
+      "filtermarkets": "Comma separated list of markets to use as a filter. If provided, only those listed in the filter will be returned.",
       "symbol": "The market to use. Select a market pair from the list. The list of symbols are loaded from the exchange. You can also enter a symbol manually by choosing the String type or via a property of flow, msg. If no symbols are available in the dropdown list, try entering the symbol manually or via a property.",
       "since": "This parameter is used for date-based pagination and is required in most cases. The user supplies a since timestamp in milliseconds and a number to limit results. Enter a date in the format yyyy-mm-dd or use a property which provides a date in this format. The date will be converted to milliseconds prior to invoking the API.",
       "timeframe": "This parameter is used by the API fetching OHLCV data for a particular symbol based on a Candle size. The list of available timeframes for the exchange are listed in the drop-down list. If a list was not successfully retrieved from the exchange, it means that the API is emulated (indicated by the aeroplane icon) and in this case a default list is available in the dropdown list. Select a timeframe from the list or enter a timeframe manually or indicate a context flow or msg property containing the required value.",
@@ -45,12 +49,13 @@
       "requesting": "requesting"
     },
     "parameters": {
-      "exchange": "Select Exchange name",
+      "exchange": "Select one or more exchanges ...",
       "apitype": "Select API Type",
       "apiname": "Select API",
+      "filtermarkets": "Enter a list of markets to filter separated by commas ...",
       "secrets": "Select an API Secret and Key configuration",
-      "symbol": "Enter a supported Symbol pair e.g. BTCETH",
-      "symbolselect": "Select a supported Symbol",
+      "symbol": "Enter one or more pairs separated by commas e.g. BTC/ETH,BTC/ETH ...",
+      "symbolselect": "Select one or more market pairs ...",
       "since": "Enter a date in the format yyyy-mm-dd ",
       "timeframe": "1m, 1h, etc.",
       "limit": "A number",
@@ -64,20 +69,26 @@
   },
   "ccxt-exchange": {
     "label": {
+      "exchange": "Exchange",
       "name": "Name",
       "apikey": "API Key",
       "apisecret": "API Secret",
       "uid": "User Id",
       "login": "Login",
-      "password": "Password"
+      "password": "Password",
+      "defaultconfig": "Default",
+      "activeconfig": "Active"
     },
     "parameters": {
-      "name": "Enter exchange Name",
+      "exchange": "The exchange for which the API Keys configuration apply.",
+      "name": "Enter Configuration Name",
       "apikey": "Enter your API Key",
       "apisecret": "Enter your API Secret",
       "uid": "User ID",
-      "login":"Login",
-      "password": "Password or a passphrase"
+      "login": "Login",
+      "password": "Password or a passphrase",
+      "defaultconfig": "Tick to make this configuration the default. Only one configuration can be the default for the exchange. Note: this is used in multi-exchange API calls.",
+      "activeconfig": "If the configuraiton is inactive, it will not be used."
     }
   }
 }

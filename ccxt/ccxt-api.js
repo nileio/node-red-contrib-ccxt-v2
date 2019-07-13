@@ -12,7 +12,18 @@ module.exports = function(RED) {
   // Date.prototype.getUnixTime = function() {
   //     return (this.getTime() / 1000) | 0;
   // };
+  // Returns if value is a date object
+  function isDate(value) {
+    return value instanceof Date;
+  }
 
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  // Returns if a value is really a number
+  function isNumber(value) {
+    return typeof value === "number" && isFinite(value);
+  }
   // load RED app server and settings
   var app = RED.httpNode;
   // var settings = RED.settings;
@@ -25,11 +36,12 @@ module.exports = function(RED) {
     RED.nodes.createNode(this, config);
     //defaults
     this.exchange = config.exchange;
+    this.allexchanges = config.allexchanges || false;
     this.apitype = config.apitype;
     this.customapitype = config.customapitype;
     this.api = config.api;
     this.apiprivate = config.apiprivate || false;
-    this.loadmarketsreload = config.loadmarketsreload || false;
+    this.filtermarkets = config.filtermarkets || "";
     this.symbol = config.symbol;
     this.symbolType = config.symbolType || "str";
     this.limit = config.limit;
@@ -79,99 +91,178 @@ module.exports = function(RED) {
       };
 
       node.callbackExchangeCaps = function(req, res) {
-        var exchange = req.query.exchange;
+        //added support to recieve multiple exchange for this call
 
-        //TODO: fix bug The Ocean exchange cannot be instantiated
+        var rst = req.query.exchange;
+        //   var exchangeSet = [];
 
-        // create the exchange object passing in exchange id
-        exchange = new ccxt[exchange]();
-        let arr = [];
-        if (exchange.has !== undefined) {
-          arr = Object.entries(exchange.has)
-            // filter only exchange caps with = true
-            // excluding caps that do not represent a unified API
-            .filter(function(x) {
-              if (x[0] !== "CORS" && x[0] !== "privateAPI" && x[0] !== "publicAPI") {
-                if (x[1] === true || x[1] === "emulated") {
-                  return x;
+        // multi-exchange
+        // note this is now not needed because every request coming here should ALWAYS
+        // be an array
+        // Array.isArray(exchangereq)
+        //   ? (exchangeSet = exchangereq)
+        //   : (exchangeSet[0] = exchangereq);
+
+        // using ES-6 Set object here for a change !
+        //let exchangeSet = new Set(exchangereq);
+        let outputarr = [];
+        for (let index = 0; index < rst.length; index++) {
+          const ex = rst[index];
+
+          // create the exchange object passing in exchange id
+          var exchange = new ccxt[ex]();
+          let arr = [];
+          if (exchange.has !== undefined) {
+            arr = Object.entries(exchange.has)
+              // filter only exchange caps with = true
+              .filter(function(x) {
+                // excluding caps that do not represent a unified API (exclude caps named as CORS/privateAPI/publicAPI)
+                if (x[0] !== "CORS" && x[0] !== "privateAPI" && x[0] !== "publicAPI") {
+                  // include caps = true and also emulated
+                  if (x[1] === true || x[1] === "emulated") {
+                    return x;
+                  }
                 }
-              }
-            })
-            .map(function(v) {
-              //slice out and return only the name
-              // console.log("checking for capability: ", v);
-              var modarr = v.slice(0, 1);
-              //lookup if the api is private : return true or false
-              // then add to the temp array and return the final array
-              //Note: error will be Cannot read property 'filter' of undefined
-              // when the capability does not exist onmy list
+              })
+              .map(function(v) {
+                //slice out and return only the name
+                // console.log("checking for capability: ", v);
 
-              modarr.push(
-                exchanges.allunfiedAPIs[v[0]].filter(x => x === "private").join()
-                  ? true
-                  : false
-              );
-              return modarr;
-            });
-          //each element of the array includes the name of the api
-          // and whether the api is private
+                var modarr = v.slice(0, 1);
+
+                //lookup if the api is private : return true or false
+                // then add to the temp array and return the final array
+
+                //Note: error will be 'Cannot read property 'filter' of undefined'
+                // when the capability does not exist on my exchanges unifiedAPI list
+
+                modarr.push(
+                  exchanges.allunfiedAPIs[v[0]].filter(x => x === "private").join()
+                    ? true
+                    : false
+                );
+                return modarr;
+              });
+
+            // if we only have one element just copy array
+            if (index == 0 && arr.length > 0) outputarr = arr;
+
+            if (index > 0 && arr.length > 0) {
+              // inner join new array with existing array
+              outputarr = arr.filter(function(c) {
+                return outputarr.some(ov => ov[0] === c[0]);
+              });
+            }
+          }
         }
+
         res.setHeader("Content-Type", "application/json");
         // send out the array of all supported unified APIs of the exchange
         // including true or false for private apis
-        res.send(JSON.stringify({ caps: arr }));
+        res.send(JSON.stringify({ caps: outputarr }));
       };
 
       node.callbackExchangeSymbols = async function(req, res) {
+        let rst = req.query.exchange;
+        let outputarr = [];
+
         try {
-          let exchange = req.query.exchange;
+          for (let index = 0; index < rst.length; index++) {
+            const ex = rst[index];
 
-          // instantiate the exchange by id
-          exchange = new ccxt[exchange]();
+            // instantiate the exchange by id
+            var exchange = new ccxt[ex]();
+            let marketsList = [];
+            // note if fetchMarkets is unsupported then the final list will be empty or filled with other exchange
+            // markets which support the call. this means that in the rare case that an exchange
+            // does NOT support the call to fetchMarkets we may get an error message when executing the call to that exchange
+            // that "symobol is not supported by the exchange"
 
-          // load all markets from the exchange
-          // should use await
-          //let markets = await exchange.loadMarkets();
-          let marketsList = [];
-          if (exchange.has["fetchMarkets"]) {
-            let markets = await exchange.fetchMarkets();
-            // get all supported symbols from the exchange
-            marketsList = ccxt
-              .sortBy(Object.values(markets), "symbol")
-              .map(market => ccxt.omit(market, ["info", "limits", "precision", "fees"]))
-              .map(x => x.symbol);
+            // load all markets from the exchange using fetchMarkets
+            if (exchange.has["fetchMarkets"]) {
+              let markets = await exchange.fetchMarkets();
+              // get all supported symbols from the exchange
+              marketsList = ccxt
+                .sortBy(Object.values(markets), "symbol")
+                .map(market => ccxt.omit(market, ["info", "limits", "precision", "fees"]))
+                .map(x => x.symbol);
+              // if we only have one element just copy array
+              if (index == 0) outputarr = marketsList;
+              // if this is a second round we already have an array add to it
+              if (index > 0 && marketsList.length > 0) {
+                // inner join new array with incoming array
+                outputarr = marketsList.filter(function(c) {
+                  return outputarr.some(ov => ov === c);
+                });
+              }
+            }
+            //else loadMarkets ??
           }
-
           res.setHeader("Content-Type", "application/json");
 
-          res.send(JSON.stringify({ symbols: marketsList }));
+          res.send(JSON.stringify({ symbols: outputarr }));
         } catch (error) {
           console.log(error);
         }
       };
       node.callbackOHLCVTimeframes = function(req, res) {
-        let exchange = req.query.exchange;
+        let rst = req.query.exchange;
+        let outputarr = [];
+        let defList = ["1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1d"];
+        let emulated = false,
+          unsupported = false,
+          unsupportedby = "";
+        try {
+          for (let index = 0; index < rst.length; index++) {
+            const ex = rst[index];
 
-        // create the exchange object
-        exchange = new ccxt[exchange]();
+            // note here that if fetchOHLCV is unsupported then the final list will be a default list of timeframes
+            // for any exchange supplied if fetchOHLCV is supported and yet no values are returned , this means the api is emulated
+            // a default list will be used for building the final list in this case and emulated will be set to true for the whole payload
+            // timeframes have default lists that can safely be used in most cases
+            // even if the exchange api is emulated, we can still use a value from the default list
+            // create the exchange object
+            let exchange = new ccxt[ex]();
+            if (exchange.has["fetchOHLCV"]) {
+              let tmpList = [];
+              if (exchange.timeframes) tmpList = Object.keys(exchange.timeframes);
+              if (tmpList === null || tmpList.length == 0) {
+                emulated = true;
+                tmpList = defList;
+              }
+              // if we only have one element just copy array
+              if (index == 0) outputarr = tmpList;
+              // if this is a second round we already have an array add to it
+              if (index > 0 && tmpList.length > 0) {
+                // inner join new array with incoming array
+                outputarr = tmpList.filter(function(c) {
+                  return outputarr.some(ov => ov === c);
+                });
+              }
+            } else {
+              //just return empty list response, the api is not supported by one of the exchanges supplied
+              //but we should possibly return an error here
+              unsupported = true;
+              unsupportedby = exchange.name;
+              //exit the loop if any of the exchnages does not support fetchOHLCV
+              // this is done to avoid return of partial list
+              index = rst.length + 1;
+            }
+          }
 
-        res.setHeader("Content-Type", "application/json");
-
-        if (exchange.has["fetchOHLCV"]) {
+          res.setHeader("Content-Type", "application/json");
           res.send(
             JSON.stringify({
-              timeframes: exchange.timeframes
+              results: {
+                fetchOHLCVunsupported: unsupported,
+                fetchOHLCVunsupportedby: unsupportedby,
+                fetchOHLCVemulated: emulated,
+                timeframes: outputarr
+              }
             })
           );
-        } else {
-          //i should possibly end the response/raise error/
-          // or send unsupported
-
-          res.send(
-            JSON.stringify({
-              timeframes: "unsupported"
-            })
-          );
+        } catch (error) {
+          console.log(error);
         }
       };
       node.callbackApis = function(req, res) {
@@ -260,214 +351,419 @@ module.exports = function(RED) {
     // execute ccxt API
     node.on("input", function(msg) {
       const asyncInput = async function async(config) {
-        try {
+        let results = [];
+        let res = 0;
+        let exchangelist = node.exchange;
+        var api = node.api;
+
+        if (node.allexchanges === true)
+          if (api === "loadMarkets") exchangelist = Object.keys(exchanges.exchanges);
+          else {
+            node.error("All exchanges can only be used with loadMarkets call.", msg);
+            return;
+          }
+
+        for (let index = 0; index < exchangelist.length; index++) {
+          const element = exchangelist[index];
+          let addresult = false; // switch is default to false to return the result
           // connect to exchange selected
           var exchange = undefined;
 
           // obtain secrets if API is private
           // applies for both unified and custom(exchange-specific) APIs
+          //      if Array.isArray(node.exchange) {
+          try {
+            //instantiate the exchange
+            if (node.apiprivate === "true") {
+              if (exchangelist.length > 1)
+                RED.nodes.eachNode(function(n) {
+                  // check if n is one you want
+                  if (n.type === "ccxt-exchange-v2")
+                    if (n.exchange === element)
+                      if (n.defaultconfig === true) {
+                        node.apisecrets = RED.nodes.getNode(n.id);
+                        return;
+                      }
+                });
 
-          //instantiate the exchange
-          if (node.apiprivate === "true") {
-            //var secret = RED.nodes.getNode(config.apisecrets);
-
-            if (node.apisecrets == undefined) {
-              node.error("No Exchange credentials configured.", msg);
-              return;
-            }
-
-            exchange = new ccxt[node.exchange]({
-              apiKey: node.apisecrets.credentials.apikey,
-              secret: node.apisecrets.credentials.secret,
-              uid: node.apisecrets.credentials.uid,
-              login: node.apisecrets.credentials.login,
-              password: node.apisecrets.credentials.password
-            });
-          } else exchange = new ccxt[node.exchange]();
-
-          var result;
-          var api = node.api;
-
-          //  var args = [];
-          //  returns the value for the parameter passed in
-          //  from the node.config
-          /*                     function prepareValue(msg, done) {
-                        // Either apply the jsonata expression or...
-                        if (preparedEditExpression) {
-                            RED.util.evaluateJSONataExpression(
-                                preparedEditExpression,
-                                msg,
-                                (err, value) => {
-                                    if (err) {
-                                        done(
-                                            RED._("debug.invalid-exp", {
-                                                error: editExpression
-                                            })
-                                        );
-                                    } else {
-                                        done(null, {
-                                            id: node.id,
-                                            name: node.name,
-                                            topic: msg.topic,
-                                            msg: value,
-                                            _path: msg._path
-                                        });
-                                    }
-                                }
-                            );
-                        } else {
-                            // Extract the required message property
-                            var property = "payload";
-                            var output = msg[property];
-                            if (
-                                node.complete !== "false" &&
-                                typeof node.complete !== "undefined"
-                            ) {
-                                property = node.complete;
-                                try {
-                                    output = RED.util.getMessageProperty(
-                                        msg,
-                                        node.complete
-                                    );
-                                } catch (err) {
-                                    output = undefined;
-                                }
-                            }
-                            done(null, {
-                                id: node.id,
-                                z: node.z,
-                                name: node.name,
-                                topic: msg.topic,
-                                property: property,
-                                msg: output,
-                                _path: msg._path
-                            });
-                        }
-                    } */
-
-          var getVal = function(param) {
-            // the parameter name should always match the parameter name in the definitions file exchanges.js .
-            // if no param match undefined would be returned
-
-            //replacing config with node here
-            var value = node[param];
-            if (value === undefined || value === "") return undefined;
-            // handle parameter by name
-            if (param === "apipayload") {
-              //here you should handle retrieving the value from all typedinput
-              //none/json/msg/flow
-
-              if (node.apipayloadType === "none") value = undefined;
-              if (node.apipayloadType === "json") value = JSON.parse(value);
-              if (node.apipayloadType === "msg")
-                value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
-              if (node.apipayloadType === "flow")
-                value = JSON.stringify(
-                  RED.util.evaluateNodeProperty(node.apipayload, value, node, msg)
+              if (node.apisecrets == undefined) {
+                node.error(
+                  "No Exchange credentials configured for this exchange. If using multiple exchanges for the call, ensure there is one API Keys config is a default.",
+                  msg
                 );
-            }
-            // special handling for since argument to convert to milliseconds
-            if (param === "since") {
-              if (node.sinceType === "msg") {
-                value = RED.util.getMessageProperty(msg, node.since);
+                return;
               }
-              if (node.sinceType === "flow") {
-                value = RED.util.evaluateNodeProperty(node.since, value, node, msg);
-              }
-              //special handling for since parameter
-              // make sure you get ISO string
-              value = new Date(value);
-              value = exchange.parse8601(value.toISOString());
-            }
-            if (param === "timeframe") {
-              if (node.timeframeType === "msg") {
-                value = RED.util.getMessageProperty(msg, node.timeframe);
-              }
-              if (node.sinceType === "flow") {
-                value = RED.util.evaluateNodeProperty(node.timeframe, value, node, msg);
-              }
-            }
 
-            if (param === "symbol") {
-              if (node.symbolType === "msg")
-                value = RED.util.getMessageProperty(msg, node.symbol);
-              if (node.symbolType === "flow")
-                value = RED.util.evaluateNodeProperty(node.symbol, value, node, msg);
-            }
-            return value;
-          };
+              exchange = new ccxt[element]({
+                apiKey: node.apisecrets.credentials.apikey,
+                secret: node.apisecrets.credentials.secret,
+                uid: node.apisecrets.credentials.uid,
+                login: node.apisecrets.credentials.login,
+                password: node.apisecrets.credentials.password
+              });
+            } else exchange = new ccxt[element]();
 
-          // prepareValue(msg,function(err,msg) {
-          // if (err) {
-          //     node.error(err);
-          //     return;
-          // }
+            //enable the built-in rate-limiter
+            exchange.enableRateLimit = true;
 
-          if (node.apitype === "unifiedAPI") {
-            //  result = await exchange.loadMarkets("true");
-            let args = getApiParams(api).map(x => getVal(x));
-
-            // make sure the exchange has the api and execute the api
-            if (exchange.has[api]) {
-              if (args.length > 0)
-                // call with arguments
-                result = await exchange[api](...args);
-              // call without any arguments
-              else result = await exchange[api]();
-            }
-          } else if (node.apitype === "customAPI") {
-            var xcall = api.replace(/\//g, "_");
-            xcall = xcall.replace(/\{/g, "");
-            xcall = xcall.replace(/\}/g, "");
-            xcall = node.customapitype + "_" + xcall.toLowerCase();
-
-            //invoke api without a payload
-            if (node.apipayloadType === "none") result = await exchange[xcall]();
-            //invoke api with a payload
-            else if (node.apipayloadType === "json")
-              result = await exchange[xcall](JSON.parse(node.apipayload));
-            //TODO : test msg
-            else if (node.apipayloadType === "msg") {
-              let value = JSON.stringify(
-                RED.util.getMessageProperty(msg, node.apipayload)
-              );
-              result = await exchange[xcall](JSON.parse(value));
-            }
-            //todo : handle msg and flow
-            else result = await exchange[xcall]();
-          } else {
             node.status({
-              fill: "yellow",
-              shape: "ring",
-              text:
-                "Node Configuration Error. Check all required parameters for the call are set."
+              fill: "blue",
+              shape: "dot",
+              text: exchange.name + " : " + node.api
             });
-            node.warning("CCXT API configuration error");
+
+            //  var payload;
+
+            var getVal = function(param) {
+              // well
+              // the parameter name should always match the parameter name in the definitions file exchanges.js .
+              // if no param match undefined would be returned
+
+              var value = node[param];
+              if (value === undefined) return undefined;
+              // handle parameter by name
+              if (param === "apipayload") {
+                //here you should handle retrieving the value from all typedinput
+                //none/json/msg/flow
+
+                if (node.apipayloadType === "none") value = undefined;
+                if (node.apipayloadType === "json" && value != "")
+                  value = JSON.parse(value);
+                if (node.apipayloadType === "msg")
+                  value = JSON.stringify(
+                    RED.util.getMessageProperty(msg, node.apipayload)
+                  );
+                if (node.apipayloadType === "flow")
+                  value = JSON.stringify(
+                    RED.util.evaluateNodeProperty(node.apipayload, value, node, msg)
+                  );
+              }
+              // special handling for since argument to convert to milliseconds
+              if (param === "since") {
+                if (node.sinceType === "msg") {
+                  value = RED.util.getMessageProperty(msg, node.since);
+                }
+                if (node.sinceType === "flow") {
+                  value = RED.util.evaluateNodeProperty(node.since, value, node, msg);
+                }
+                // special handling for since parameter
+                // make sure you get ISO string
+                // the value can either be a number (long) or a date string.
+                // if the value is number then i assume its already in milliseconds UTC
+                // if the value is not a number then i convert the date to milliseconds iso
+                if (isNumber(value) === false && value !== "") {
+                  value = new Date(value);
+                  value = exchange.parse8601(value.toISOString());
+                }
+              }
+              if (param === "timeframe") {
+                if (node.timeframeType === "msg") {
+                  value = RED.util.getMessageProperty(msg, node.timeframe);
+                }
+                if (node.sinceType === "flow") {
+                  value = RED.util.evaluateNodeProperty(node.timeframe, value, node, msg);
+                }
+              }
+              //market
+              if (param === "symbol") {
+                if (node.symbolType === "msg")
+                  value = RED.util.getMessageProperty(msg, node.symbol);
+                if (node.symbolType === "flow")
+                  value = RED.util.evaluateNodeProperty(node.symbol, value, node, msg);
+                if (node.symbolType === "allSymbols") value = exchange.symbols;
+                // if (node.symbolType === "symbolList") value = value.split(",");
+                if (value !== "" && !Array.isArray(value)) value = value.split(",");
+              }
+              if (value === "") value = undefined;
+              return value;
+            };
+            //stream results back to client
+            let returnResult = async function(resultObj, returnresult) {
+              if (returnresult === true) {
+                msg.payload = resultObj;
+                node.send(msg);
+              }
+            };
+            // prepareValue(msg,function(err,msg) {
+            // if (err) {
+            //     node.error(err);
+            //     return;
+            // }
+
+            if (node.apitype === "unifiedAPI") {
+              //3. we need special handling for multi-select of markets (symbols parameter) and using all symbols parameter
+
+              if (api === "loadMarkets") {
+                let payload = await exchange.loadMarkets(true);
+                //filter output of markets if provided
+                if (node.filtermarkets) {
+                  // comma separated to array
+                  let filterlist = node.filtermarkets.split(",");
+                  //filter result here
+                  payload = Object.keys(payload)
+                    .filter(key => filterlist.includes(key))
+                    .reduce((obj, key) => {
+                      obj[key] = payload[key];
+                      return obj;
+                    }, {});
+                }
+                //if we have markets after applying filters then return result showing the exchange and the markets available
+                if (Object.entries(payload).length > 0) {
+                  addresult = true;
+                  returnResult(
+                    {
+                      api: api,
+                      exchange: exchange.name,
+                      payload: payload
+                    },
+                    addresult
+                  );
+                }
+              } else if (api === "fetchMarkets" && exchange.has["fetchMarkets"]) {
+                let payload = await exchange.fetchMarkets();
+                if (node.filtermarkets) {
+                  // comma separated to array
+                  let filterlist = node.filtermarkets.split(",");
+                  //filter result here
+                  payload = payload.filter(key => {
+                    return filterlist.includes(key.symbol);
+                  });
+                }
+                if (payload.length > 0) {
+                  addresult = true;
+                  returnResult(
+                    {
+                      api: api,
+                      exchange: exchange.name,
+                      payload: payload
+                    },
+                    addresult
+                  );
+                }
+              }
+              // handling for any Unified API apart from loadMarkets and fetchMarkets is here
+              // make sure the exchange has the api and execute the api
+              else if (exchange.has[api]) {
+                addresult = true;
+                let marketparm = false;
+                let marketpos = 0;
+                let counter = 0;
+                //this call ensures that exchange has loaded all markets
+                await exchange.loadMarkets(true);
+                // return args and check if we have a markets parameter for this unifiedAPI
+                // TODO : handling for arguments overrides. in some situations exchanges have specific
+                // requirements for unifiedAPIs most notably some exchanges require api keys for all calls.
+                let args = getApiParams(api).map(x => {
+                  if (x === "symbol") {
+                    marketparm = true;
+                    marketpos = counter;
+                  }
+                  counter++;
+                  return getVal(x);
+                });
+
+                // call with arguments
+                if (args.length > 0) {
+                  //check if market param is used as one of the args
+                  // this check is needed so that we can also loop over the markets if multiple markets provided
+
+                  if (marketparm) {
+                    // var marketresult;
+                    let marketsarr = args[marketpos];
+                    //result = {};
+                    //[{ market: { symbol: null, result: null } }];
+                    //  result = {};
+                    let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+                    //empty markets list?
+                    if (marketsarr) {
+                      // loop across all markets provided
+                      for (let index = 0; index < marketsarr.length; index++) {
+                        const element = marketsarr[index];
+                        //carefull! modify of array modifies the original.
+                        // arrays pass by reference in javascript!!
+                        args[marketpos] = element;
+                        if (index > 0) await sleep(exchange.rateLimit);
+                        // add a note about the market being queried for the call
+                        // useful when there are many markets to use
+                        node.status({
+                          fill: "blue",
+                          shape: "dot",
+                          text:
+                            exchange.name +
+                            " : " +
+                            node.api +
+                            " - " +
+                            (marketsarr.length - index).toString() +
+                            " : " +
+                            element
+                        });
+                        //get the resulting payload then return as streaming msg
+                        let payload = await exchange[api](...args);
+                        returnResult(
+                          {
+                            api: api,
+                            exchange: exchange.name,
+                            arguments: args.concat(),
+                            market: element,
+                            payload: payload
+                          },
+                          addresult
+                        );
+                      }
+                      // market is a param of the api but no market is provided as an argument
+                    } else {
+                      let payload = await exchange[api](...args);
+                      //console.log(payload);
+
+                      returnResult(
+                        {
+                          api: api,
+                          exchange: exchange.name,
+                          arguments: args.concat(),
+                          market: "",
+                          payload: payload
+                        },
+                        addresult
+                      );
+                    }
+                  } else {
+                    // market is not a param of this api
+                    let payload = await exchange[api](...args);
+                    returnResult(
+                      {
+                        api: api,
+                        exchange: exchange.name,
+                        arguments: args.concat(),
+                        payload: payload
+                      },
+                      addresult
+                    );
+                  }
+                  // zero args required .. call without any arguments
+                } else {
+                  let payload = await exchange[api]();
+                  returnResult(
+                    {
+                      api: api,
+                      exchange: exchange.name,
+                      arguments: "",
+                      payload: payload
+                    },
+                    addresult
+                  );
+                }
+              }
+            } else if (node.apitype === "customAPI") {
+              addresult = true;
+              //replace special unwanted chars
+              //this method will form the pattern public_get_method_name which is what ccxt provides for every custom method
+              let method = api.replace(/\//g, "_").replace(/\-/g, "_");
+              method = method.replace(/\{/g, "");
+              method = method.replace(/\}/g, "");
+              method = node.customapitype + "_" + method.toLowerCase();
+
+              //invoke api without a payload param
+              if (node.apipayloadType === "none") {
+                let payload = await exchange[method]();
+                returnResult(
+                  {
+                    api: api,
+                    exchange: exchange.name,
+                    arguments: "", // iam using the property arguments so it is consistent with the unifiedAPI term. in face this is just the apipayload param
+                    payload: payload
+                  },
+                  addresult
+                );
+              }
+              //invoke api with a payload params
+              else if (node.apipayloadType === "json") {
+                let parsedPayload = JSON.parse(node.apipayload);
+                let payload = await exchange[method](parsedPayload);
+                returnResult(
+                  {
+                    api: api,
+                    exchange: exchange.name,
+                    arguments: parsedPayload,
+                    payload: payload
+                  },
+                  addresult
+                );
+              }
+              //todo : handle msg and flow
+              else if (node.apipayloadType === "msg") {
+                let value = JSON.stringify(
+                  RED.util.getMessageProperty(msg, node.apipayload)
+                );
+                let parsedPayload = JSON.parse(value);
+                let payload = await exchange[method](parsedPayload);
+                returnResult(
+                  {
+                    api: api,
+                    exchange: exchange.name,
+                    arguments: parsedPayload,
+                    payload: payload
+                  },
+                  addresult
+                );
+
+                //custom api with no apipayload param - defaults
+              } else {
+                let payload = await exchange[method]();
+                returnResult(
+                  {
+                    api: api,
+                    exchange: exchange.name,
+                    arguments: "",
+                    payload: payload
+                  },
+                  addresult
+                );
+              }
+            } else {
+              node.status({
+                fill: "yellow",
+                shape: "ring",
+                text:
+                  "Node Configuration Error. Check that all required parameters for the call are set."
+              });
+              node.warning("CCXT API configuration error");
+            }
+            // build api results as an array per exchange
+            // if (addresult === true) {
+            //   results = {
+            //     exchange: exchange.name,
+            //     api: node.api,
+            //     //  apitype: node.apitype,
+            //     payload: result
+            //   };
+            //   res++;
+            //   //stream results
+            //   msg.payload = results;
+            //   node.send(msg);
+            // }
+
+            // if (index < node.exchange.length && node.exchange.length > 1) {
+            //   //sleep 200 milliseconds
+            //   node.status({ fill: "blue", shape: "dot", text: "Zzz.." });
+            //   // await sleep(2000);
+            // }
+            // clear any node error
+          } catch (err) {
+            addresult = node.status({
+              fill: "red",
+              shape: "ring",
+              text: "API err: " + err.message
+            });
+
+            node.error(err.message, msg);
+
+            // return;
           }
-
-          // clear any node error
-          node.status({});
-
-          // send api result
-          msg.payload = result;
-          msg.cryptoexchange = {};
-          msg.cryptoexchange.id = exchange.id;
-          msg.cryptoexchange.name = exchange.name;
-          msg.cryptoapi = node.api;
-          msg.cryptoapitype = node.apitype;
-
-          node.send(msg);
-        } catch (err) {
-          node.status({
-            fill: "red",
-            shape: "ring",
-            text: "server err:" + err.message
-          });
-
-          node.error(err.message, msg);
-
-          return;
         }
+        // clear any node error
+        node.status({});
+        // msg.payload = results;
+        // node.send(msg);
       };
 
       asyncInput.apply(this, [config]);
