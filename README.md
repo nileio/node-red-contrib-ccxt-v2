@@ -9,7 +9,8 @@ This is now in Beta testing with really cool new features as below :) Please cre
 **New Features**
 
 - Automatic load of all unified and custom (exchange-specific) APIs.
-- Now only the supported APIs by the exchange will be listed.
+- Supports a call to multiple exchanges at one time and for multiple markets !
+- Now only the supported APIs by the exchange will be listed. TODO: configuration for overrides.
 - Automatic detection of private and public APIs based on exchange capabilities. Private APIs only require API Key and Secret.
 - Links for the selected exchange API docs.
 - Automatic detection of required and optional parameters for the selected Exchange.
@@ -36,13 +37,12 @@ npm install node-red-contrib-ccxt-v2 --save
 
 ## Some examples
 
-- List Bitcoin Balance in my wallet from Kraken exchange.
+- Retrieve a list of all markets from all exchanges !
 
-![ccxt_kraken_balance](https://user-images.githubusercontent.com/1216181/53039001-5ea66e80-347e-11e9-87c1-61bdf474ecf8.png)
+- List my Balances from Binance and Poloneix.
 
-- List OHLCV array for Doge/Bitcoin grouped in hours from 18/02/2019 from Bittrex Exchange. This API is public and we do not need to register in the Exchange to query this data.
+- fetch OHLCV for multiple markets from Bittrex exchange.
 
-![ccxt_bittrex_ohclv](https://user-images.githubusercontent.com/1216181/53039005-62d28c00-347e-11e9-936d-210b6c9f50a7.png)
 
 In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the secrets.
 
