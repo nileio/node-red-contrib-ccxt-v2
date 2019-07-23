@@ -63,6 +63,7 @@ module.exports = function(RED) {
     this.apipayloadType = config.apipayloadType || "none";
     var node = this;
 
+    // if RED httpNodeRoot is not enabled, then ajax calls will not work!
     if (RED.settings.httpNodeRoot !== false) {
       node.errorHandler = function(err, req, res, next) {
         node.warn(err);
@@ -340,8 +341,8 @@ module.exports = function(RED) {
     // execute ccxt API
     node.on("input", function(msg) {
       const asyncInput = async function async(config) {
-        let results = [];
-        let res = 0;
+      //  let results = [];
+      //  let res = 0;
         let exchangelist = node.exchange;
         var api = node.api;
 
