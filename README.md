@@ -11,7 +11,7 @@ This is now in Beta testing with really cool new features as below :) Please cre
 - Automatic load of all unified and custom (exchange-specific) APIs.
 - Supports a call to multiple exchanges at one time and for multiple markets !
 - Now only the supported APIs by the exchange will be listed. TODO: configuration for overrides.
-- Automatic detection of private and public APIs based on exchange capabilities. Private APIs only require API Key and Secret.
+- Automatic detection of private and public APIs based on exchange capabilities. Private APIs only require API Key and Secret. TODO : support overrides.
 - Links for the selected exchange API docs.
 - Automatic detection of required and optional parameters for the selected Exchange.
 - Dynamic flow input parameters.
