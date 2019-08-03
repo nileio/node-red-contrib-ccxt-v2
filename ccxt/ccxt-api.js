@@ -68,7 +68,7 @@ module.exports = function(RED) {
       node.errorHandler = function(err, req, res, next) {
         node.warn(err);
 
-        res.send(500);
+        res.sendStatus(500);
       };
 
       node.callbackExchanges = function(req, res) {
@@ -104,7 +104,9 @@ module.exports = function(RED) {
           let arr = [];
           if (exchange.has !== undefined) {
             arr = Object.entries(exchange.has)
+
               // filter only exchange caps with = true
+
               .filter(function(x) {
                 // excluding caps that do not represent a unified API (exclude caps named as CORS/privateAPI/publicAPI)
                 if (x[0] !== "CORS" && x[0] !== "privateAPI" && x[0] !== "publicAPI") {
@@ -341,8 +343,8 @@ module.exports = function(RED) {
     // execute ccxt API
     node.on("input", function(msg) {
       const asyncInput = async function async(config) {
-      //  let results = [];
-      //  let res = 0;
+        //  let results = [];
+        //  let res = 0;
         let exchangelist = node.exchange;
         var api = node.api;
 
@@ -840,3 +842,4 @@ module.exports = function(RED) {
     }
   });
 };
+//# sourceMappingURL=/ccxt/ccxt-api.js.map

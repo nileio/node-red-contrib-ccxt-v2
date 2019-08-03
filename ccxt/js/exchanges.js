@@ -129,7 +129,7 @@ const allunifiedAPIs = {
   fetchMySells: ["private", ["symbol", "since", "limit", "apipayload"]],
   fetchMyBuys: ["private", ["symbol", "since", "limit", "apipayload"]],
   fetchCurrencies: ["apipayload"],
-  fetchAccounts: ["private",["apipayload"]],
+  fetchAccounts: ["private", ["apipayload"]],
   fetchDepositAddress: ["private", "code", ["apipayload"]],
   fetchDepositAddresses: ["private", ["codes", "apipayload"]],
   fetchDeposits: ["private", "code", ["since", "limit", "apipayload"]],
@@ -148,7 +148,9 @@ const allunifiedAPIs = {
   fetchTradingFee: ["private", "symbol", ["apipayload"]],
   fetchFees: ["private", "apipayload"],
   fetchTradingLimits: ["private", "symbol", ["apipayload"]],
-  futures: [["apipayload"]] // I dont know how to use futures .. some exchanges have this capabilitylike OKEx
+  futures: [["apipayload"]], // I dont know how to use futures .. some exchanges have this capabilitylike OKEx
+  fetchTime: [["apipayload"]],
+  fetchStatus: [["apipayload"]]
 };
 
 //-----------------------------------------------------------------------------

@@ -1,20 +1,32 @@
 <!--
-  Copyright NileIO.io and other contributors, https://github.com/nileio/node-red-contrib-ccxt-v2
+Copyright (c) 2019 Neil Lyon-S
+and other contributors, 
+https://github.com/nileio/node-red-contrib-ccxt-v2
 
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
+Licensed under the MIT License (the "License");
 
-  http://www.apache.org/licenses/LICENSE-2.0
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
 -->
 
 <script type="text/x-red" data-template-name="ccxt-api-v2">
+
   <div class="form-row">
         <span
           ><a href="#" target="_blank" id="id-img-display-exchange-homepage"
@@ -24,9 +36,10 @@
               id="id-anchor-display-exchange-img"
               style="max-width:68%;"/></a
         ></span>
+        <!-- * ? how does the src get resolved here. the svg is in the images folder of my node not in static! -->
         <span
           ><img
-            src="spinning-circles.svg"
+            src="images/spinning-circles.svg"
             alt="retrieving data..."
             id="id-loading-svg"
             style="display:none;width:24px;"
@@ -199,7 +212,7 @@
         />
         <input type="hidden" id="node-input-timeframeType" />
         <img
-          src="emulated.svg"
+          src="images/emulated.svg"
           alt="API is emulated"
           id="id-emulated-api"
           style="width:16px;"
@@ -383,6 +396,16 @@
         />
       </div>
 </script>
+<!--
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css"
+  rel="stylesheet"
+/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
+-->
+
+<link href="vendor/select2/select2.min.css" rel="stylesheet" />
+<script src="vendor/select2/select2.min.js"></script>
 
 <script type="text/javascript">
   RED.nodes.registerType("ccxt-api-v2", {
@@ -561,7 +584,7 @@
             value: "symbolList",
             label: "Pair",
             hasValue: true,
-            icon: "red/images/typedInput/bitcoin-28.png",
+            icon: "images/typedInput/bitcoin-18.png",
             options: ["None"]
           },
           {
@@ -585,7 +608,7 @@
             value: "timeframeList",
             label: "Candle size",
             //  hasValue: true,
-            icon: "red/images/typedInput/timeline.png",
+            icon: "images/typedInput/timeline.png",
             //default list of values
             options: ["1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1d"]
           },
@@ -602,7 +625,7 @@
           {
             value: "datepick",
             label: "Date",
-            icon: "red/images/typedInput/date_range.png",
+            icon: "images/typedInput/date-from-18.png",
             hasValue: true
           },
           "msg",
@@ -1219,7 +1242,7 @@
           //   let select2Container = $("#id-input-select-symbol").data("select2").$container;
           select2Container.remove();
           if (value === "str") $("#node-input-symbol").typedInput("width", "68%");
-          else $("#node-input-symbol").typedInput("width", "37%");
+          else $("#node-input-symbol").typedInput("width", "40%");
           //typedInputContainerElement.find(".red-ui-typedInput-input").show();
         }
       });
@@ -1352,7 +1375,7 @@
                     value: "timeframeList",
                     label: "Candle size",
                     //  hasValue: true,
-                    icon: "red/images/typedInput/timeline.png",
+                    icon: "images/typedInput/timeline.png",
                     options: timeframes
                   },
                   "str",
@@ -1480,6 +1503,8 @@
       }
     }
   });
+  //# sourceURL=/ccxt/ccxt-api.html
+  //# sourceMappingURL=/ccxt/ccxt-api.html.map
 </script>
 
 <style>
