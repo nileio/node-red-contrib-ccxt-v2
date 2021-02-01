@@ -554,10 +554,7 @@ SOFTWARE.
                 ****************************                           ****************************
       */
       // initialise select2 on the exchange field ! this will load a nice long drop-down searable list interface
-      // based on select2. Note: select2 js&css must be added to nodered public vendor folders
-      // currenctly i loaded it under @node-red/editor-client/public/vendor/select2
-      // if nodered is installed globally then @node-red will be under /usr/local/lib/node_modules/
-      // TODO: need to find a way to automatically package select2 and  reference it with installed nodered
+      // based on select2. Note: select2 js&css must be added either using a cdn or to a local folder and update the reference
       //initialise select2 on select input for the field exchange
       $("#node-input-exchange").select2({
         multiple: "multiple",
