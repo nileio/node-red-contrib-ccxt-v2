@@ -318,6 +318,7 @@ SOFTWARE.
           data-i18n="[placeholder]ccxt.parameters.txid"
           style="width: 50%"
         />
+         <input type="hidden" id="node-input-orderidType" />
       </div>
 
       <div class="form-row node-input-unified-api-code hidden">
@@ -409,7 +410,7 @@ SOFTWARE.
 
 <script type="text/javascript">
   RED.nodes.registerType("ccxt-api-v2", {
-    category: "Crypto API",
+    category: "cryptocurrency",
     defaults: {
       name: {
         value: ""
@@ -488,7 +489,13 @@ SOFTWARE.
         value: ""
       },
       orderid: {
-        value: ""
+        value: "",
+        required: false,
+        validate: RED.validators.typedInput("orderidType")
+      },
+      orderidType: {
+        value: "str",
+        required: false
       },
       code: {
         value: ""
@@ -608,7 +615,7 @@ SOFTWARE.
             value: "timeframeList",
             label: "Candle size",
             //  hasValue: true,
-            icon: "images/typedInput/timeline.png",
+            //icon: "images/typedInput/timeline.png",
             //default list of values
             options: ["1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1d"]
           },
@@ -647,6 +654,19 @@ SOFTWARE.
             icon: "red/images/typedInput/09.png",
             validate: /^[+-]?[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/
           },
+          "msg",
+          {
+            value: "flow",
+            label: "flow.",
+            hasValue: true
+          }
+        ]
+      });
+      $("#node-input-orderid").typedInput({
+        typeField: $("#node-input-orderidType"),
+        default: "str",
+        types: [
+          "str",
           "msg",
           {
             value: "flow",
@@ -826,7 +846,7 @@ SOFTWARE.
                 $.each(Object.keys(result.api[apitype]), function(index, verb) {
                   $.each(result.api[apitype][verb], function(index, api) {
                     var option = $("<option>", {
-                      value: verb + "_" + api,
+                      value: apitype + "_" + verb + "_" + api,
                       text: verb + "_" + api,
                       verb: verb,
                       customapitype: apitype,
@@ -932,22 +952,12 @@ SOFTWARE.
             //disable custom API option if multiple exchanges selected
             $("#input-apitype-customAPI").prop("disabled", true);
             //ensure value is unifiedAPI only
-            if ($("#node-input-apitype").val() !== "unifiedAPI")
-              $("#node-input-apitype").val("unifiedAPI");
+            if ($("#node-input-apitype").val() !== "unifiedAPI") $("#node-input-apitype").val("unifiedAPI");
           } else if (exchange.length == 1) {
             $("#input-apitype-customAPI").prop("disabled", false);
-            $("#id-img-display-exchange-homepage").attr(
-              "href",
-              $("#node-input-exchange option:selected").attr("homepage")
-            );
-            $("#id-anchor-display-exchange-img").attr(
-              "src",
-              $("#node-input-exchange option:selected").attr("logo")
-            );
-            $("#id-anchor-display-exchange-img").attr(
-              "alt",
-              $("#node-input-exchange option:selected").text()
-            );
+            $("#id-img-display-exchange-homepage").attr("href", $("#node-input-exchange option:selected").attr("homepage"));
+            $("#id-anchor-display-exchange-img").attr("src", $("#node-input-exchange option:selected").attr("logo"));
+            $("#id-anchor-display-exchange-img").attr("alt", $("#node-input-exchange option:selected").text());
             // $("#id-anchor-display-exchange-homepage").toggle(true);
           }
 
@@ -958,10 +968,7 @@ SOFTWARE.
       //select2 workaround bug fix - dropdown does not close when selecting multiple
       //more than the allowed
       $("#node-input-exchange").on("select2:select", function(e) {
-        if (
-          $(this).select2("data").length >=
-          $(this).data("select2").results.data.maximumSelectionLength
-        ) {
+        if ($(this).select2("data").length >= $(this).data("select2").results.data.maximumSelectionLength) {
           $(this).select2("close");
         }
       });
@@ -971,10 +978,7 @@ SOFTWARE.
        */
 
       $("#id-node-input-allexchanges").click(function() {
-        $("#node-input-allexchanges").prop(
-          "checked",
-          !$("#node-input-allexchanges").prop("checked")
-        );
+        $("#node-input-allexchanges").prop("checked", !$("#node-input-allexchanges").prop("checked"));
         $("#node-input-allexchanges").trigger("change");
       });
 
@@ -1018,15 +1022,9 @@ SOFTWARE.
         apiElement.empty();
         if (exchange !== undefined && exchange !== "" && exchange !== null) {
           if (apitype === "customAPI") {
-            $("#id-anchor-display-exchange-apidoc").attr(
-              "href",
-              $("#node-input-exchange option:selected").attr("apidoc")
-            );
+            $("#id-anchor-display-exchange-apidoc").attr("href", $("#node-input-exchange option:selected").attr("apidoc"));
           } else {
-            $("#id-anchor-display-exchange-apidoc").attr(
-              "href",
-              "https://ccxt.readthedocs.io/en/latest/manual.html#api-methods-endpoints"
-            );
+            $("#id-anchor-display-exchange-apidoc").attr("href", "https://ccxt.readthedocs.io/en/latest/manual.html#api-methods-endpoints");
           }
         }
 
@@ -1053,9 +1051,7 @@ SOFTWARE.
           if (api && $("#node-input-apipayload").typedInput("type") === "json") {
             // api = api.toLowerCase();
 
-            currValue = $("#node-input-apipayload").typedInput("value")
-              ? JSON.parse($("#node-input-apipayload").typedInput("value"))
-              : {};
+            currValue = $("#node-input-apipayload").typedInput("value") ? JSON.parse($("#node-input-apipayload").typedInput("value")) : {};
           }
           var newValue = {};
           if (api)
@@ -1091,8 +1087,7 @@ SOFTWARE.
             //  apipayload = "{\n" + apipayload + "\n}";
             //if ($("#node-input-apipayload").typedInput("value") === "") {
             $("#node-input-apipayload").typedInput("value", JSON.stringify(newValue));
-          } else if (!$("#node-input-apipayload").typedInput("value"))
-            $("#node-input-apipayload").typedInput("type", "none");
+          } else if (!$("#node-input-apipayload").typedInput("value")) $("#node-input-apipayload").typedInput("type", "none");
         }
         // Get the params for the unified API if an API is selected
         if (apitype === "unifiedAPI") {
@@ -1113,10 +1108,7 @@ SOFTWARE.
                   // trying to fix this ... this is not safe for calling from both symbol and timefram
 
                   if (x === "symbol") {
-                    $("#node-input-symbol").trigger(
-                      "change",
-                      $("#node-input-symbolType").val()
-                    );
+                    $("#node-input-symbol").trigger("change", $("#node-input-symbolType").val());
                   }
                   if (x === "timeframe") {
                     $("#node-input-timeframe").trigger("change", "timeframes");
@@ -1139,20 +1131,10 @@ SOFTWARE.
 
                     //the below code is aweful and buggy dont know why i had to do this .. need to research this problem
                     //for some reason styles of those typedInput fields need some massaging !
-                    if (
-                      x === "timeframe" ||
-                      x === "since" ||
-                      x === "symbol" ||
-                      x === "limit" ||
-                      x === "apipayload"
-                    ) {
-                      if (
-                        $("#node-input-" + x).typedInput("type") !== "msg" &&
-                        $("#node-input-" + x).typedInput("type") !== "flow"
-                      )
-                        $(
-                          ".node-input-unified-api-" + x + " .red-ui-typedInput-input"
-                        ).css("left", "40px");
+                    // *** removed 29  Jan 2020
+                    if (x === "timeframe" || x === "since" || x === "symbol" || x === "limit" || x === "apipayload") {
+                      if ($("#node-input-" + x).typedInput("type") !== "msg" && $("#node-input-" + x).typedInput("type") !== "flow")
+                        $(".node-input-unified-api-" + x + " .red-ui-typedInput-input").css("left", "40px");
                     }
                   }
                 });
@@ -1186,9 +1168,7 @@ SOFTWARE.
             placeholder: node._("ccxt.parameters.symbolselect")
           });
           // hide the symbolslist typedInput
-          let typedInputContainerElement = $(
-            ".node-input-unified-api-symbol > .red-ui-typedInput-container"
-          );
+          let typedInputContainerElement = $(".node-input-unified-api-symbol > .red-ui-typedInput-container");
           //typedInputContainerElement
           $("#node-input-symbol").typedInput("width", "40px");
 
@@ -1235,9 +1215,7 @@ SOFTWARE.
             inputSelectSymbolElem.trigger("change");
           });
         } else {
-          let typedInputContainerElement = $(
-            ".node-input-unified-api-symbol > .red-ui-typedInput-container"
-          );
+          let typedInputContainerElement = $(".node-input-unified-api-symbol > .red-ui-typedInput-container");
           let select2Container = inputSelectSymbolElem.siblings(".select2-container");
           //   let select2Container = $("#id-input-select-symbol").data("select2").$container;
           select2Container.remove();
@@ -1248,10 +1226,7 @@ SOFTWARE.
       });
       // Symbol select2 drop down
       $("#id-input-select-symbol").on("select2:select", function(e) {
-        if (
-          $(this).select2("data").length >=
-          $(this).data("select2").results.data.maximumSelectionLength
-        ) {
+        if ($(this).select2("data").length >= $(this).data("select2").results.data.maximumSelectionLength) {
           $(this).select2("close");
         }
       });
@@ -1264,11 +1239,7 @@ SOFTWARE.
         if (val !== null) {
           if (Array.isArray(val) && val.length > 0) {
             let sval = val.join(",");
-            if (
-              $("#node-input-symbolType").val() === "symbolList" &&
-              $("#node-input-symbol").val() !== sval
-            )
-              $("#node-input-symbol").val(sval);
+            if ($("#node-input-symbolType").val() === "symbolList" && $("#node-input-symbol").val() !== sval) $("#node-input-symbol").val(sval);
           } else $("#node-input-symbol").val(null);
         } else $("#node-input-symbol").val(null);
       });
@@ -1283,46 +1254,27 @@ SOFTWARE.
         // whereas when choosing msg or flow .. it is expecting a string
         // and so i just hide my custom date picker field.
         // the change of date on my custom input date field is captured and value is copied to the actual node field
-        if (value === true)
-          $("#id-input-since").appendTo(
-            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input"
-          );
+        if (value === true) $("#id-input-since").appendTo(".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input");
         else if (value === "datepick") {
-          $(
-            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]"
-          ).hide();
+          $(".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]").hide();
           $("#id-input-since").show();
         } else if (value === "msg" || value === "flow") {
           $("#id-input-since").hide();
-          $(
-            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]"
-          ).show();
+          $(".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]").show();
         }
-        if (
-          value === true &&
-          ($("#node-input-sinceType").val() === "datepick" ||
-            node.sinceType === "datepick")
-        ) {
+        if (value === true && ($("#node-input-sinceType").val() === "datepick" || node.sinceType === "datepick")) {
           $("#id-input-since").val($("#node-input-since").val() || node.since);
-          $(
-            ".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]"
-          ).hide();
+          $(".node-input-unified-api-since.hidden > .red-ui-typedInput-container > .red-ui-typedInput-input > input[type=text]").hide();
 
           $("#id-input-since").show();
         }
       });
 
       $("#id-input-since").change(function() {
-        if (
-          $("#node-input-sinceType").val() === "datepick" &&
-          $("#node-input-since").val() !== $("#id-input-since").val()
-        ) {
+        if ($("#node-input-sinceType").val() === "datepick" && $("#node-input-since").val() !== $("#id-input-since").val()) {
           $("#node-input-since").val($("#id-input-since").val());
         }
-        if (
-          $("#node-input-sinceType").val() === "datepick" &&
-          $("#id-input-since").val()
-        ) {
+        if ($("#node-input-sinceType").val() === "datepick" && $("#id-input-since").val()) {
           var parsedDate = new Date($("#id-input-since").val()).getTime();
           $("#label-node-input-sinceMseconds").val(parsedDate);
 
@@ -1336,9 +1288,9 @@ SOFTWARE.
 
       $("#node-input-timeframe").on("change", function(type, value) {
         //this happens only when you open the editor for first time
-        if (value === true && $("#node-input-timeframe").val() !== node.timeframe) {
-          $("#node-input-timeframe").typedInput("value", node.timeframe);
-        }
+        // if (value === true && $("#node-input-timeframe").val() !== node.timeframe) {
+        //   $("#node-input-timeframe").typedInput("value", node.timeframe);
+        // }
         // the value contains timeframeType
         if (value === "timeframes") {
           var exchange = $("#node-input-exchange").val();
@@ -1386,10 +1338,7 @@ SOFTWARE.
                 .typedInput("width", "37%");
               //after loading new options, it is important to try set the configured value or the saved value
               //if the value doe not exist in the list
-              $("#node-input-timeframe").typedInput(
-                "value",
-                $("#node-input-timeframe").val() || node.timeframe
-              );
+              $("#node-input-timeframe").typedInput("value", $("#node-input-timeframe").val() || node.timeframe);
             });
           }
         }
@@ -1400,10 +1349,7 @@ SOFTWARE.
 
       $("#node-input-limit").on("change", function() {
         //setting defaults here..
-        if (
-          $("#node-input-limit").typedInput("type") === "msg" &&
-          $("#node-input-limit").typedInput("value") === ""
-        ) {
+        if ($("#node-input-limit").typedInput("type") === "msg" && $("#node-input-limit").typedInput("value") === "") {
           $("#node-input-limit").typedInput("value", "payload");
         }
       });
@@ -1424,8 +1370,7 @@ SOFTWARE.
 
       //save exchange property
 
-      if (isallexchanges === true && $("#node-input-exchange").val().length !== 0)
-        node.exchange = $("#node-input-exchange").val([]);
+      if (isallexchanges === true && $("#node-input-exchange").val().length !== 0) node.exchange = $("#node-input-exchange").val([]);
       //comparing arrays change to strings first
       else if (
         node.exchange.toString() !==
@@ -1435,10 +1380,8 @@ SOFTWARE.
       )
         node.exchange = $("#node-input-exchange").val();
 
-      if (node.api !== $("#node-input-api option:selected").val())
-        node.api = $("#node-input-api option:selected").val();
-      if (node.apiprivate !== $("#node-input-api option:selected").attr("isprivate"))
-        node.apiprivate = $("#node-input-api option:selected").attr("isprivate");
+      if (node.api !== $("#node-input-api option:selected").val()) node.api = $("#node-input-api option:selected").val();
+      if (node.apiprivate !== $("#node-input-api option:selected").attr("isprivate")) node.apiprivate = $("#node-input-api option:selected").attr("isprivate");
 
       // symbol storage handling
       if ($("#node-input-symbolType").val() === "symbolList") {
@@ -1457,19 +1400,11 @@ SOFTWARE.
         node.symbol = "all";
       }
       // timeframe storage handling
-      if (
-        $("#node-input-timeframeType").val() === "timeframeList" &&
-        node.timeframe !== $("#node-input-timeframe").val()
-      )
+      if ($("#node-input-timeframeType").val() === "timeframeList" && node.timeframe !== $("#node-input-timeframe").val())
         node.timeframe = $("#node-input-timeframe").val();
       if ($("#node-input-apitype option:selected").val() === "customAPI")
-        if (
-          node.customapitype !==
-          $("#node-input-api option:selected").attr("customapitype")
-        )
-          $("#node-input-customapitype").val(
-            $("#node-input-api option:selected").attr("customapitype")
-          );
+        if (node.customapitype !== $("#node-input-api option:selected").attr("customapitype"))
+          $("#node-input-customapitype").val($("#node-input-api option:selected").attr("customapitype"));
 
       // set Name if undefined
       if (!$("#node-input-name").val()) {
@@ -1481,25 +1416,12 @@ SOFTWARE.
               " more : " +
               $("#node-input-api option:selected").text()
           );
-        } else if (
-          Array.isArray(node.exchange) &&
-          node.exchange.length == 1 &&
-          node.api
-        ) {
-          $("#node-input-name").val(
-            $("#node-input-exchange").select2("data")[0].text +
-              " : " +
-              $("#node-input-api option:selected").text()
-          );
+        } else if (Array.isArray(node.exchange) && node.exchange.length == 1 && node.api) {
+          $("#node-input-name").val($("#node-input-exchange").select2("data")[0].text + " : " + $("#node-input-api option:selected").text());
         } else if (node.exchange && node.api) {
-          $("#node-input-name").val(
-            $("#node-input-exchange option:selected").text() +
-              " : " +
-              $("#node-input-api option:selected").text()
-          );
+          $("#node-input-name").val($("#node-input-exchange option:selected").text() + " : " + $("#node-input-api option:selected").text());
         }
-        if (isallexchanges && node.api)
-          $("#node-input-name").val("All exchanges : " + node.api);
+        if (isallexchanges && node.api) $("#node-input-name").val("All exchanges : " + node.api);
       }
     }
   });
@@ -1754,6 +1676,21 @@ SOFTWARE.
       />
     </div>
 
+      <div class="form-row">
+      <label for="node-config-input-url" class="tooltip"
+        ><i class="fa fa-globe"></i> <span data-i18n="ccxt-exchange.label.url"></span>
+        <div class="right">
+          <strong data-i18n="ccxt-exchange.label.url"></strong>
+          <p data-i18n="ccxt-exchange.labeltooltip.url"></p>
+          <i></i>
+        </div>
+      </label>
+
+      <select type="text" id="node-config-input-url">
+        <option value="default">Default</option>
+      </select>
+    </div>
+
     <div class="form-row node-config-defaultconfig">
       <label for="node-config-input-defaultconfig"
         ><i class="fa fa-eye"></i>
@@ -1789,6 +1726,7 @@ SOFTWARE.
       name: {
         value: ""
       },
+      url: { value: "default", required: false },
       defaultconfig: {
         value: true,
         required: true
@@ -1886,11 +1824,33 @@ SOFTWARE.
                 if (value[0] === "password") {
                   $(".node-config-password").show();
                   if (config.credentials.has_password === true)
-                    $("#node-config-input-password").attr(
-                      "placeholder",
-                      "Value Exists! Enter a new Value to update"
-                    );
+                    $("#node-config-input-password").attr("placeholder", "Value Exists! Enter a new Value to update");
                 }
+              });
+            }
+          ).error(function(error) {
+            console.log(error);
+          });
+          $.getJSON(
+            "exchangeurls",
+            {
+              exchange: exchange
+            },
+            function(result) {
+              $("#node-config-input-url").empty();
+              $("#node-config-input-url").append(
+                $("<option />")
+                  .val("default")
+                  .text("Default")
+              );
+              $.each(result.exchangeurls, function(key, value) {
+                $("#node-config-input-url").append(
+                  $("<option />")
+                    .val(value[1])
+                    .text(value[0])
+                );
+                $("#node-config-input-url").val(config.url);
+                $("#node-config-input-url").trigger("change");
               });
             }
           ).error(function(error) {
@@ -1900,10 +1860,7 @@ SOFTWARE.
       };
       $("#node-config-input-exchange").change(function() {
         if ($("#node-config-input-exchange").val())
-          if (!$("#node-config-input-name").val())
-            $("#node-config-input-name").val(
-              $("#node-config-input-exchange option:selected").text()
-            );
+          if (!$("#node-config-input-name").val()) $("#node-config-input-name").val($("#node-config-input-exchange option:selected").text());
         showhideInputFields();
       });
     },

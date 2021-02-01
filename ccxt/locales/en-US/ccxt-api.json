@@ -76,8 +76,12 @@
       "uid": "User Id",
       "login": "Login",
       "password": "Password",
+      "url": "URL",
       "defaultconfig": "Default",
       "activeconfig": "Active"
+    },
+    "labeltooltip": {
+      "url": "Select from the list of urls supported by the exchange, or default."
     },
     "parameters": {
       "exchange": "The exchange for which the API Keys configuration apply.",

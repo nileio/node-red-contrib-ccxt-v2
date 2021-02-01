@@ -12,17 +12,16 @@
     "cryptotrading"
   ],
   "scripts": {
-    "maps": "nr-gen-source-maps --sourceRoot /ccxt/",
-    "debug": "nr-gen-source-maps -r /ccxt/ && node --inspect-brk=9229 /usr/local/lib/node_modules/node-red/red.js",
+    "maps": "genmaps --sourceRoot /ccxt/",
+    "debug": "genmaps -r /ccxt/ && node --inspect-brk=9229 /usr/local/lib/node_modules/node-red/red.js",
     "start": "/usr/local/lib/node_modules/node-red/red.js",
     "test": "mocha \"test/**/*_spec.js\"",
     "lint": "eslint"
   },
   "author": "Neil Lyon-S",
-  "license": "Apache License, Version 2.0",
+  "license": "Apache-2.0",
   "dependencies": {
-    "ccxt": "^1.18.630",
-    "serve-static": "^1.14.1"
+    "ccxt": "^1.40.47"
   },
   "node-red": {
     "nodes": {
@@ -30,8 +29,8 @@
     }
   },
   "devDependencies": {
-    "ansicolor": "^1.1.84",
-    "as-table": "^1.0.44",
-    "ololog": "^1.1.128"
+    "ansicolor": "^1.1.93",
+    "as-table": "^1.0.55",
+    "ololog": "^1.1.164"
   }
 }
