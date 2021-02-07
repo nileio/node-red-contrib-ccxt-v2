@@ -1,0 +1,20 @@
+{
+  "name": "nr-gen-source-maps",
+  "version": "1.0.0",
+  "description": "Generate source maps for Node-RED nodes.",
+  "main": "bin/gensourcemaps.js",
+  "bin": {
+    "nr-gen-source-maps": "bin/npmgensourcemaps.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sourcemaps"
+  ],
+  "author": "Neil Lyon-S",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "source-map": "^0.7.3"
+  }
+}
