@@ -451,34 +451,3 @@ function lineNumberByIndex(index, string) {
   return line;
 }
 
-/*           if (sourcefileType === "html") {
-            //** strictly search for the exact string (spacing or chars are allowed everywhere and case insensitive)
-            const regex = /(<script type="text\/javascript"\s*>)(.|\n)*?(RED.nodes.registerType\(.)(.*)('|")/gim;
-
-            let m;
-            let x = 0;
-
-            
-            while ((m = regex.exec(modifiedSource)) !== null) {
-             
-
-              //** this is the line where the <script type='text/javascript'> tag is**
-
-
-              //** extract the javascript code only from source file**
-
-
-/*             //** 3. update the source file with sourceMappingURL & sourceURL comments if needed
-
-
-/* if (sourcefileType === "html") {
-          //* 1. get javascript source code
-          //* javascript is embedded in the html page, extract source code and starting line number
-
-  
-              //* this is the line where the <script type='text/javascript'> tag is**
-              
-
-              /** extract the javascript code only from source file**
-
-              */
