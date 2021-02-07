@@ -153,18 +153,19 @@ for (let index = 0; index < args.length; index++) {
 }
 
 // inform the user of what we will be doing
-if (sourcerootprovided=false)
-  console.log(
-    `Note: sourceRoot not specified. Generating source maps for node "${outputTypes.join()}" using sourceRoot value "${defsourceRoot}" and ${
-      updateComments === true ? "update of source maps comments in source files if necessary." : "will make no changes to source files."
-    }`
-  );
+if (sourcerootprovided)
+console.log(
+  `Generating source maps for node "${outputTypes.join()}" using sourceRoot value "${sourceRoot}" and ${
+    updateComments === true ? "update of source maps comments in source files if necessary." : "will make no changes to source files."
+  }`
+)
 else
-  console.log(
-    `Generating source maps for node "${outputTypes.join()}" using sourceRoot value "${sourceRoot}" and ${
-      updateComments === true ? "update of source maps comments in source files if necessary." : "will make no changes to source files."
-    }`
-  );
+console.log(
+  `Note: sourceRoot not specified. Generating source maps for node "${outputTypes.join()}" using sourceRoot value "${defsourceRoot}" and ${
+    updateComments === true ? "update of source maps comments in source files if necessary." : "will make no changes to source files."
+  }`
+)
+
 /**
  * *Program entry
  *
