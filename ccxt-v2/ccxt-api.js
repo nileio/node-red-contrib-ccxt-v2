@@ -255,6 +255,40 @@ module.exports = function (RED) {
     res.send(JSON.stringify({ api: exchange.api }));
   };
 
+  // returns parameters of the unified api
+  // based on the signature of the api in the dictionary
+  // loaded from our exchanges.js file
+  var getApiParams = function(api, extended) {
+    //TODO: implement extended as true/false
+    //if true return a required/non-required for each param
+    let arr = [],
+      reqparams = [],
+      optparams = [];
+
+    // required parameters appear first and they are string
+    // exclude the special parameter called private which is just an indicator that
+    // the api requires credentials
+
+    reqparams = exchanges.allunfiedAPIs[api].filter(x => typeof x === "string" && x !== "private");
+
+    // the set of optional parameters are defined as an array
+    optparams = exchanges.allunfiedAPIs[api].filter(x => typeof x !== "string");
+    //if there are optional params return the names of optional parameters from the array
+    if (optparams.length > 0) {
+      optparams = optparams.map(x => x)[0];
+      //concatenate the required and optional params and close any gaps (closing gaps doesnt really work but it still OK)
+      arr = reqparams.concat(optparams).filter(function () {
+        return true;
+      });
+      //if we have required params. sometimes we only have optional params
+    } else if (reqparams.length > 0)
+      arr = reqparams.filter(function () {
+        return true;
+      });
+
+    return arr;
+  }
+
   var callbackApiParams = function (req, res) {
     let api = req.query.api;
 
@@ -373,39 +407,6 @@ module.exports = function (RED) {
     this.apipayloadType = config.apipayloadType || "none";
     var node = this;
 
-    // returns parameters of the unified api
-    // based on the signature of the api in the dictionary
-    // loaded from our exchanges.js file
-    function getApiParams(api, extended) {
-      //TODO: implement extended as true/false
-      //if true return a required/non-required for each param
-      let arr = [],
-        reqparams = [],
-        optparams = [];
-
-      // required parameters appear first and they are string
-      // exclude the special parameter called private which is just an indicator that
-      // the api requires credentials
-
-      reqparams = exchanges.allunfiedAPIs[api].filter(x => typeof x === "string" && x !== "private");
-
-      // the set of optional parameters are defined as an array
-      optparams = exchanges.allunfiedAPIs[api].filter(x => typeof x !== "string");
-      //if there are optional params return the names of optional parameters from the array
-      if (optparams.length > 0) {
-        optparams = optparams.map(x => x)[0];
-        //concatenate the required and optional params and close any gaps (closing gaps doesnt really work but it still OK)
-        arr = reqparams.concat(optparams).filter(function () {
-          return true;
-        });
-        //if we have required params. sometimes we only have optional params
-      } else if (reqparams.length > 0)
-        arr = reqparams.filter(function () {
-          return true;
-        });
-
-      return arr;
-    }
     // execute ccxt API
     node.on("input", function (msg) {
       const asyncInput = async function async(config) {

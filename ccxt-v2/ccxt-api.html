@@ -690,7 +690,7 @@ SOFTWARE.
         //show spinner
         $("#id-loading-svg").show();
         $.getJSON(
-          "exchangesymbols",
+          "ccxt-v2/exchangesymbols",
           {
             exchange: ex
           },
@@ -773,7 +773,7 @@ SOFTWARE.
         $("#id-loading-svg").show();
 
         $.getJSON(
-          "exchangecaps",
+          "ccxt-v2/exchangecaps",
           {
             exchange: exchange
           },
@@ -889,7 +889,7 @@ SOFTWARE.
         //show spinner
         $("#id-loading-svg").show();
         $.getJSON(
-          "fetchOHLCVTimeframes",
+          "ccxt-v2/fetchOHLCVTimeframes",
           {
             exchange: ex
           },
@@ -1090,7 +1090,7 @@ SOFTWARE.
         if (apitype === "unifiedAPI") {
           if (api !== undefined && api !== "") {
             $.getJSON(
-              "apiparams",
+              "ccxt-v2/apiparams",
               {
                 api: api
               },
@@ -1766,7 +1766,7 @@ SOFTWARE.
         var exchangeElement = $("#node-config-input-exchange");
         //show spinner
         //$("#id-loading-svg").show();
-        $.getJSON("exchanges", function(result) {
+        $.getJSON("ccxt-v2/exchanges", function(result) {
           exchangeElement.empty();
           exchangeElement.append(
             $("<option>", {
@@ -1807,7 +1807,7 @@ SOFTWARE.
         let exchange = $("#node-config-input-exchange option:selected").val();
         if (exchange !== undefined && exchange !== "") {
           $.getJSON(
-            "exchangereqcreds",
+            "ccxt-v2/exchangereqcreds",
             {
               exchange: exchange
             },
@@ -1829,7 +1829,7 @@ SOFTWARE.
             console.log(error);
           });
           $.getJSON(
-            "exchangeurls",
+            "ccxt-v2/exchangeurls",
             {
               exchange: exchange
             },
