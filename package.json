@@ -12,8 +12,8 @@
     "cryptotrading"
   ],
   "scripts": {
-    "maps": "genmaps --sourceRoot /ccxt/",
-    "debug": "genmaps -r /ccxt/ && node --inspect-brk=9229 /usr/local/lib/node_modules/node-red/red.js",
+    "maps": "genmaps --sourceRoot /ccxt-v2/",
+    "debug": "genmaps -r /ccxt-v2/ && node --inspect-brk=9229 /usr/local/lib/node_modules/node-red/red.js",
     "start": "/usr/local/lib/node_modules/node-red/red.js",
     "test": "mocha \"test/**/*_spec.js\"",
     "lint": "eslint"
@@ -25,7 +25,7 @@
   },
   "node-red": {
     "nodes": {
-      "ccxt-api-v2": "ccxt/ccxt-api.js"
+      "ccxt-api-v2": "ccxt-v2/ccxt-api.js"
     }
   },
   "devDependencies": {

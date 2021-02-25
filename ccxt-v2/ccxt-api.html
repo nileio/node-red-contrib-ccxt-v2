@@ -713,7 +713,7 @@ SOFTWARE.
         var exchangeElement = $("#node-input-exchange");
         //show spinner
         $("#id-loading-svg").show();
-        $.getJSON("exchanges", function(result) {
+        $.getJSON("ccxt-v2/exchanges", function(result) {
           exchangeElement.empty();
 
           $.each(result.exchange, function(key, value) {
@@ -826,7 +826,7 @@ SOFTWARE.
         //show spinner
         $("#id-loading-svg").show();
         $.getJSON(
-          "apis",
+          "ccxt-v2/apis",
           {
             exchange: exchange
           },
@@ -1422,8 +1422,8 @@ SOFTWARE.
       }
     }
   });
-  //# sourceURL=/ccxt/ccxt-api.html
-  //# sourceMappingURL=/ccxt/ccxt-api.html.map
+  //# sourceURL=/ccxt-v2/ccxt-api.html
+  //# sourceMappingURL=/ccxt-v2/ccxt-api.html.map
 </script>
 
 <style>
@@ -1779,7 +1779,7 @@ SOFTWARE.
             exchangeElement.append(
               $("<option />")
                 .val(key)
-                .text(value[0])
+                .text(value)
                 .attr("homepage", value[1])
                 .attr("logo", value[2])
                 .attr("apidoc", value[3])
