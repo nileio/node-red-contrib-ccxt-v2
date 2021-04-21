@@ -847,7 +847,7 @@ SOFTWARE.
                       text: verb + "_" + api,
                       verb: verb,
                       customapitype: apitype,
-                      isprivate: apitype !== "public"
+                      isprivate: !apitype.includes("public")
                     });
                     optgroup.append(option);
                     // sort on text

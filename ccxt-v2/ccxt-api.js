@@ -238,6 +238,38 @@ module.exports = function (RED) {
     }
   };
 
+  var flatten_api = function(orig_struct, label = "", depth=0) {
+    if (depth > 10) {
+      throw new Error("Too much recursion: " + depth);
+    }
+    let hasverb = function(orig_struct) {
+      var i_has_a_verb = false;
+      Object.keys(orig_struct).forEach(function(key, i) {
+        if (['get','post','put','delete'].includes(key)) {
+          i_has_a_verb = true;
+          return;
+        }
+      });
+      return i_has_a_verb;
+    }
+
+    let finalstruct = {};
+    Object.keys(orig_struct).forEach(function(key, i) {
+      console.log('Current key: ' + key);
+      let tmplabel = label ? label + "_" + key : key;
+      if (hasverb(orig_struct[key])) {
+        finalstruct[tmplabel] = orig_struct[key];
+      } else {
+        let tmpstruct = flatten_api(orig_struct[key], tmplabel, depth + 1);
+        Object.keys(tmpstruct).forEach(function(subkey, i) {
+            finalstruct[subkey] = tmpstruct[subkey];
+        });
+      }
+    });
+
+    return finalstruct;
+  };
+
   var callbackApis = function (req, res) {
     var exchange = req.query.exchange;
 
@@ -252,7 +284,7 @@ module.exports = function (RED) {
     // provided by the exchange categories into private/public and other groups
     res.setHeader("Content-Type", "application/json");
 
-    res.send(JSON.stringify({ api: exchange.api }));
+    res.send(JSON.stringify({ api: flatten_api(exchange.api) }));
   };
 
   // returns parameters of the unified api

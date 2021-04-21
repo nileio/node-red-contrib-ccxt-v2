@@ -5,7 +5,7 @@ const ccxt = require('ccxt'),
 
   // ccxt.version
   // binding to ccxt version
-  version = ccxt.version, // "1.18.630";
+  version = ccxt.version, // "1.47.46";
 
   // this list match the latest list from ccxt module. update as necessary
   exchanges = function () {
