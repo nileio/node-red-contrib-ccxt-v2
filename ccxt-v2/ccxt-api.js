@@ -29,14 +29,6 @@ module.exports = function (RED) {
   // configure image static folder
   //app.use("/", serveStatic(path.join(__dirname, "images")));
 
-  // add map files
-  RED.httpNode.get('/ccxt-v2/ccxt-api.html.map', function(req, res) {
-    res.sendFile(path.join(__dirname, '/ccxt-api.html.map'));
-  });
-  RED.httpNode.get('/ccxt-v2/ccxt-api.js.map', function(req, res) {
-      res.sendFile(path.join(__dirname, '/ccxt-api.js.map'));
-  });
-
   var errorHandler = function (err, req, res, next) {
     console.warn(err);
     res.sendStatus(500);
@@ -48,7 +40,7 @@ module.exports = function (RED) {
 
     // get all exchanges
     res.setHeader("Content-Type", "application/json");
-    res.send(JSON.stringify({ exchange: exchanges.exchanges }));
+    res.send(JSON.stringify({exchange: exchanges.exchanges}));
   };
 
   var callbackExchangeCaps = function (req, res) {
@@ -73,8 +65,8 @@ module.exports = function (RED) {
       // create the exchange object passing in exchange id
       var exchange = new ccxt[ex]({
         headers: {
-          Connection: "keep-alive"
-        }
+          Connection: "keep-alive",
+        },
       });
       let arr = [];
       if (exchange.has !== undefined) {
@@ -103,7 +95,7 @@ module.exports = function (RED) {
             //Note: error will be 'Cannot read property 'filter' of undefined'
             // when the capability does not exist on my exchanges unifiedAPI list
 
-            modarr.push(exchanges.allunfiedAPIs[v[0]].filter(x => x === "private").join() ? true : false);
+            modarr.push(exchanges.allunfiedAPIs[v[0]].filter((x) => x === "private").join() ? true : false);
             return modarr;
           });
 
@@ -113,7 +105,7 @@ module.exports = function (RED) {
         if (index > 0 && arr.length > 0) {
           // inner join new array with existing array
           outputarr = arr.filter(function (c) {
-            return outputarr.some(ov => ov[0] === c[0]);
+            return outputarr.some((ov) => ov[0] === c[0]);
           });
         }
       }
@@ -122,7 +114,7 @@ module.exports = function (RED) {
     res.setHeader("Content-Type", "application/json");
     // send out the array of all supported unified APIs of the exchange
     // including true or false for private apis
-    res.send(JSON.stringify({ caps: outputarr }));
+    res.send(JSON.stringify({caps: outputarr}));
   };
 
   var callbackExchangeSymbols = async function (req, res) {
@@ -136,8 +128,8 @@ module.exports = function (RED) {
         // instantiate the exchange by id
         var exchange = new ccxt[ex]({
           headers: {
-            Connection: "keep-alive"
-          }
+            Connection: "keep-alive",
+          },
         });
         let marketsList = [];
         // note if fetchMarkets is unsupported then the final list will be empty or filled with other exchange
@@ -151,15 +143,15 @@ module.exports = function (RED) {
           // get all supported symbols from the exchange
           marketsList = ccxt
             .sortBy(Object.values(markets), "symbol")
-            .map(market => ccxt.omit(market, ["info", "limits", "precision", "fees"]))
-            .map(x => x.symbol);
+            .map((market) => ccxt.omit(market, ["info", "limits", "precision", "fees"]))
+            .map((x) => x.symbol);
           // if we only have one element just copy array
           if (index == 0) outputarr = marketsList;
           // if this is a second round we already have an array add to it
           if (index > 0 && marketsList.length > 0) {
             // inner join new array with incoming array
             outputarr = marketsList.filter(function (c) {
-              return outputarr.some(ov => ov === c);
+              return outputarr.some((ov) => ov === c);
             });
           }
         }
@@ -167,7 +159,7 @@ module.exports = function (RED) {
       }
       res.setHeader("Content-Type", "application/json");
 
-      res.send(JSON.stringify({ symbols: outputarr }));
+      res.send(JSON.stringify({symbols: outputarr}));
     } catch (error) {
       console.log(error);
     }
@@ -192,8 +184,8 @@ module.exports = function (RED) {
         // create the exchange object
         let exchange = new ccxt[ex]({
           headers: {
-            Connection: "keep-alive"
-          }
+            Connection: "keep-alive",
+          },
         });
         if (exchange.has["fetchOHLCV"]) {
           let tmpList = [];
@@ -208,7 +200,7 @@ module.exports = function (RED) {
           if (index > 0 && tmpList.length > 0) {
             // inner join new array with incoming array
             outputarr = tmpList.filter(function (c) {
-              return outputarr.some(ov => ov === c);
+              return outputarr.some((ov) => ov === c);
             });
           }
         } else {
@@ -229,8 +221,8 @@ module.exports = function (RED) {
             fetchOHLCVunsupported: unsupported,
             fetchOHLCVunsupportedby: unsupportedby,
             fetchOHLCVemulated: emulated,
-            timeframes: outputarr
-          }
+            timeframes: outputarr,
+          },
         })
       );
     } catch (error) {
@@ -238,31 +230,31 @@ module.exports = function (RED) {
     }
   };
 
-  var flatten_api = function(orig_struct, label = "", depth=0) {
+  var flatten_api = function (orig_struct, label = "", depth = 0) {
     if (depth > 10) {
       throw new Error("Too much recursion: " + depth);
     }
-    let hasverb = function(orig_struct) {
+    let hasverb = function (orig_struct) {
       var i_has_a_verb = false;
-      Object.keys(orig_struct).forEach(function(key, i) {
-        if (['get','post','put','delete'].includes(key)) {
+      Object.keys(orig_struct).forEach(function (key, i) {
+        if (["get", "post", "put", "delete"].includes(key)) {
           i_has_a_verb = true;
           return;
         }
       });
       return i_has_a_verb;
-    }
+    };
 
     let finalstruct = {};
-    Object.keys(orig_struct).forEach(function(key, i) {
-      console.log('Current key: ' + key);
+    Object.keys(orig_struct).forEach(function (key, i) {
+      console.log("Current key: " + key);
       let tmplabel = label ? label + "_" + key : key;
       if (hasverb(orig_struct[key])) {
         finalstruct[tmplabel] = orig_struct[key];
       } else {
         let tmpstruct = flatten_api(orig_struct[key], tmplabel, depth + 1);
-        Object.keys(tmpstruct).forEach(function(subkey, i) {
-            finalstruct[subkey] = tmpstruct[subkey];
+        Object.keys(tmpstruct).forEach(function (subkey, i) {
+          finalstruct[subkey] = tmpstruct[subkey];
         });
       }
     });
@@ -276,21 +268,21 @@ module.exports = function (RED) {
     // create the exchange object
     exchange = new ccxt[exchange]({
       headers: {
-        Connection: "keep-alive"
-      }
+        Connection: "keep-alive",
+      },
     });
 
     // get exchange.api which includes all custom apis
     // provided by the exchange categories into private/public and other groups
     res.setHeader("Content-Type", "application/json");
 
-    res.send(JSON.stringify({ api: flatten_api(exchange.api) }));
+    res.send(JSON.stringify({api: flatten_api(exchange.api)}));
   };
 
   // returns parameters of the unified api
   // based on the signature of the api in the dictionary
   // loaded from our exchanges.js file
-  var getApiParams = function(api, extended) {
+  var getApiParams = function (api, extended) {
     //TODO: implement extended as true/false
     //if true return a required/non-required for each param
     let arr = [],
@@ -301,13 +293,13 @@ module.exports = function (RED) {
     // exclude the special parameter called private which is just an indicator that
     // the api requires credentials
 
-    reqparams = exchanges.allunfiedAPIs[api].filter(x => typeof x === "string" && x !== "private");
+    reqparams = exchanges.allunfiedAPIs[api].filter((x) => typeof x === "string" && x !== "private");
 
     // the set of optional parameters are defined as an array
-    optparams = exchanges.allunfiedAPIs[api].filter(x => typeof x !== "string");
+    optparams = exchanges.allunfiedAPIs[api].filter((x) => typeof x !== "string");
     //if there are optional params return the names of optional parameters from the array
     if (optparams.length > 0) {
-      optparams = optparams.map(x => x)[0];
+      optparams = optparams.map((x) => x)[0];
       //concatenate the required and optional params and close any gaps (closing gaps doesnt really work but it still OK)
       arr = reqparams.concat(optparams).filter(function () {
         return true;
@@ -319,7 +311,7 @@ module.exports = function (RED) {
       });
 
     return arr;
-  }
+  };
 
   var callbackApiParams = function (req, res) {
     let api = req.query.api;
@@ -328,7 +320,7 @@ module.exports = function (RED) {
     let apiparams = getApiParams(api);
     res.setHeader("Content-Type", "application/json");
 
-    res.send(JSON.stringify({ apiparams: apiparams }));
+    res.send(JSON.stringify({apiparams: apiparams}));
   };
 
   var callbackExURLs = function (req, res) {
@@ -339,8 +331,8 @@ module.exports = function (RED) {
     // create the exchange object passing in exchange id
     exchange = new ccxt[exchange]({
       headers: {
-        Connection: "keep-alive"
-      }
+        Connection: "keep-alive",
+      },
     });
     let arr = [];
     //("requiredCredentials");
@@ -353,7 +345,7 @@ module.exports = function (RED) {
     res.setHeader("Content-Type", "application/json");
     // send out the array of all supported unified APIs of the exchange
     // including true or false for private apis
-    res.send(JSON.stringify({ exchangeurls: arr }));
+    res.send(JSON.stringify({exchangeurls: arr}));
   };
 
   var callbackExchangerequiredCredentials = function (req, res) {
@@ -364,8 +356,8 @@ module.exports = function (RED) {
     // create the exchange object passing in exchange id
     exchange = new ccxt[exchange]({
       headers: {
-        Connection: "keep-alive"
-      }
+        Connection: "keep-alive",
+      },
     });
     let arr = [];
     //("requiredCredentials");
@@ -394,17 +386,17 @@ module.exports = function (RED) {
     res.setHeader("Content-Type", "application/json");
     // send out the array of all supported unified APIs of the exchange
     // including true or false for private apis
-    res.send(JSON.stringify({ exchangereqcreds: arr }));
+    res.send(JSON.stringify({exchangereqcreds: arr}));
   };
 
-  RED.httpAdmin.get('/ccxt-v2/exchanges', RED.auth.needsPermission('ccxt-api-v2.read'), callbackExchanges, errorHandler);
-  RED.httpAdmin.get('/ccxt-v2/exchangecaps', RED.auth.needsPermission('ccxt-api-v2.read'), callbackExchangeCaps, errorHandler);
-  RED.httpAdmin.get('/ccxt-v2/apis', RED.auth.needsPermission('ccxt-api-v2.read'), callbackApis, errorHandler);
-  RED.httpAdmin.get('/ccxt-v2/apiparams', RED.auth.needsPermission('ccxt-api-v2.read'), callbackApiParams, errorHandler);
-  RED.httpAdmin.get('/ccxt-v2/exchangesymbols', RED.auth.needsPermission('ccxt-api-v2.read'), callbackExchangeSymbols, errorHandler);
-  RED.httpAdmin.get('/ccxt-v2/fetchOHLCVTimeframes', RED.auth.needsPermission('ccxt-api-v2.read'), callbackOHLCVTimeframes, errorHandler);
-  RED.httpAdmin.get('/ccxt-v2/exchangereqcreds', RED.auth.needsPermission('ccxt-exchange-v2.read'), callbackExchangerequiredCredentials, errorHandler);
-  RED.httpAdmin.get('/ccxt-v2/exchangeurls', RED.auth.needsPermission('ccxt-exchange-v2.read'), callbackExURLs, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/exchanges", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchanges, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/exchangecaps", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeCaps, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/apis", RED.auth.needsPermission("ccxt-api-v2.read"), callbackApis, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/apiparams", RED.auth.needsPermission("ccxt-api-v2.read"), callbackApiParams, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/exchangesymbols", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeSymbols, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/fetchOHLCVTimeframes", RED.auth.needsPermission("ccxt-api-v2.read"), callbackOHLCVTimeframes, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/exchangereqcreds", RED.auth.needsPermission("ccxt-exchange-v2.read"), callbackExchangerequiredCredentials, errorHandler);
+  RED.httpAdmin.get("/ccxt-v2/exchangeurls", RED.auth.needsPermission("ccxt-exchange-v2.read"), callbackExURLs, errorHandler);
 
   // node implementation
   function CcxtApi(config) {
@@ -445,7 +437,7 @@ module.exports = function (RED) {
         //  let results = [];
         //  let res = 0;
         let exchangelist = node.exchange;
-        var api = node.api.replace(node.customapitype + "_","");
+        var api = node.api.replace(node.customapitype + "_", "");
 
         if (node.allexchanges === true)
           if (api === "loadMarkets") exchangelist = Object.keys(exchanges.exchanges);
@@ -492,21 +484,21 @@ module.exports = function (RED) {
                 login: node.apisecrets.credentials.login,
                 password: node.apisecrets.credentials.password,
                 headers: {
-                  Connection: "keep-alive"
-                }
+                  Connection: "keep-alive",
+                },
               });
               //PLEASE REMEMBER I modified bitmex.js line url to make it just a one value per object rather than an object with public and private
               //what ever the url is
               if (node.apisecrets.url !== "default")
                 exchange.urls["api"] = {
                   public: node.apisecrets.url,
-                  private: node.apisecrets.url
+                  private: node.apisecrets.url,
                 };
             } else
               exchange = new ccxt[element]({
                 headers: {
-                  Connection: "keep-alive"
-                }
+                  Connection: "keep-alive",
+                },
               });
 
             //enable the built-in rate-limiter
@@ -515,7 +507,7 @@ module.exports = function (RED) {
             node.status({
               fill: "blue",
               shape: "dot",
-              text: exchange.name + " : " + node.api
+              text: exchange.name + " : " + node.api,
             });
 
             var getVal = function (param) {
@@ -587,7 +579,6 @@ module.exports = function (RED) {
             //     node.error(err);
             //     return;
 
-
             if (node.apitype === "unifiedAPI") {
               //3. we need special handling for multi-select of markets (symbols parameter) and using all symbols parameter
 
@@ -599,7 +590,7 @@ module.exports = function (RED) {
                   let filterlist = node.filtermarkets.split(",");
                   //filter result here
                   payload = Object.keys(payload)
-                    .filter(key => filterlist.includes(key))
+                    .filter((key) => filterlist.includes(key))
                     .reduce((obj, key) => {
                       obj[key] = payload[key];
                       return obj;
@@ -612,7 +603,7 @@ module.exports = function (RED) {
                     {
                       exchange: exchange.name,
                       api: api,
-                      payload: payload
+                      payload: payload,
                     },
                     addresult
                   );
@@ -623,7 +614,7 @@ module.exports = function (RED) {
                   // comma separated to array
                   let filterlist = node.filtermarkets.split(",");
                   //filter result here
-                  payload = payload.filter(key => {
+                  payload = payload.filter((key) => {
                     return filterlist.includes(key.symbol);
                   });
                 }
@@ -633,7 +624,7 @@ module.exports = function (RED) {
                     {
                       exchange: exchange.name,
                       api: api,
-                      payload: payload
+                      payload: payload,
                     },
                     addresult
                   );
@@ -651,7 +642,7 @@ module.exports = function (RED) {
                 // return args and check if we have a markets parameter for this unifiedAPI
                 // TODO : handling for arguments overrides. in some situations exchanges have specific
                 // requirements for unifiedAPIs most notably some exchanges require api keys for all calls.
-                let args = getApiParams(api).map(x => {
+                let args = getApiParams(api).map((x) => {
                   if (x === "symbol") {
                     marketparm = true;
                     marketpos = counter;
@@ -671,7 +662,7 @@ module.exports = function (RED) {
                     //result = {};
                     //[{ market: { symbol: null, result: null } }];
                     //  result = {};
-                    let sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+                    let sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
                     //empty markets list?
                     if (marketsarr) {
                       // loop across all markets provided
@@ -686,7 +677,7 @@ module.exports = function (RED) {
                         node.status({
                           fill: "blue",
                           shape: "dot",
-                          text: exchange.name + " : " + node.api + " - " + (marketsarr.length - index).toString() + " : " + element
+                          text: exchange.name + " : " + node.api + " - " + (marketsarr.length - index).toString() + " : " + element,
                         });
                         //get the resulting payload then return as streaming msg
                         let payload = await exchange[api](...args);
@@ -696,7 +687,7 @@ module.exports = function (RED) {
                             api: api,
                             arguments: args.concat(),
                             market: element,
-                            payload: payload
+                            payload: payload,
                           },
                           addresult
                         );
@@ -712,7 +703,7 @@ module.exports = function (RED) {
                           api: api,
                           arguments: args.concat(),
                           market: "",
-                          payload: payload
+                          payload: payload,
                         },
                         addresult
                       );
@@ -725,7 +716,7 @@ module.exports = function (RED) {
                         exchange: exchange.name,
                         api: api,
                         arguments: args.concat(),
-                        payload: payload
+                        payload: payload,
                       },
                       addresult
                     );
@@ -738,7 +729,7 @@ module.exports = function (RED) {
                       exchange: exchange.name,
                       api: api,
                       arguments: "",
-                      payload: payload
+                      payload: payload,
                     },
                     addresult
                   );
@@ -761,7 +752,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: "", // iam using the property arguments so it is consistent with the unifiedAPI term. in face this is just the apipayload param
-                    payload: payload
+                    payload: payload,
                   },
                   addresult
                 );
@@ -775,7 +766,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: parsedPayload,
-                    payload: payload
+                    payload: payload,
                   },
                   addresult
                 );
@@ -790,7 +781,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: parsedPayload,
-                    payload: payload
+                    payload: payload,
                   },
                   addresult
                 );
@@ -803,7 +794,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: "",
-                    payload: payload
+                    payload: payload,
                   },
                   addresult
                 );
@@ -812,7 +803,7 @@ module.exports = function (RED) {
               node.status({
                 fill: "yellow",
                 shape: "ring",
-                text: "Node Configuration Error. Check that all required parameters for the call are set."
+                text: "Node Configuration Error. Check that all required parameters for the call are set.",
               });
               node.warn("CCXT API configuration error");
             }
@@ -840,7 +831,7 @@ module.exports = function (RED) {
             addresult = node.status({
               fill: "red",
               shape: "ring",
-              text: "API err: " + err.message
+              text: "API err: " + err.message,
             });
 
             node.error(err.message, msg);
@@ -859,7 +850,7 @@ module.exports = function (RED) {
   }
 
   RED.nodes.registerType("ccxt-api-v2", CcxtApi);
-  
+
   //config node implementation
   function CcxtExchange(config) {
     RED.nodes.createNode(this, config);
@@ -869,17 +860,16 @@ module.exports = function (RED) {
     this.activeconfig = config.activeconfig;
 
     var node = this;
-
   }
 
   RED.nodes.registerType("ccxt-exchange-v2", CcxtExchange, {
     credentials: {
-      apikey: { type: "text" },
-      secret: { type: "text" },
-      uid: { type: "text" },
-      login: { type: "text" },
-      password: { type: "password" }
-    }
+      apikey: {type: "text"},
+      secret: {type: "text"},
+      uid: {type: "text"},
+      login: {type: "text"},
+      password: {type: "password"},
+    },
   });
 };
 //# sourceMappingURL=/ccxt-v2/ccxt-api.js.map
