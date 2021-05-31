@@ -1,7 +1,7 @@
 {
   "name": "node-red-contrib-ccxt-v2",
-  "version": "0.2.3",
-  "description": "node-red ccxt v2.0 is a fork of node-red-contrib-ccxt with numberous updates supporting all exchanges and APIs.",
+  "version": "0.2.3.2",
+  "description": "node-red ccxt-v2 is a fork of node-red-contrib-ccxt with numberous updates supporting all exchanges and APIs.",
   "keywords": [
     "node-red",
     "ccxt",
@@ -12,8 +12,8 @@
     "cryptotrading"
   ],
   "scripts": {
-    "maps": "genmaps --sourceRoot /ccxt/",
-    "debug": "genmaps -r /ccxt/ && node --inspect-brk=9229 /usr/local/lib/node_modules/node-red/red.js",
+    "maps": "genmaps --sourceRoot /ccxt-v2/",
+    "debug": "genmaps -r /ccxt-v2/ && node --inspect-brk=9229 /usr/local/lib/node_modules/node-red/red.js",
     "start": "/usr/local/lib/node_modules/node-red/red.js",
     "test": "mocha \"test/**/*_spec.js\"",
     "lint": "eslint"
@@ -21,11 +21,11 @@
   "author": "Neil Lyon-S",
   "license": "Apache-2.0",
   "dependencies": {
-    "ccxt": "^1.41.89"
+    "ccxt": "^1.47.46"
   },
   "node-red": {
     "nodes": {
-      "ccxt-api-v2": "ccxt/ccxt-api.js"
+      "ccxt-api-v2": "ccxt-v2/ccxt-api.js"
     }
   },
   "devDependencies": {
