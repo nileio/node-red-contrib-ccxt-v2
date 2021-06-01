@@ -30,7 +30,7 @@ const ccxt = require("ccxt"),
               name = exch.name;
             }
           } catch (err) {
-            console.log("name duplicated error for:", exch.name);
+            console.log("exchange name duplicated error for:", exch.name);
             // in case of fallback error, the duplicate name will appear in the menu, however the id is different.
             name = exch.name;
           }

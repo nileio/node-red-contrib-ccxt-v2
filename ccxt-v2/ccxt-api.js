@@ -247,7 +247,7 @@ module.exports = function (RED) {
 
     let finalstruct = {};
     Object.keys(orig_struct).forEach(function (key, i) {
-      console.log("Current key: " + key);
+      //console.log("Current key: " + key);
       let tmplabel = label ? label + "_" + key : key;
       if (hasverb(orig_struct[key])) {
         finalstruct[tmplabel] = orig_struct[key];

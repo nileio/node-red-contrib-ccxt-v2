@@ -80,4 +80,7 @@ node_modules/
 
 export
 Node-Red Logical Architecture
-.map
+*.map
+ccxt-v2/ccxt-api.js.map
+.gitignore
+ccxt-v2/ccxt-api.html.map
