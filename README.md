@@ -1,6 +1,6 @@
 # node-red-contrib-ccxt-v2
 
-A Node-RED node to communicate with various crypto exchanges using CCXT library. The node now supports all Unified and Exchange-specific APIs.
+A Node-RED node to communicate with various crypto exchanges using [CCXT](https://github.com/ccxt/ccxt) library. The node now supports all Unified and Exchange-specific APIs.
 
 Note this package has much more added features and changes from the original fork, so this is refactored to v2.
 
