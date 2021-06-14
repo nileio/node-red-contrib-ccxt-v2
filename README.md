@@ -24,7 +24,7 @@ This node package supports all APIs which are provided by latest version of CCXT
 Please check CCXT website for all supported exchanges.
 As of the latest release, there are **(133 Exchanges)** Crypto Exchanges supported from [CCXT](https://github.com/ccxt/ccxt) node-RED package.
 
-For the latest updates see the [CHANGELOG.md](https://github.com/masalinas/node-red-contrib-ccxt/blob/master/CHANGELOG.md)
+For the latest updates see the [CHANGELOG.md](https://github.com/nileio/node-red-contrib-ccxt-v2/blob/master/CHANGELOG.md)
 
 ## Installation Instructions
 
@@ -34,7 +34,6 @@ npm install node-red-contrib-ccxt-v2 --save
 
 ## CCXT node-RED Configuration
 
-
 ## Some examples
 
 - Retrieve a list of all markets from all exchanges !
@@ -43,10 +42,10 @@ npm install node-red-contrib-ccxt-v2 --save
 
 - fetch OHLCV for multiple markets from Bittrex exchange.
 
-
 In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the secrets.
 
 **To Do**
+
 - have node.status for different stages
 - Testing of all dynamic configuration based on msg or flow
 - Testing of trade APIs
