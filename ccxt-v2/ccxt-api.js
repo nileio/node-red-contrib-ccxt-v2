@@ -389,6 +389,17 @@ module.exports = function (RED) {
     res.send(JSON.stringify({exchangereqcreds: arr}));
   };
 
+  /* var replacePathParams = function (method, json) {
+    let newMethod = "";
+    Object.keys(json).forEach((key) => {
+      newMethod = method.replace(new RegExp(`_${key}_`, "g"), `_${json[key]}`);
+      delete json[key];
+    });
+    return {
+      method: newMethod,
+      json,
+    };
+  }; */
   RED.httpAdmin.get("/ccxt-v2/exchanges", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchanges, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/exchangecaps", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeCaps, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/apis", RED.auth.needsPermission("ccxt-api-v2.read"), callbackApis, errorHandler);
@@ -736,6 +747,8 @@ module.exports = function (RED) {
                 }
               }
             } else if (node.apitype === "customAPI") {
+              //path parameters exist
+              let hasPathParameters = /{(\w+)}/g.test(api);
               addresult = true;
               //replace special unwanted chars
               //this method will form the pattern public_get_method_name which is what ccxt provides for every custom method
@@ -743,9 +756,13 @@ module.exports = function (RED) {
               method = method.replace(/\{/g, "");
               method = method.replace(/\}/g, "");
               method = node.customapitype + "_" + method.toLowerCase();
-
+              // issue #5
+              // last character should never be an underscore as a result of previous replacement
+              if (method.endsWith("_")) method = method.slice(0, method.length - 1);
               //invoke api without a payload param
               if (node.apipayloadType === "none") {
+                if (hasPathParameters) throw new Error("No values provided for API path parameters. Ensure you provide the required keys in the Payload.");
+
                 let payload = await exchange[method]();
                 returnResult(
                   {
@@ -760,6 +777,11 @@ module.exports = function (RED) {
               //invoke api with a payload params
               else if (node.apipayloadType === "json") {
                 let parsedPayload = JSON.parse(node.apipayload);
+                /*                 if (hasPathParameters) {
+                  let newAPI = replacePathParams(method, parsedPayload);
+                  method = newAPI.method;
+                  parsedPayload = newAPI.json;
+                } */
                 let payload = await exchange[method](parsedPayload);
                 returnResult(
                   {
@@ -775,6 +797,11 @@ module.exports = function (RED) {
               else if (node.apipayloadType === "msg") {
                 let value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
                 let parsedPayload = JSON.parse(value);
+                /*                 if (hasPathParameters) {
+                  let newAPI = replacePathParams(method, parsedPayload);
+                  method = newAPI.method;
+                  parsedPayload = newAPI.json;
+                } */
                 let payload = await exchange[method](parsedPayload);
                 returnResult(
                   {
