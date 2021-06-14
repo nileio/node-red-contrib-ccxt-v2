@@ -389,17 +389,6 @@ module.exports = function (RED) {
     res.send(JSON.stringify({exchangereqcreds: arr}));
   };
 
-  /* var replacePathParams = function (method, json) {
-    let newMethod = "";
-    Object.keys(json).forEach((key) => {
-      newMethod = method.replace(new RegExp(`_${key}_`, "g"), `_${json[key]}`);
-      delete json[key];
-    });
-    return {
-      method: newMethod,
-      json,
-    };
-  }; */
   RED.httpAdmin.get("/ccxt-v2/exchanges", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchanges, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/exchangecaps", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeCaps, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/apis", RED.auth.needsPermission("ccxt-api-v2.read"), callbackApis, errorHandler);
@@ -777,11 +766,6 @@ module.exports = function (RED) {
               //invoke api with a payload params
               else if (node.apipayloadType === "json") {
                 let parsedPayload = JSON.parse(node.apipayload);
-                /*                 if (hasPathParameters) {
-                  let newAPI = replacePathParams(method, parsedPayload);
-                  method = newAPI.method;
-                  parsedPayload = newAPI.json;
-                } */
                 let payload = await exchange[method](parsedPayload);
                 returnResult(
                   {
@@ -797,11 +781,6 @@ module.exports = function (RED) {
               else if (node.apipayloadType === "msg") {
                 let value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
                 let parsedPayload = JSON.parse(value);
-                /*                 if (hasPathParameters) {
-                  let newAPI = replacePathParams(method, parsedPayload);
-                  method = newAPI.method;
-                  parsedPayload = newAPI.json;
-                } */
                 let payload = await exchange[method](parsedPayload);
                 returnResult(
                   {
