@@ -25,7 +25,7 @@ SOFTWARE.
 
 -->
 
-<script type="text/x-red" data-template-name="ccxt-api-v2">
+<script type="text/html" data-template-name="ccxt-api-v2">
 
   <div class="form-row">
         <span
@@ -398,10 +398,7 @@ SOFTWARE.
       </div>
 </script>
 
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css"
-  rel="stylesheet"
-/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
 
 <!--
@@ -523,10 +520,10 @@ SOFTWARE.
     inputs: 1,
     color: "#D8BFD8",
     icon: "bitcoin.png",
-    label: function() {
+    label: function () {
       return this.name || "ccxt API v2";
     },
-    oneditprepare: function() {
+    oneditprepare: function () {
       //   debugger;
       var node = this;
 
@@ -694,14 +691,14 @@ SOFTWARE.
           {
             exchange: ex
           },
-          function(result) {
+          function (result) {
             if (callback && typeof callback == "function") {
               callback(result.symbols);
             }
             //hide spinner
             $("#id-loading-svg").hide();
           }
-        ).error(function(error) {
+        ).error(function (error) {
           //hide spinner
           $("#id-loading-svg").hide();
           console.log(error);
@@ -709,14 +706,14 @@ SOFTWARE.
       }
 
       // retrieve Exchanges from server
-      let getExchanges = function() {
+      let getExchanges = function () {
         var exchangeElement = $("#node-input-exchange");
         //show spinner
         $("#id-loading-svg").show();
-        $.getJSON("ccxt-v2/exchanges", function(result) {
+        $.getJSON("ccxt-v2/exchanges", function (result) {
           exchangeElement.empty();
 
-          $.each(result.exchange, function(key, value) {
+          $.each(result.exchange, function (key, value) {
             exchangeElement.append(
               $("<option />")
                 .val(key)
@@ -735,13 +732,13 @@ SOFTWARE.
 
           //hide spinner
           $("#id-loading-svg").hide();
-        }).error(function(error) {
+        }).error(function (error) {
           console.log(error);
         });
       };
       // call getExchanges on load
       getExchanges();
-      let showHideAPIPrivateKeys = function() {
+      let showHideAPIPrivateKeys = function () {
         //show API Keys
         const isPrivate = $("#node-input-api option:selected").attr("isprivate");
         const exchange = $("#node-input-exchange").val();
@@ -755,7 +752,7 @@ SOFTWARE.
         } else $(".node-input-private-api").hide();
       };
       // retrieve all supported unified APIs by the exchange
-      getunifiedAPIs = function() {
+      getunifiedAPIs = function () {
         //this method always an array so i am using it here instead of converting to an array.
         var exchange = $("#node-input-exchange")
           .select2("data")
@@ -777,8 +774,8 @@ SOFTWARE.
           {
             exchange: exchange
           },
-          function(result) {
-            result.caps.forEach(function(element) {
+          function (result) {
+            result.caps.forEach(function (element) {
               apiElement.append(
                 $("<option>", {
                   value: element[0],
@@ -791,7 +788,7 @@ SOFTWARE.
 
             // sort on text
             apiElement.html(
-              apiElement.find("option").sort(function(x, y) {
+              apiElement.find("option").sort(function (x, y) {
                 // to change to descending order switch "<" for ">"
                 return $(x).text() > $(y).text() ? 1 : -1;
               })
@@ -807,13 +804,13 @@ SOFTWARE.
             //hide spinner
             $("#id-loading-svg").hide();
           }
-        ).error(function(error) {
+        ).error(function (error) {
           console.log(error);
         });
         //
       };
       // retrieve all supported custom APIs by the exchange
-      getcustomAPIs = function() {
+      getcustomAPIs = function () {
         //note option:selected ensures that only a single value will be returned
         //if a multi-select the first value will be returned only
         var exchange = $("#node-input-exchange option:selected").val();
@@ -830,8 +827,8 @@ SOFTWARE.
           {
             exchange: exchange
           },
-          function(result) {
-            $.each(Object.keys(result.api), function(index, apitype) {
+          function (result) {
+            $.each(Object.keys(result.api), function (index, apitype) {
               if (apitype !== "web") {
                 var optgroup = apiElement.find($("#node-input-api_" + apitype));
                 if (optgroup.length === 0) {
@@ -840,8 +837,8 @@ SOFTWARE.
                   optgroup.attr("id", "node-input-api_" + apitype);
                   optgroup.attr("value", "node-input-api_" + apitype);
                 }
-                $.each(Object.keys(result.api[apitype]), function(index, verb) {
-                  $.each(result.api[apitype][verb], function(index, api) {
+                $.each(Object.keys(result.api[apitype]), function (index, verb) {
+                  $.each(result.api[apitype][verb], function (index, api) {
                     var option = $("<option>", {
                       value: apitype + "_" + verb + "_" + api,
                       text: verb + "_" + api,
@@ -870,14 +867,14 @@ SOFTWARE.
             //hide spinner
             $("#id-loading-svg").hide();
           }
-        ).error(function(error) {
+        ).error(function (error) {
           console.log(error);
         });
 
         //
       };
 
-      let getTimeframes = function(ex, callback) {
+      let getTimeframes = function (ex, callback) {
         //timeframes supported by the exchange
 
         if (ex === undefined || ex === "" || ex === null) return [];
@@ -893,7 +890,7 @@ SOFTWARE.
           {
             exchange: ex
           },
-          function(result) {
+          function (result) {
             if (callback && typeof callback == "function") {
               //note: we could get an empty list if the api is emulated and not directly supported
               //by the api
@@ -903,7 +900,7 @@ SOFTWARE.
             //hide spinner
             $("#id-loading-svg").hide();
           }
-        ).error(function(error) {
+        ).error(function (error) {
           console.log(error);
         });
       };
@@ -921,7 +918,7 @@ SOFTWARE.
        **************************** Events : Exchange
        */
 
-      $("#node-input-exchange").change(function() {
+      $("#node-input-exchange").change(function () {
         /* single select.
           note I use specific way to load the data into select2.
           I do not use AJAX data source or remote data sources, rather manually load the options
@@ -964,7 +961,7 @@ SOFTWARE.
 
       //select2 workaround bug fix - dropdown does not close when selecting multiple
       //more than the allowed
-      $("#node-input-exchange").on("select2:select", function(e) {
+      $("#node-input-exchange").on("select2:select", function (e) {
         if ($(this).select2("data").length >= $(this).data("select2").results.data.maximumSelectionLength) {
           $(this).select2("close");
         }
@@ -974,12 +971,12 @@ SOFTWARE.
        **************************** Events : All Exchanges
        */
 
-      $("#id-node-input-allexchanges").click(function() {
+      $("#id-node-input-allexchanges").click(function () {
         $("#node-input-allexchanges").prop("checked", !$("#node-input-allexchanges").prop("checked"));
         $("#node-input-allexchanges").trigger("change");
       });
 
-      $("#node-input-allexchanges").change(function() {
+      $("#node-input-allexchanges").change(function () {
         const ischecked = $("#node-input-allexchanges").prop("checked");
         $("#node-input-exchange").prop("disabled", ischecked);
         if (ischecked === true) {
@@ -1008,7 +1005,7 @@ SOFTWARE.
       /*
        **************************** Events : API Type
        */
-      $("#node-input-apitype").change(function() {
+      $("#node-input-apitype").change(function () {
         var exchange = $("#node-input-exchange").val();
         //another way of doing this would be $element.select2("data").map(data => data.id);
         var apitype = $("#node-input-apitype option:selected").val();
@@ -1035,7 +1032,7 @@ SOFTWARE.
        **************************** Events : API
        */
 
-      $("#node-input-api").change(function(type, value) {
+      $("#node-input-api").change(function (type, value) {
         const apitype = $("#node-input-apitype option:selected").val();
         const api = $("#node-input-api option:selected").val();
         if (!api) $(".hidden").hide();
@@ -1065,7 +1062,7 @@ SOFTWARE.
             var apipayload = "";
             var paramKey = "";
             var x = "";
-            params.map(function(x) {
+            params.map(function (x) {
               paramKey = x.replace("{", "").replace("}", "");
               arr.push(paramKey);
             });
@@ -1094,12 +1091,12 @@ SOFTWARE.
               {
                 api: api
               },
-              function(result) {
+              function (result) {
                 //start by hiding all params
                 $(".hidden").hide();
                 showHideAPIPrivateKeys();
 
-                result.apiparams.map(function(x) {
+                result.apiparams.map(function (x) {
                   //special handling for some params
                   // i dont know why am i triggering change here .. this is not right
                   // trying to fix this ... this is not safe for calling from both symbol and timefram
@@ -1145,7 +1142,7 @@ SOFTWARE.
        **************************** Events : Symbol
        */
 
-      $("#node-input-symbol").on("change", function(type, value) {
+      $("#node-input-symbol").on("change", function (type, value) {
         //Initialise select2 on field
         //&show hide the right elements
         var inputSelectSymbolElem = $("#id-input-select-symbol");
@@ -1188,8 +1185,8 @@ SOFTWARE.
           typedInputContainerElement.find(".red-ui-typedInput-option-trigger").hide();
           typedInputContainerElement.find(".red-ui-typedInput-input").hide();
 
-          getSymbols(exchange, function(symbols) {
-            symbols.forEach(function(element) {
+          getSymbols(exchange, function (symbols) {
+            symbols.forEach(function (element) {
               inputSelectSymbolElem.append(
                 $("<option>", {
                   value: element,
@@ -1222,13 +1219,13 @@ SOFTWARE.
         }
       });
       // Symbol select2 drop down
-      $("#id-input-select-symbol").on("select2:select", function(e) {
+      $("#id-input-select-symbol").on("select2:select", function (e) {
         if ($(this).select2("data").length >= $(this).data("select2").results.data.maximumSelectionLength) {
           $(this).select2("close");
         }
       });
       // Symbol field select2 save
-      $("#id-input-select-symbol").change(function(type, v) {
+      $("#id-input-select-symbol").change(function (type, v) {
         //will always return an array
         let val = $("#id-input-select-symbol").val();
         // we need to save the value as a string only
@@ -1245,7 +1242,7 @@ SOFTWARE.
        **************************** Events : Since
        */
 
-      $("#node-input-since").on("change", function(type, value) {
+      $("#node-input-since").on("change", function (type, value) {
         // the trick here is that I show the date field instead of a text so that
         // the browser can show a nice date picker for the field
         // whereas when choosing msg or flow .. it is expecting a string
@@ -1267,7 +1264,7 @@ SOFTWARE.
         }
       });
 
-      $("#id-input-since").change(function() {
+      $("#id-input-since").change(function () {
         if ($("#node-input-sinceType").val() === "datepick" && $("#node-input-since").val() !== $("#id-input-since").val()) {
           $("#node-input-since").val($("#id-input-since").val());
         }
@@ -1283,7 +1280,7 @@ SOFTWARE.
        **************************** Events : Timeframe
        */
 
-      $("#node-input-timeframe").on("change", function(type, value) {
+      $("#node-input-timeframe").on("change", function (type, value) {
         //this happens only when you open the editor for first time
         // if (value === true && $("#node-input-timeframe").val() !== node.timeframe) {
         //   $("#node-input-timeframe").typedInput("value", node.timeframe);
@@ -1293,7 +1290,7 @@ SOFTWARE.
           var exchange = $("#node-input-exchange").val();
           let timeframes = [];
           if (exchange !== null && exchange.length >= 0) {
-            getTimeframes(exchange, function(results) {
+            getTimeframes(exchange, function (results) {
               if (results === null) {
                 // if timeframes are not returned from the exchange
                 // this means that the OHLCV is an emulated api
@@ -1344,7 +1341,7 @@ SOFTWARE.
        **************************** Events : Limit
        */
 
-      $("#node-input-limit").on("change", function() {
+      $("#node-input-limit").on("change", function () {
         //setting defaults here..
         if ($("#node-input-limit").typedInput("type") === "msg" && $("#node-input-limit").typedInput("value") === "") {
           $("#node-input-limit").typedInput("value", "payload");
@@ -1355,13 +1352,13 @@ SOFTWARE.
        **************************** Events : OrderType
        */
 
-      $("#node-input-ordertype").change(function() {
+      $("#node-input-ordertype").change(function () {
         $("#node-input-ordertype option:selected").val() === "market"
           ? $("#node-input-orderprice").attr("readonly", true)
           : $("#node-input-orderprice").attr("readonly", false);
       });
     },
-    oneditsave: function() {
+    oneditsave: function () {
       var node = this;
       const isallexchanges = $("#node-input-allexchanges").prop("checked");
 
@@ -1408,10 +1405,10 @@ SOFTWARE.
         if (Array.isArray(node.exchange) && node.exchange.length > 1 && node.api) {
           $("#node-input-name").val(
             $("#node-input-exchange").select2("data")[0].text +
-              " & " +
-              (node.exchange.length - 1).toString() +
-              " more : " +
-              $("#node-input-api option:selected").text()
+            " & " +
+            (node.exchange.length - 1).toString() +
+            " more : " +
+            $("#node-input-api option:selected").text()
           );
         } else if (Array.isArray(node.exchange) && node.exchange.length == 1 && node.api) {
           $("#node-input-name").val($("#node-input-exchange").select2("data")[0].text + " : " + $("#node-input-api option:selected").text());
@@ -1438,6 +1435,7 @@ SOFTWARE.
   .hidden {
     display: none;
   }
+
   .select2-container .select2-selection--multiple {
     border: 1px solid #ccc;
   }
@@ -1448,12 +1446,14 @@ SOFTWARE.
   .select2-container--default .select2-selection--single .select2-selection__arrow {
     height: 34px;
   }
+
   /* .select2-container--default .select2-selection--multiple .select2-selection__arrow {
     height: 32px;
   } */
   .select2-container .select2-search--inline .select2-search__field {
     margin-top: unset;
   }
+
   .select2-container--default.select2-container--focus .select2-selection--multiple {
     border: solid rgba(85, 150, 230, 0.8) 1px;
   }
@@ -1594,7 +1594,7 @@ SOFTWARE.
   }
 </style>
 
-<script type="text/x-red" data-template-name="ccxt-exchange-v2">
+<script type="text/html" data-template-name="ccxt-exchange-v2">
   <div class="form-row">
       <label for="node-config-input-exchange" class="tooltip"
         ><i class="fa fa-exchange"></i> <span data-i18n="ccxt.label.exchange"></span>
@@ -1750,23 +1750,23 @@ SOFTWARE.
         value: ""
       }
     },
-    label: function() {
+    label: function () {
       if (this.name) {
         return this.name;
       }
     },
-    oneditprepare: function() {
-      //debugger;
+    oneditprepare: function () {
+
       var config = this;
 
-      //console.log("does it have password set is:", config.credentials.has_password);
+      //
       $("#node-config-input-exchange").select2();
       // retrieve Exchanges from server
-      let getExchanges = function() {
+      let getExchanges = function () {
         var exchangeElement = $("#node-config-input-exchange");
         //show spinner
         //$("#id-loading-svg").show();
-        $.getJSON("ccxt-v2/exchanges", function(result) {
+        $.getJSON("ccxt-v2/exchanges", function (result) {
           exchangeElement.empty();
           exchangeElement.append(
             $("<option>", {
@@ -1775,11 +1775,12 @@ SOFTWARE.
             })
           );
 
-          $.each(result.exchange, function(key, value) {
+          $.each(result.exchange, function (key, value) {
+            //  debugger;
             exchangeElement.append(
               $("<option />")
                 .val(key)
-                .text(value)
+                .text(value[0]) //@nileio fix #6
                 .attr("homepage", value[1])
                 .attr("logo", value[2])
                 .attr("apidoc", value[3])
@@ -1794,12 +1795,12 @@ SOFTWARE.
 
           //hide spinner
           // $("#id-loading-svg").hide();
-        }).error(function(error) {
+        }).error(function (error) {
           console.log(error);
         });
       };
       getExchanges();
-      let showhideInputFields = function() {
+      let showhideInputFields = function () {
         // console.log("password is set:", this.credentials.apikey);
         //hide all params by default
         $(".hidden").hide();
@@ -1811,8 +1812,8 @@ SOFTWARE.
             {
               exchange: exchange
             },
-            function(result) {
-              $.each(result.exchangereqcreds, function(key, value) {
+            function (result) {
+              $.each(result.exchangereqcreds, function (key, value) {
                 //show-hide based on req creds
                 if (value[0] === "apiKey") $(".node-config-apikey").show();
                 if (value[0] === "secret") $(".node-config-secret").show();
@@ -1825,7 +1826,7 @@ SOFTWARE.
                 }
               });
             }
-          ).error(function(error) {
+          ).error(function (error) {
             console.log(error);
           });
           $.getJSON(
@@ -1833,14 +1834,14 @@ SOFTWARE.
             {
               exchange: exchange
             },
-            function(result) {
+            function (result) {
               $("#node-config-input-url").empty();
               $("#node-config-input-url").append(
                 $("<option />")
                   .val("default")
                   .text("Default")
               );
-              $.each(result.exchangeurls, function(key, value) {
+              $.each(result.exchangeurls, function (key, value) {
                 $("#node-config-input-url").append(
                   $("<option />")
                     .val(value[1])
@@ -1850,18 +1851,18 @@ SOFTWARE.
                 $("#node-config-input-url").trigger("change");
               });
             }
-          ).error(function(error) {
+          ).error(function (error) {
             console.log(error);
           });
         }
       };
-      $("#node-config-input-exchange").change(function() {
+      $("#node-config-input-exchange").change(function () {
         if ($("#node-config-input-exchange").val())
           if (!$("#node-config-input-name").val()) $("#node-config-input-name").val($("#node-config-input-exchange option:selected").text());
         showhideInputFields();
       });
     },
-    oneditsave: function() {
+    oneditsave: function () {
       var config = this;
 
       config.exchange = $("#node-config-input-exchange option:selected").val();
