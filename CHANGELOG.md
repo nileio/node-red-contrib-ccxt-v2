@@ -39,3 +39,7 @@ Now this node package supports the API for all **(133 exchanges) crypto exchange
 ## 0.2.3: Bug Fix
 
 Fixes issue #5 - for custom API an underscore is needlessly added at the end of the API method causing the API to fail.
+
+## 0.2.4: Bug Fix
+
+Fixes issue #6 - Exchange list values are not populated correctly in API config page.
