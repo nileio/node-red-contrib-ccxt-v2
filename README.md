@@ -63,3 +63,7 @@ In the **Example folder** of the node you have the flow of these two cases. Of c
 - dynamic show of CCXT version used in tooltip or help
 - Additional feature requests
 - Submit to node-red-contrib repo
+
+**Thanks**
+
+A lot of effort and time have gone into this project. If you are using the node or if you like it , please hit the Star button and consider to leave a comment!
