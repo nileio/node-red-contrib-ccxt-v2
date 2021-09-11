@@ -494,6 +494,10 @@ module.exports = function (RED) {
                   public: node.apisecrets.url,
                   private: node.apisecrets.url,
                 };
+
+              if (node.apisecrets.sandboxmode === true) {
+                exchange.setSandboxMode(true);
+              }
             } else
               exchange = new ccxt[element]({
                 headers: {
@@ -864,6 +868,7 @@ module.exports = function (RED) {
     this.url = config.url;
     this.defaultconfig = config.defaultconfig;
     this.activeconfig = config.activeconfig;
+    this.sandboxmode = config.sandboxmode;
 
     var node = this;
   }

@@ -1710,6 +1710,17 @@ SOFTWARE.
         data-i18n="[placeholder]ccxt-exchange.parameters.activeconfig"
       />
     </div>
+    <div class="form-row node-config-sandboxmode">
+      <label for="node-config-input-sandboxmode"
+        ><i class="fa fa-wrench"></i>
+        <span data-i18n="ccxt-exchange.label.sandboxmode"></span
+      ></label>
+      <input
+        type="checkbox"
+        id="node-config-input-sandboxmode"
+        data-i18n="[placeholder]ccxt-exchange.parameters.sandboxmode"
+      />
+    </div>
 </script>
 
 <script type="text/javascript">
@@ -1730,6 +1741,10 @@ SOFTWARE.
       },
       activeconfig: {
         value: true,
+        required: true
+      },
+      sandboxmode: {
+        value: false,
         required: true
       }
     },
