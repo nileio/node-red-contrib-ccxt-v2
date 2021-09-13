@@ -409,6 +409,7 @@ module.exports = function (RED) {
     this.api = config.api;
     this.apiprivate = config.apiprivate || false;
     this.filtermarkets = config.filtermarkets || "";
+    this.filtermarketsType = config.filtermarketsType;
     this.symbol = config.symbol;
     this.symbolType = config.symbolType || "str";
     this.limit = config.limit;
@@ -420,7 +421,9 @@ module.exports = function (RED) {
     this.ordertype = config.ordertype || "limit";
     this.orderside = config.orderside || "buy";
     this.amount = config.amount;
+    this.amountType = config.amountType;
     this.orderprice = config.orderprice;
+    this.orderpriceType = config.orderpriceType;
     this.orderid = config.orderid;
     this.orderidType = config.orderidType || "str";
     this.code = config.code;
@@ -519,16 +522,25 @@ module.exports = function (RED) {
               // handle parameter by name
               if (param === "apipayload") {
                 //here you should handle retrieving the value from all typedinput
-                //none/json/msg/flow
+                //none/json/jsonata/msg/flow
 
                 if (node.apipayloadType === "none") value = undefined;
                 if (node.apipayloadType === "json" && value != "") value = JSON.parse(value);
+                if (node.apipayloadType === "jsonata" && value != "") value = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(value, node), msg);
                 if (node.apipayloadType === "msg") value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
-                if (node.apipayloadType === "flow") value = JSON.stringify(RED.util.evaluateNodeProperty(node.apipayload, value, node, msg));
+                if (node.apipayloadType === "flow") value = JSON.stringify(RED.util.evaluateNodeProperty(node.apipayload, node.apipayloadType, node, msg));
               }
               if (param === "orderid") {
                 if (node.orderidType === "msg") value = RED.util.getMessageProperty(msg, node.orderid);
-                if (node.orderidType === "flow") value = RED.util.evaluateNodeProperty(node.orderid, value, node, msg);
+                if (node.orderidType === "flow") value = RED.util.evaluateNodeProperty(node.orderid, node.orderidType, node, msg);
+              }
+              if (param === "amount") {
+                if (node.amountType === "msg") value = JSON.stringify(RED.util.getMessageProperty(msg, node.amount));
+                if (node.amountType === "flow") value = RED.util.evaluateNodeProperty(node.amount, node.amountType, node, msg);
+              }
+              if (param === "orderprice") {
+                if (node.orderpriceType === "msg") value = JSON.stringify(RED.util.getMessageProperty(msg, node.orderprice));
+                if (node.orderpriceType === "flow") value = RED.util.evaluateNodeProperty(node.orderprice, node.orderpriceType, node, msg);
               }
               // special handling for since argument to convert to milliseconds
               if (param === "since") {
@@ -536,7 +548,7 @@ module.exports = function (RED) {
                   value = RED.util.getMessageProperty(msg, node.since);
                 }
                 if (node.sinceType === "flow") {
-                  value = RED.util.evaluateNodeProperty(node.since, value, node, msg);
+                  value = RED.util.evaluateNodeProperty(node.since, node.sinceType, node, msg);
                 }
                 // special handling for since parameter
                 // make sure you get ISO string
@@ -553,13 +565,13 @@ module.exports = function (RED) {
                   value = RED.util.getMessageProperty(msg, node.timeframe);
                 }
                 if (node.sinceType === "flow") {
-                  value = RED.util.evaluateNodeProperty(node.timeframe, value, node, msg);
+                  value = RED.util.evaluateNodeProperty(node.timeframe, node.sinceType, node, msg);
                 }
               }
               //market
               if (param === "symbol") {
                 if (node.symbolType === "msg") value = RED.util.getMessageProperty(msg, node.symbol);
-                if (node.symbolType === "flow") value = RED.util.evaluateNodeProperty(node.symbol, value, node, msg);
+                if (node.symbolType === "flow") value = RED.util.evaluateNodeProperty(node.symbol, node.symbolType, node, msg);
                 if (node.symbolType === "allSymbols") value = exchange.symbols;
                 // if (node.symbolType === "symbolList") value = value.split(",");
                 if (value !== "" && !Array.isArray(value)) value = value.split(",");
@@ -567,10 +579,11 @@ module.exports = function (RED) {
               if (value === "") value = undefined;
               return value;
             };
+
             //stream results back to client
             let returnResult = async function (resultObj, returnresult) {
               if (returnresult === true) {
-                msg.payload = resultObj;
+                msg.payload = Object.assign(msg.payload, resultObj);
                 node.send(msg);
               }
             };
@@ -586,8 +599,13 @@ module.exports = function (RED) {
                 let payload = await exchange.loadMarkets(true);
                 //filter output of markets if provided
                 if (node.filtermarkets) {
-                  // comma separated to array
-                  let filterlist = node.filtermarkets.split(",");
+                  let filterlist = [];
+                  if (node.filtermarketsType === "str") filterlist = node.filtermarkets.split(",");
+                  if (node.filtermarketsType === "msg") filterlist = RED.util.getMessageProperty(msg, node.filtermarkets).split(",");
+                  if (node.filtermarketsType === "flow") filterlist = RED.util.evaluateNodeProperty(node.filtermarkets, node.filtermarketsType, node, msg);
+                  if (node.filtermarketsType === "json") filterlist = JSON.parse(node.filtermarkets);
+                  if (node.filtermarketsType === "jsonata") filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
+
                   //filter result here
                   payload = Object.keys(payload)
                     .filter((key) => filterlist.includes(key))
@@ -603,7 +621,7 @@ module.exports = function (RED) {
                     {
                       exchange: exchange.name,
                       api: api,
-                      payload: payload,
+                      [`${api}Response`]: payload,
                     },
                     addresult
                   );
@@ -611,8 +629,13 @@ module.exports = function (RED) {
               } else if (api === "fetchMarkets" && exchange.has["fetchMarkets"]) {
                 let payload = await exchange.fetchMarkets();
                 if (node.filtermarkets) {
-                  // comma separated to array
-                  let filterlist = node.filtermarkets.split(",");
+                  let filterlist = [];
+                  if (node.filtermarketsType === "str") filterlist = node.filtermarkets.split(",");
+                  if (node.filtermarketsType === "msg") filterlist = RED.util.getMessageProperty(msg, node.filtermarkets).split(",");
+                  if (node.filtermarketsType === "flow") filterlist = RED.util.evaluateNodeProperty(node.filtermarkets, node.filtermarketsType, node, msg);
+                  if (node.filtermarketsType === "json") filterlist = JSON.parse(node.filtermarkets);
+                  if (node.filtermarketsType === "jsonata") filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
+
                   //filter result here
                   payload = payload.filter((key) => {
                     return filterlist.includes(key.symbol);
@@ -624,7 +647,7 @@ module.exports = function (RED) {
                     {
                       exchange: exchange.name,
                       api: api,
-                      payload: payload,
+                      [`${api}Response`]: payload,
                     },
                     addresult
                   );
@@ -687,7 +710,7 @@ module.exports = function (RED) {
                             api: api,
                             arguments: args.concat(),
                             market: element,
-                            payload: payload,
+                            [`${api}Response`]: payload,
                           },
                           addresult
                         );
@@ -703,7 +726,7 @@ module.exports = function (RED) {
                           api: api,
                           arguments: args.concat(),
                           market: "",
-                          payload: payload,
+                          [`${api}Response`]: payload,
                         },
                         addresult
                       );
@@ -716,7 +739,7 @@ module.exports = function (RED) {
                         exchange: exchange.name,
                         api: api,
                         arguments: args.concat(),
-                        payload: payload,
+                        [`${api}Response`]: payload,
                       },
                       addresult
                     );
@@ -729,7 +752,7 @@ module.exports = function (RED) {
                       exchange: exchange.name,
                       api: api,
                       arguments: "",
-                      payload: payload,
+                      [`${api}Response`]: payload,
                     },
                     addresult
                   );
@@ -758,7 +781,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: "", // iam using the property arguments so it is consistent with the unifiedAPI term. in face this is just the apipayload param
-                    payload: payload,
+                    [`${api}Response`]: payload,
                   },
                   addresult
                 );
@@ -772,7 +795,20 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: parsedPayload,
-                    payload: payload,
+                    [`${api}Response`]: payload,
+                  },
+                  addresult
+                );
+              }
+              else if (node.apipayloadType === "jsonata") {
+                let parsedPayload = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.apipayload, node), msg);
+                let payload = await exchange[method](parsedPayload);
+                returnResult(
+                  {
+                    exchange: exchange.name,
+                    api: api,
+                    arguments: parsedPayload,
+                    [`${api}Response`]: payload,
                   },
                   addresult
                 );
@@ -787,7 +823,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: parsedPayload,
-                    payload: payload,
+                    [`${api}Response`]: payload,
                   },
                   addresult
                 );
@@ -800,7 +836,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: "",
-                    payload: payload,
+                    [`${api}Response`]: payload,
                   },
                   addresult
                 );
