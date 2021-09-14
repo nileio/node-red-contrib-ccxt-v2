@@ -43,3 +43,12 @@ Fixes issue #5 - for custom API an underscore is needlessly added at the end of 
 ## 0.2.4: Bug Fix
 
 Fixes issue #6 - Exchange list values are not populated correctly in API config page.
+
+## 0.2.5: support for additional input types
+
+Added support for additional input types for the following fields:
+
+filtermarkets (msg, flow, json, jsonata)
+amount (msg, flow)
+orderprice (msg, flow)
+apipayload (jsonata)

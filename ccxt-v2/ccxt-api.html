@@ -141,6 +141,7 @@ SOFTWARE.
           data-i18n="[placeholder]ccxt.parameters.filtermarkets"
           style="width: 70%;"
         />
+        <input type="hidden" id="node-input-filtermarketsType" />
       </div>
 
       <div class="form-row node-input-unified-api-symbol hidden">
@@ -279,10 +280,11 @@ SOFTWARE.
           </div>
         </label>
         <input
-          type="number"
+          type="text"
           id="node-input-amount"
           data-i18n="[placeholder]ccxt.parameters.orderamount"
         />
+        <input type="hidden" id="node-input-amountType" />
       </div>
 
       <div class="form-row node-input-unified-api-orderprice hidden">
@@ -296,10 +298,11 @@ SOFTWARE.
           </div>
         </label>
         <input
-          type="number"
+          type="text"
           id="node-input-orderprice"
           data-i18n="[placeholder]ccxt.parameters.price"
         />
+        <input type="hidden" id="node-input-orderpriceType" />
       </div>
 
       <div class="form-row node-input-unified-api-orderid hidden">
@@ -441,6 +444,9 @@ SOFTWARE.
         value: "",
         required: false
       },
+      filtermarketsType: {
+        value: "str"
+      },
       symbol: {
         value: "",
         required: false
@@ -482,8 +488,14 @@ SOFTWARE.
       amount: {
         value: ""
       },
+      amountType: {
+        value: "num"
+      },
       orderprice: {
         value: ""
+      },
+      orderpriceType: {
+        value: "num"
       },
       orderid: {
         value: "",
@@ -572,6 +584,7 @@ SOFTWARE.
               hasValue: false
             },
             "json",
+            "jsonata",
             "msg"
           ]
         })
@@ -667,6 +680,35 @@ SOFTWARE.
             label: "flow.",
             hasValue: true
           }
+        ]
+      });
+      $("#node-input-filtermarkets").typedInput({
+        typeField: $("#node-input-filtermarketsType"),
+        default: "str",
+        types: [
+          "str",
+          "msg",
+          "flow",
+          "json",
+          "jsonata"
+        ]
+      });
+      $("#node-input-amount").typedInput({
+        typeField: $("#node-input-amountType"),
+        default: "num",
+        types: [
+          "num",
+          "msg",
+          "flow"
+        ]
+      });
+      $("#node-input-orderprice").typedInput({
+        typeField: $("#node-input-orderpriceType"),
+        default: "num",
+        types: [
+          "num",
+          "msg",
+          "flow"
         ]
       });
 
