@@ -485,6 +485,7 @@ module.exports = function (RED) {
               });
 
               if (node.apisecrets.sandboxmode === true) exchange.setSandboxMode(true);
+
             } else
               exchange = new ccxt[element]({
                 headers: {
