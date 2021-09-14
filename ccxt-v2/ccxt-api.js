@@ -583,7 +583,7 @@ module.exports = function (RED) {
             //stream results back to client
             let returnResult = async function (resultObj, returnresult) {
               if (returnresult === true) {
-                msg.payload = Object.assign(msg.payload, resultObj);
+                msg.payload = resultObj;
                 node.send(msg);
               }
             };
@@ -621,7 +621,7 @@ module.exports = function (RED) {
                     {
                       exchange: exchange.name,
                       api: api,
-                      [`${api}Response`]: payload,
+                      payload: payload,
                     },
                     addresult
                   );
@@ -647,7 +647,7 @@ module.exports = function (RED) {
                     {
                       exchange: exchange.name,
                       api: api,
-                      [`${api}Response`]: payload,
+                      payload: payload,
                     },
                     addresult
                   );
@@ -710,7 +710,7 @@ module.exports = function (RED) {
                             api: api,
                             arguments: args.concat(),
                             market: element,
-                            [`${api}Response`]: payload,
+                            payload: payload,
                           },
                           addresult
                         );
@@ -726,7 +726,7 @@ module.exports = function (RED) {
                           api: api,
                           arguments: args.concat(),
                           market: "",
-                          [`${api}Response`]: payload,
+                          payload: payload,
                         },
                         addresult
                       );
@@ -739,7 +739,7 @@ module.exports = function (RED) {
                         exchange: exchange.name,
                         api: api,
                         arguments: args.concat(),
-                        [`${api}Response`]: payload,
+                        payload: payload,
                       },
                       addresult
                     );
@@ -752,7 +752,7 @@ module.exports = function (RED) {
                       exchange: exchange.name,
                       api: api,
                       arguments: "",
-                      [`${api}Response`]: payload,
+                      payload: payload,
                     },
                     addresult
                   );
@@ -781,7 +781,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: "", // iam using the property arguments so it is consistent with the unifiedAPI term. in face this is just the apipayload param
-                    [`${api}Response`]: payload,
+                    payload: payload,
                   },
                   addresult
                 );
@@ -795,7 +795,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: parsedPayload,
-                    [`${api}Response`]: payload,
+                    payload: payload,
                   },
                   addresult
                 );
@@ -808,7 +808,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: parsedPayload,
-                    [`${api}Response`]: payload,
+                    payload: payload,
                   },
                   addresult
                 );
@@ -823,7 +823,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: parsedPayload,
-                    [`${api}Response`]: payload,
+                    payload: payload,
                   },
                   addresult
                 );
@@ -836,7 +836,7 @@ module.exports = function (RED) {
                     exchange: exchange.name,
                     api: api,
                     arguments: "",
-                    [`${api}Response`]: payload,
+                    payload: payload,
                   },
                   addresult
                 );
