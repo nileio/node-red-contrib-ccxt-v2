@@ -490,8 +490,8 @@ module.exports = function (RED) {
                   Connection: "keep-alive",
                 },
               });
-              //PLEASE REMEMBER I modified bitmex.js line url to make it just a one value per object rather than an object with public and private
-              //what ever the url is
+
+              //what ever the url is FIXME: no consistent structure across ccxt for exchange environments
               if (node.apisecrets.url !== "default")
                 exchange.urls["api"] = {
                   public: node.apisecrets.url,
@@ -526,7 +526,8 @@ module.exports = function (RED) {
 
                 if (node.apipayloadType === "none") value = undefined;
                 if (node.apipayloadType === "json" && value != "") value = JSON.parse(value);
-                if (node.apipayloadType === "jsonata" && value != "") value = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(value, node), msg);
+                if (node.apipayloadType === "jsonata" && value != "")
+                  value = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(value, node), msg);
                 if (node.apipayloadType === "msg") value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
                 if (node.apipayloadType === "flow") value = JSON.stringify(RED.util.evaluateNodeProperty(node.apipayload, node.apipayloadType, node, msg));
               }
@@ -604,7 +605,8 @@ module.exports = function (RED) {
                   if (node.filtermarketsType === "msg") filterlist = RED.util.getMessageProperty(msg, node.filtermarkets).split(",");
                   if (node.filtermarketsType === "flow") filterlist = RED.util.evaluateNodeProperty(node.filtermarkets, node.filtermarketsType, node, msg);
                   if (node.filtermarketsType === "json") filterlist = JSON.parse(node.filtermarkets);
-                  if (node.filtermarketsType === "jsonata") filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
+                  if (node.filtermarketsType === "jsonata")
+                    filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
 
                   //filter result here
                   payload = Object.keys(payload)
@@ -634,7 +636,8 @@ module.exports = function (RED) {
                   if (node.filtermarketsType === "msg") filterlist = RED.util.getMessageProperty(msg, node.filtermarkets).split(",");
                   if (node.filtermarketsType === "flow") filterlist = RED.util.evaluateNodeProperty(node.filtermarkets, node.filtermarketsType, node, msg);
                   if (node.filtermarketsType === "json") filterlist = JSON.parse(node.filtermarkets);
-                  if (node.filtermarketsType === "jsonata") filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
+                  if (node.filtermarketsType === "jsonata")
+                    filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
 
                   //filter result here
                   payload = payload.filter((key) => {
@@ -799,8 +802,7 @@ module.exports = function (RED) {
                   },
                   addresult
                 );
-              }
-              else if (node.apipayloadType === "jsonata") {
+              } else if (node.apipayloadType === "jsonata") {
                 let parsedPayload = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.apipayload, node), msg);
                 let payload = await exchange[method](parsedPayload);
                 returnResult(
