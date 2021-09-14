@@ -334,18 +334,11 @@ module.exports = function (RED) {
         Connection: "keep-alive",
       },
     });
-    let arr = [];
-    //("requiredCredentials");
-    if (exchange.urls !== undefined) {
-      arr = Object.entries(exchange.urls);
 
-      //each element of the array includes the name of the api
-      // and whether the api is private
-    }
     res.setHeader("Content-Type", "application/json");
     // send out the array of all supported unified APIs of the exchange
     // including true or false for private apis
-    res.send(JSON.stringify({exchangeurls: arr}));
+    res.send(exchange.urls);
   };
 
   var callbackExchangerequiredCredentials = function (req, res) {
@@ -487,17 +480,9 @@ module.exports = function (RED) {
                   Connection: "keep-alive",
                 },
               });
-              //PLEASE REMEMBER I modified bitmex.js line url to make it just a one value per object rather than an object with public and private
-              //what ever the url is
-              if (node.apisecrets.url !== "default")
-                exchange.urls["api"] = {
-                  public: node.apisecrets.url,
-                  private: node.apisecrets.url,
-                };
 
-              if (node.apisecrets.sandboxmode === true) {
-                exchange.setSandboxMode(true);
-              }
+              if (node.apisecrets.sandboxmode === true) exchange.setSandboxMode(true);
+
             } else
               exchange = new ccxt[element]({
                 headers: {
@@ -865,7 +850,6 @@ module.exports = function (RED) {
   function CcxtExchange(config) {
     RED.nodes.createNode(this, config);
     this.name = config.name;
-    this.url = config.url;
     this.defaultconfig = config.defaultconfig;
     this.activeconfig = config.activeconfig;
     this.sandboxmode = config.sandboxmode;

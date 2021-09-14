@@ -1673,21 +1673,6 @@ SOFTWARE.
       />
     </div>
 
-      <div class="form-row">
-      <label for="node-config-input-url" class="tooltip"
-        ><i class="fa fa-globe"></i> <span data-i18n="ccxt-exchange.label.url"></span>
-        <div class="right">
-          <strong data-i18n="ccxt-exchange.label.url"></strong>
-          <p data-i18n="ccxt-exchange.labeltooltip.url"></p>
-          <i></i>
-        </div>
-      </label>
-
-      <select type="text" id="node-config-input-url">
-        <option value="default">Default</option>
-      </select>
-    </div>
-
     <div class="form-row node-config-defaultconfig">
       <label for="node-config-input-defaultconfig"
         ><i class="fa fa-eye"></i>
@@ -1710,7 +1695,7 @@ SOFTWARE.
         data-i18n="[placeholder]ccxt-exchange.parameters.activeconfig"
       />
     </div>
-    <div class="form-row node-config-sandboxmode">
+    <div class="form-row node-config-sandboxmode hidden">
       <label for="node-config-input-sandboxmode"
         ><i class="fa fa-wrench"></i>
         <span data-i18n="ccxt-exchange.label.sandboxmode"></span
@@ -1734,7 +1719,6 @@ SOFTWARE.
       name: {
         value: ""
       },
-      url: { value: "default", required: false },
       defaultconfig: {
         value: true,
         required: true
@@ -1844,30 +1828,17 @@ SOFTWARE.
           ).error(function (error) {
             console.log(error);
           });
+
           $.getJSON(
             "ccxt-v2/exchangeurls",
             {
               exchange: exchange
             },
-            function (result) {
-              $("#node-config-input-url").empty();
-              $("#node-config-input-url").append(
-                $("<option />")
-                  .val("default")
-                  .text("Default")
-              );
-              $.each(result.exchangeurls, function (key, value) {
-                $("#node-config-input-url").append(
-                  $("<option />")
-                    .val(value[1])
-                    .text(value[0])
-                );
-                $("#node-config-input-url").val(config.url);
-                $("#node-config-input-url").trigger("change");
-              });
+            function (urls) {
+              if ('test' in urls) $(".node-config-sandboxmode").show();
             }
           ).error(function (error) {
-            console.log(error);
+              console.log(error);
           });
         }
       };
