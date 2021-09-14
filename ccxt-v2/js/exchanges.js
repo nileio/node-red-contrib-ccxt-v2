@@ -37,6 +37,9 @@ const ccxt = require("ccxt"),
 
           arrNames.push(name);
           arrValues.push(name);
+          arrValues.push(exch.urls.www);
+          arrValues.push(exch.urls.logo);
+          arrValues.push(exch.urls.doc);
           // newObj[id] = myExchanges[id];
           newObj[id] = arrValues;
         }
