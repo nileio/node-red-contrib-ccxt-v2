@@ -323,24 +323,6 @@ module.exports = function (RED) {
     res.send(JSON.stringify({apiparams: apiparams}));
   };
 
-  var callbackExURLs = function (req, res) {
-    var exchange = req.query.exchange;
-
-    //TODO: fix bug The Ocean exchange cannot be instantiated
-
-    // create the exchange object passing in exchange id
-    exchange = new ccxt[exchange]({
-      headers: {
-        Connection: "keep-alive",
-      },
-    });
-
-    res.setHeader("Content-Type", "application/json");
-    // send out the array of all supported unified APIs of the exchange
-    // including true or false for private apis
-    res.send(exchange.urls);
-  };
-
   var callbackExchangerequiredCredentials = function (req, res) {
     var exchange = req.query.exchange;
 
@@ -389,7 +371,6 @@ module.exports = function (RED) {
   RED.httpAdmin.get("/ccxt-v2/exchangesymbols", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeSymbols, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/fetchOHLCVTimeframes", RED.auth.needsPermission("ccxt-api-v2.read"), callbackOHLCVTimeframes, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/exchangereqcreds", RED.auth.needsPermission("ccxt-exchange-v2.read"), callbackExchangerequiredCredentials, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/exchangeurls", RED.auth.needsPermission("ccxt-exchange-v2.read"), callbackExURLs, errorHandler);
 
   // node implementation
   function CcxtApi(config) {

@@ -1737,7 +1737,7 @@ SOFTWARE.
         data-i18n="[placeholder]ccxt-exchange.parameters.activeconfig"
       />
     </div>
-    <div class="form-row node-config-sandboxmode hidden">
+    <div class="form-row node-config-sandboxmode">
       <label for="node-config-input-sandboxmode"
         ><i class="fa fa-wrench"></i>
         <span data-i18n="ccxt-exchange.label.sandboxmode"></span
@@ -1866,18 +1866,6 @@ SOFTWARE.
                     $("#node-config-input-password").attr("placeholder", "Value Exists! Enter a new Value to update");
                 }
               });
-            }
-          ).error(function (error) {
-            console.log(error);
-          });
-
-          $.getJSON(
-            "ccxt-v2/exchangeurls",
-            {
-              exchange: exchange
-            },
-            function (urls) {
-              if ('test' in urls) $(".node-config-sandboxmode").show();
             }
           ).error(function (error) {
             console.log(error);
