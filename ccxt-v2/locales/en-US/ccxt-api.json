@@ -76,12 +76,9 @@
       "uid": "User Id",
       "login": "Login",
       "password": "Password",
-      "url": "URL",
       "defaultconfig": "Default",
-      "activeconfig": "Active"
-    },
-    "labeltooltip": {
-      "url": "Select from the list of urls supported by the exchange, or default."
+      "activeconfig": "Active",
+      "sandboxmode": "Sandbox Mode"
     },
     "parameters": {
       "exchange": "The exchange for which the API Keys configuration apply.",
@@ -92,7 +89,8 @@
       "login": "Login",
       "password": "Password or a passphrase",
       "defaultconfig": "Tick to make this configuration the default. Only one configuration can be the default for the exchange. Note: this is used in multi-exchange API calls.",
-      "activeconfig": "If the configuraiton is inactive, it will not be used."
+      "activeconfig": "If the configuration is inactive, it will not be used.",
+      "sandboxmode": "Tick to turn on sandbox mode for this configuration."
     }
   }
 }
