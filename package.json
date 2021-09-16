@@ -18,7 +18,7 @@
     "test": "mocha \"test/**/*_spec.js\"",
     "lint": "eslint"
   },
-  "author": "Neil Lyon-S",
+  "author": "Islam El'ewady",
   "license": "Apache-2.0",
   "dependencies": {
     "ccxt": "^1.47.46"
@@ -35,8 +35,12 @@
   },
   "contributors": [
     {
-      "name": "Neil Lyon-S",
+      "name": "Islam El'ewady",
       "url": "https://github.com/nileio"
+    },
+    {
+      "name": "Miguel Gancedo",
+      "url": "https://github.com/masalinas"
     },
     {
       "name": "Joel Wilson",

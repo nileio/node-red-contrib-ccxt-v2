@@ -46,23 +46,22 @@ In the **Example folder** of the node you have the flow of these two cases. Of c
 
 **To Do**
 
-- have node.status for different stages
-- Testing of all dynamic configuration based on msg or flow
-- Testing of trade APIs
-- update ReadMe and docs
-- include one additional language
-- fix slight typedInput drawing issue - box radius doesnot align evenly
-- package select2 and test whole package
-- better error handling for jquery get calls.
-- review all error handling
-- adding Currencies typedInput list
-- support using msg & flow properties for amount & price
-- supporting dynamic Exchange name using context
-- support an option to retrieve all exchanges as an list.
-- change static exchanges to latest exchanges from ccxt
-- dynamic show of CCXT version used in tooltip or help
-- Additional feature requests
-- Submit to node-red-contrib repo
+- [ ] have node.status for different stages
+- [ ] Testing of all dynamic configuration based on msg or flow
+- [ ] Testing of trade APIs
+- [ ] update ReadMe and docs
+- [ ] include one additional language
+- [ ] fix slight typedInput drawing issue - box radius doesnot align evenly
+- [ ] package select2 and test whole package
+- [ ] better error handling for jquery get calls.
+- [ ] review all error handling
+- [ ] adding Currencies typedInput list
+- [x] support using msg & flow properties for amount & price
+- [ ] supporting dynamic Exchange name using context
+- [ ] support an option to retrieve all exchanges as an list.
+- [ ] change static exchanges to latest exchanges from ccxt
+- [ ] dynamic show of CCXT version used in tooltip or help
+- [ ] Additional feature requests
 
 **Thanks**
 
