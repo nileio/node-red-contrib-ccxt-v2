@@ -323,31 +323,6 @@ module.exports = function (RED) {
     res.send(JSON.stringify({apiparams: apiparams}));
   };
 
-  var callbackExURLs = function (req, res) {
-    var exchange = req.query.exchange;
-
-    //TODO: fix bug The Ocean exchange cannot be instantiated
-
-    // create the exchange object passing in exchange id
-    exchange = new ccxt[exchange]({
-      headers: {
-        Connection: "keep-alive",
-      },
-    });
-    let arr = [];
-    //("requiredCredentials");
-    if (exchange.urls !== undefined) {
-      arr = Object.entries(exchange.urls);
-
-      //each element of the array includes the name of the api
-      // and whether the api is private
-    }
-    res.setHeader("Content-Type", "application/json");
-    // send out the array of all supported unified APIs of the exchange
-    // including true or false for private apis
-    res.send(JSON.stringify({exchangeurls: arr}));
-  };
-
   var callbackExchangerequiredCredentials = function (req, res) {
     var exchange = req.query.exchange;
 
@@ -396,7 +371,6 @@ module.exports = function (RED) {
   RED.httpAdmin.get("/ccxt-v2/exchangesymbols", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeSymbols, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/fetchOHLCVTimeframes", RED.auth.needsPermission("ccxt-api-v2.read"), callbackOHLCVTimeframes, errorHandler);
   RED.httpAdmin.get("/ccxt-v2/exchangereqcreds", RED.auth.needsPermission("ccxt-exchange-v2.read"), callbackExchangerequiredCredentials, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/exchangeurls", RED.auth.needsPermission("ccxt-exchange-v2.read"), callbackExURLs, errorHandler);
 
   // node implementation
   function CcxtApi(config) {
@@ -491,12 +465,8 @@ module.exports = function (RED) {
                 },
               });
 
-              //what ever the url is FIXME: no consistent structure across ccxt for exchange environments
-              if (node.apisecrets.url !== "default")
-                exchange.urls["api"] = {
-                  public: node.apisecrets.url,
-                  private: node.apisecrets.url,
-                };
+              if (node.apisecrets.sandboxmode === true) exchange.setSandboxMode(true);
+
             } else
               exchange = new ccxt[element]({
                 headers: {
@@ -899,9 +869,9 @@ module.exports = function (RED) {
   function CcxtExchange(config) {
     RED.nodes.createNode(this, config);
     this.name = config.name;
-    this.url = config.url;
     this.defaultconfig = config.defaultconfig;
     this.activeconfig = config.activeconfig;
+    this.sandboxmode = config.sandboxmode;
 
     var node = this;
   }
