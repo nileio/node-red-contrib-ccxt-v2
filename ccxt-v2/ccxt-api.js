@@ -92,9 +92,11 @@ module.exports = function (RED) {
             //lookup if the api is private : return true or false
             // then add to the temp array and return the final array
 
-            //Note: error will be 'Cannot read property 'filter' of undefined'
-            // when the capability does not exist on my exchanges unifiedAPI list
-
+            //FIXME: when the capability does not exist in our exchanges.js file an error will be 'Cannot read property 'filter' of undefined'
+            // This will yeild the exchange unusable!
+            // the capabilities change all the time with ccxt new versions. Either fix the version or change this code.
+            // DEBUG this by uncommenting the line to find which Unified API fails.
+            // console.log(v[0]);
             modarr.push(exchanges.allunfiedAPIs[v[0]].filter((x) => x === "private").join() ? true : false);
             return modarr;
           });
@@ -466,7 +468,6 @@ module.exports = function (RED) {
               });
 
               if (node.apisecrets.sandboxmode === true) exchange.setSandboxMode(true);
-
             } else
               exchange = new ccxt[element]({
                 headers: {

@@ -138,6 +138,7 @@ const ccxt = require("ccxt"),
     futures: [["apipayload"]], // I dont know how to use futures .. some exchanges have this capabilitylike OKEx
     fetchTime: [["apipayload"]],
     fetchStatus: [["apipayload"]],
+    transfer: ["private", "apipayload"], // #7 Kucoin
   };
 
 // -----------------------------------------------------------------------------
