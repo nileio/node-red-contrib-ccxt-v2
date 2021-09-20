@@ -36,10 +36,10 @@ SOFTWARE.
               id="id-anchor-display-exchange-img"
               style="max-width:68%;"/></a
         ></span>
-        <!-- * ? how does the src get resolved here. the svg is in the images folder of my node not in static! -->
+        
         <span
           ><img
-            src="images/spinning-circles.svg"
+            src="resources/node-red-contrib-ccxt-v2/images/spinning-circles.svg"
             alt="retrieving data..."
             id="id-loading-svg"
             style="display:none;width:24px;"
@@ -213,7 +213,7 @@ SOFTWARE.
         />
         <input type="hidden" id="node-input-timeframeType" />
         <img
-          src="images/emulated.svg"
+          src="resources/node-red-contrib-ccxt-v2/images/emulated.svg"
           alt="API is emulated"
           id="id-emulated-api"
           style="width:16px;"
@@ -598,7 +598,7 @@ SOFTWARE.
             value: "symbolList",
             label: "Pair",
             hasValue: true,
-            icon: "images/typedInput/bitcoin-18.png",
+            icon: "resources/node-red-contrib-ccxt-v2/images/typedInput/bitcoin-18.png",
             options: ["None"]
           },
           {
@@ -622,7 +622,7 @@ SOFTWARE.
             value: "timeframeList",
             label: "Candle size",
             //  hasValue: true,
-            //icon: "images/typedInput/timeline.png",
+            //icon: "resources/node-red-contrib-ccxt-v2/typedInput/timeline.png",
             //default list of values
             options: ["1m", "5m", "15m", "30m", "1h", "3h", "6h", "12h", "1d"]
           },
@@ -639,7 +639,7 @@ SOFTWARE.
           {
             value: "datepick",
             label: "Date",
-            icon: "images/typedInput/date-from-18.png",
+            icon: "resources/node-red-contrib-ccxt-v2/images/typedInput/date-from-18.png",
             hasValue: true
           },
           "msg",
@@ -658,7 +658,7 @@ SOFTWARE.
           {
             value: "num",
             label: "number",
-            icon: "red/images/typedInput/09.png",
+            icon: "red/images/typedInput/09.svg",
             validate: /^[+-]?[0-9]*\.?[0-9]*([eE][-+]?[0-9]+)?$/
           },
           "msg",
@@ -1363,7 +1363,7 @@ SOFTWARE.
                     value: "timeframeList",
                     label: "Candle size",
                     //  hasValue: true,
-                    icon: "images/typedInput/timeline.png",
+                    icon: "resources/node-red-contrib-ccxt-v2/images/typedInput/timeline.png",
                     options: timeframes
                   },
                   "str",
