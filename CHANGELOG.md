@@ -73,3 +73,8 @@ This version now checks if the specific Unified API exists on our configuration 
 API does not exist , we dynamically add the API rather than yeild the exchange unusable. This way any new API should be possible to use.
 The solution is not guranteed to work across all exchanges, given that those new Unified APIs might require different payloads. However, in theory,
 you should be able to send any data to the new Unified API using the `Payload` field. We assume those new Unified APIs are private and require a `Payload`.
+
+## 0.2.9: icons and images
+
+using `resources` folder for images and icons.
+Now the minimum Node-Red version is 1.3.0 for this to work.
