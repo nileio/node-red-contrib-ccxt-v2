@@ -60,3 +60,7 @@ Sandbox Mode checkbox field is added to support connecting to an alternate `sand
 if the exchange includes different `testnet` environment, sandbox mode is possible.
 This means the API will not hit the `livenet` if Sandbox mode is supported. Usually a user will have a different API Keys for the `testnet` environment.
 If the Sandbox Mode checkbox is ticked and the exchange does NOT provide an alternate sandbox environment, the API call will fail and error is returned.
+
+## 0.2.6: BUG FIX support transfer Unified API
+
+fixes #7 no Unified APIs appear in the list when using Kucoin exchange.
