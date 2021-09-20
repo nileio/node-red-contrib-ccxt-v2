@@ -89,15 +89,21 @@ module.exports = function (RED) {
 
             var modarr = v.slice(0, 1);
 
-            //lookup if the api is private : return true or false
-            // then add to the temp array and return the final array
-
-            //FIXME: when the capability does not exist in our exchanges.js file an error will be 'Cannot read property 'filter' of undefined'
-            // This will yeild the exchange unusable!
-            // the capabilities change all the time with ccxt new versions. Either fix the version or change this code.
             // DEBUG this by uncommenting the line to find which Unified API fails.
             // console.log(v[0]);
+
+            // BUGFIX: when the capability does not exist in our exchanges.js file an error will be 'Cannot read property 'filter' of undefined'
+            // This will yeild the exchange unusable and the config will not list any Unified APIs!
+            // the capabilities change all the time with ccxt new versions and therefore exchanges.js cannot be kept in sync.
+            // Workaround solution is to add the capability if it does not exist
+            // this call will ensure that a new Unified API(not known to exchanges.js) is still possible to use.
+            // We assume the API is private and requires a custom payload only. No special fields will be shown for this API though.
+            if (!exchanges.allunfiedAPIs[v[0]]) exchanges.allunfiedAPIs[v[0]] = ["private", "apipayload"];
+
+            //lookup if the api is private : return true or false
+            // then add to the temp array and return the final array
             modarr.push(exchanges.allunfiedAPIs[v[0]].filter((x) => x === "private").join() ? true : false);
+
             return modarr;
           });
 
