@@ -74,7 +74,11 @@ API does not exist , we dynamically add the API rather than yeild the exchange u
 The solution is not guranteed to work across all exchanges, given that those new Unified APIs might require different payloads. However, in theory,
 you should be able to send any data to the new Unified API using the `Payload` field. We assume those new Unified APIs are private and require a `Payload`.
 
-## 0.2.9: icons and images
+## 0.2.9: enhancement to use resources dir for images
 
 using `resources` folder for images and icons.
 Now the minimum Node-Red version is 1.3.0 for this to work.
+
+## 0.2.10: Bug Fix: some exchanges do not have custom APIs correctly listed
+
+workaround solution to correctly list the custom APIs for exchanges. This is to fix a bug where some exchanges have their custom APIs listed with unrecognised names or numbers.

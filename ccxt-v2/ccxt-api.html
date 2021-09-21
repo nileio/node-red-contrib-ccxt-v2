@@ -879,8 +879,15 @@ SOFTWARE.
                   optgroup.attr("id", "node-input-api_" + apitype);
                   optgroup.attr("value", "node-input-api_" + apitype);
                 }
+
                 $.each(Object.keys(result.api[apitype]), function (index, verb) {
-                  $.each(result.api[apitype][verb], function (index, api) {
+
+                  //@nileio BUGFIX: $.each(object,function(key,value)) when passing object https://api.jquery.com/jquery.each/
+                  $.each(result.api[apitype][verb], function (key, api) {
+                    //console.log("index: " + index, " key: " + key, " verb: " + verb, " api: " + api);
+                    //@nileio quick and dirty workaround for the timebeing. every exchange seem to have different data structure coming here and swapped! 
+                    //server api "ccxt-v2/apis" should fix this instead of fixing here.
+                    if (typeof key === 'string') api = key
                     var option = $("<option>", {
                       value: apitype + "_" + verb + "_" + api,
                       text: verb + "_" + api,
