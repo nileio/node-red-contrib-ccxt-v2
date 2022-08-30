@@ -66,3 +66,6 @@ In the **Example folder** of the node you have the flow of these two cases. Of c
 **Thanks**
 
 A lot of effort and time have gone into this project. If you are using the node or if you like it , please hit the Star button and consider to leave a comment!
+
+**Donations**
+donations are welcomed to keep the development on this node going. Thank YOU
