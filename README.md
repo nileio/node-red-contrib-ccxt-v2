@@ -2,7 +2,7 @@
 
 A Node-RED node to communicate with various crypto exchanges using [CCXT](https://github.com/ccxt/ccxt) library. The node now supports all Unified and Exchange-specific APIs.
 
-Note this package has much more added features and changes from the original fork, so this is refactored to v2.
+Note this package is *almost a rewrite* and is not to be used with the original node. The node will possibly have its own namespace and new upgrade. This node has much more added features and changes from the original fork, so this is refactored to v2 only to keep using the name for the time being!
 
 This is now in Beta testing with really cool new features as below :) Please create an issue for any question or suggestion.
 
@@ -42,7 +42,7 @@ npm install node-red-contrib-ccxt-v2 --save
 
 - fetch OHLCV for multiple markets from Bittrex exchange.
 
-In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the secrets.
+In the **Example folder** of the node you have the flow of these two cases. Of course for the private one you must register in the Exchange and create the API keys.
 
 **To Do**
 
@@ -66,3 +66,6 @@ In the **Example folder** of the node you have the flow of these two cases. Of c
 **Thanks**
 
 A lot of effort and time have gone into this project. If you are using the node or if you like it , please hit the Star button and consider to leave a comment!
+
+**Donations**
+donations are welcomed to keep the development on this node going. Thank YOU
