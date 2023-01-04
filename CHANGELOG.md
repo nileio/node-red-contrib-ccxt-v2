@@ -82,3 +82,24 @@ Now the minimum Node-Red version is 1.3.0 for this to work.
 ## 0.2.10: Bug Fix: some exchanges do not have custom APIs correctly listed
 
 workaround solution to correctly list the custom APIs for exchanges. This is to fix a bug where some exchanges have their custom APIs listed with unrecognised names or numbers.
+
+## 0.2.11: Bug Fix: call on undefined object
+
+jquery ensure that exchange symbol provided exists for the exchange prior to making the API call.
+
+## 0.2.12:
+
+### Added Feature : since parameter as Key/Value pair object
+
+- `Since` parameter can now be a JSON object used with the `Market` parameter. This allows the node to have different startTime values for market symbols. This is very useful when you use multiple markets in the same call, which is recommended because it uses the internal rateLimiter. To use it select the new type `JSON` from the Typed Input field, or provide a valid JSON object in `msg` or `flow` .
+  the JSON object should be a key/value pair where the key corrospends to a valid market symbol for example "BTC/AUD", "BTC/ETH", etc. and
+  the value is the start Time in either 'yyyy-mm-dd hh:mm:ss' format , or an epoch milliseconds number.
+  For example `{"BTC/AUD":1610021722138, "ETH/AUD": "2021-02-11", "BTC/USDT": "2020-06-30 15:30:00"}`
+  if a date is provided it is internally converted to the milliseconds equivalent number.
+  if a symbol which exists in the call but does not exist in the provided object it is ignored.
+
+### Fix and additions to Unified APIs
+
+- added a number of new Unified APIs : fetchFundingRate, fetchFundingRates,fetchFundingRateHistory,fetchFundingHistory
+- Fixed some Unified APIs signature to be "private" rather than public.
+- Tested with latest Node-RED version (v3.0.2) and NodeJS versions, (v14.20.0) , (v16.17.1)

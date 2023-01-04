@@ -25,7 +25,9 @@ module.exports = function (RED) {
   function isNumber(value) {
     return typeof value === "number" && isFinite(value);
   }
-
+  function isObject(value) {
+    return Object.prototype.toString.call(value) === "[object Object]";
+  }
   // configure image static folder
   //app.use("/", serveStatic(path.join(__dirname, "images")));
 
@@ -76,7 +78,11 @@ module.exports = function (RED) {
 
           .filter(function (x) {
             // excluding caps that do not represent a unified API (exclude caps named as CORS/privateAPI/publicAPI)
-            if (x[0] !== "CORS" && x[0] !== "privateAPI" && x[0] !== "publicAPI") {
+            if (
+              x[0] !== "CORS" &&
+              x[0] !== "privateAPI" &&
+              x[0] !== "publicAPI"
+            ) {
               // include caps = true and also emulated
               if (x[1] === true || x[1] === "emulated") {
                 return x;
@@ -98,11 +104,18 @@ module.exports = function (RED) {
             // Workaround solution is to add the capability if it does not exist
             // this call will ensure that a new Unified API(not known to exchanges.js) is still possible to use.
             // We assume the API is private and requires a custom payload only. No special fields will be shown for this API though.
-            if (!exchanges.allunfiedAPIs[v[0]]) exchanges.allunfiedAPIs[v[0]] = ["private", "apipayload"];
+            if (!exchanges.allunfiedAPIs[v[0]])
+              exchanges.allunfiedAPIs[v[0]] = ["private", "apipayload"];
 
             //lookup if the api is private : return true or false
             // then add to the temp array and return the final array
-            modarr.push(exchanges.allunfiedAPIs[v[0]].filter((x) => x === "private").join() ? true : false);
+            modarr.push(
+              exchanges.allunfiedAPIs[v[0]]
+                .filter((x) => x === "private")
+                .join()
+                ? true
+                : false
+            );
 
             return modarr;
           });
@@ -128,48 +141,51 @@ module.exports = function (RED) {
   var callbackExchangeSymbols = async function (req, res) {
     let rst = req.query.exchange;
     let outputarr = [];
+    if (rst !== undefined) {
+      try {
+        for (let index = 0; index < rst.length; index++) {
+          const ex = rst[index];
 
-    try {
-      for (let index = 0; index < rst.length; index++) {
-        const ex = rst[index];
+          // instantiate the exchange by id
+          var exchange = new ccxt[ex]({
+            headers: {
+              Connection: "keep-alive",
+            },
+          });
+          let marketsList = [];
+          // note if fetchMarkets is unsupported then the final list will be empty or filled with other exchange
+          // markets which support the call. this means that in the rare case that an exchange
+          // does NOT support the call to fetchMarkets we may get an error message when executing the call to that exchange
+          // that "symobol is not supported by the exchange"
 
-        // instantiate the exchange by id
-        var exchange = new ccxt[ex]({
-          headers: {
-            Connection: "keep-alive",
-          },
-        });
-        let marketsList = [];
-        // note if fetchMarkets is unsupported then the final list will be empty or filled with other exchange
-        // markets which support the call. this means that in the rare case that an exchange
-        // does NOT support the call to fetchMarkets we may get an error message when executing the call to that exchange
-        // that "symobol is not supported by the exchange"
-
-        // load all markets from the exchange using fetchMarkets
-        if (exchange.has["fetchMarkets"]) {
-          let markets = await exchange.fetchMarkets();
-          // get all supported symbols from the exchange
-          marketsList = ccxt
-            .sortBy(Object.values(markets), "symbol")
-            .map((market) => ccxt.omit(market, ["info", "limits", "precision", "fees"]))
-            .map((x) => x.symbol);
-          // if we only have one element just copy array
-          if (index == 0) outputarr = marketsList;
-          // if this is a second round we already have an array add to it
-          if (index > 0 && marketsList.length > 0) {
-            // inner join new array with incoming array
-            outputarr = marketsList.filter(function (c) {
-              return outputarr.some((ov) => ov === c);
-            });
+          // load all markets from the exchange using fetchMarkets
+          if (exchange.has["fetchMarkets"]) {
+            let markets = await exchange.fetchMarkets();
+            // get all supported symbols from the exchange
+            marketsList = ccxt
+              .sortBy(Object.values(markets), "symbol")
+              .map((market) =>
+                ccxt.omit(market, ["info", "limits", "precision", "fees"])
+              )
+              .map((x) => x.symbol);
+            // if we only have one element just copy array
+            if (index == 0) outputarr = marketsList;
+            // if this is a second round we already have an array add to it
+            if (index > 0 && marketsList.length > 0) {
+              // inner join new array with incoming array
+              outputarr = marketsList.filter(function (c) {
+                return outputarr.some((ov) => ov === c);
+              });
+            }
           }
+          //else loadMarkets ??
         }
-        //else loadMarkets ??
-      }
-      res.setHeader("Content-Type", "application/json");
+        res.setHeader("Content-Type", "application/json");
 
-      res.send(JSON.stringify({symbols: outputarr}));
-    } catch (error) {
-      console.log(error);
+        res.send(JSON.stringify({symbols: outputarr}));
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -301,10 +317,14 @@ module.exports = function (RED) {
     // exclude the special parameter called private which is just an indicator that
     // the api requires credentials
 
-    reqparams = exchanges.allunfiedAPIs[api].filter((x) => typeof x === "string" && x !== "private");
+    reqparams = exchanges.allunfiedAPIs[api].filter(
+      (x) => typeof x === "string" && x !== "private"
+    );
 
     // the set of optional parameters are defined as an array
-    optparams = exchanges.allunfiedAPIs[api].filter((x) => typeof x !== "string");
+    optparams = exchanges.allunfiedAPIs[api].filter(
+      (x) => typeof x !== "string"
+    );
     //if there are optional params return the names of optional parameters from the array
     if (optparams.length > 0) {
       optparams = optparams.map((x) => x)[0];
@@ -372,13 +392,48 @@ module.exports = function (RED) {
     res.send(JSON.stringify({exchangereqcreds: arr}));
   };
 
-  RED.httpAdmin.get("/ccxt-v2/exchanges", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchanges, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/exchangecaps", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeCaps, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/apis", RED.auth.needsPermission("ccxt-api-v2.read"), callbackApis, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/apiparams", RED.auth.needsPermission("ccxt-api-v2.read"), callbackApiParams, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/exchangesymbols", RED.auth.needsPermission("ccxt-api-v2.read"), callbackExchangeSymbols, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/fetchOHLCVTimeframes", RED.auth.needsPermission("ccxt-api-v2.read"), callbackOHLCVTimeframes, errorHandler);
-  RED.httpAdmin.get("/ccxt-v2/exchangereqcreds", RED.auth.needsPermission("ccxt-exchange-v2.read"), callbackExchangerequiredCredentials, errorHandler);
+  RED.httpAdmin.get(
+    "/ccxt-v2/exchanges",
+    RED.auth.needsPermission("ccxt-api-v2.read"),
+    callbackExchanges,
+    errorHandler
+  );
+  RED.httpAdmin.get(
+    "/ccxt-v2/exchangecaps",
+    RED.auth.needsPermission("ccxt-api-v2.read"),
+    callbackExchangeCaps,
+    errorHandler
+  );
+  RED.httpAdmin.get(
+    "/ccxt-v2/apis",
+    RED.auth.needsPermission("ccxt-api-v2.read"),
+    callbackApis,
+    errorHandler
+  );
+  RED.httpAdmin.get(
+    "/ccxt-v2/apiparams",
+    RED.auth.needsPermission("ccxt-api-v2.read"),
+    callbackApiParams,
+    errorHandler
+  );
+  RED.httpAdmin.get(
+    "/ccxt-v2/exchangesymbols",
+    RED.auth.needsPermission("ccxt-api-v2.read"),
+    callbackExchangeSymbols,
+    errorHandler
+  );
+  RED.httpAdmin.get(
+    "/ccxt-v2/fetchOHLCVTimeframes",
+    RED.auth.needsPermission("ccxt-api-v2.read"),
+    callbackOHLCVTimeframes,
+    errorHandler
+  );
+  RED.httpAdmin.get(
+    "/ccxt-v2/exchangereqcreds",
+    RED.auth.needsPermission("ccxt-exchange-v2.read"),
+    callbackExchangerequiredCredentials,
+    errorHandler
+  );
 
   // node implementation
   function CcxtApi(config) {
@@ -425,9 +480,13 @@ module.exports = function (RED) {
         var api = node.api.replace(node.customapitype + "_", "");
 
         if (node.allexchanges === true)
-          if (api === "loadMarkets") exchangelist = Object.keys(exchanges.exchanges);
+          if (api === "loadMarkets")
+            exchangelist = Object.keys(exchanges.exchanges);
           else {
-            node.error("All exchanges can only be used with loadMarkets call.", msg);
+            node.error(
+              "All exchanges can only be used with loadMarkets call.",
+              msg
+            );
             return;
           }
 
@@ -473,7 +532,8 @@ module.exports = function (RED) {
                 },
               });
 
-              if (node.apisecrets.sandboxmode === true) exchange.setSandboxMode(true);
+              if (node.apisecrets.sandboxmode === true)
+                exchange.setSandboxMode(true);
             } else
               exchange = new ccxt[element]({
                 headers: {
@@ -502,23 +562,63 @@ module.exports = function (RED) {
                 //none/json/jsonata/msg/flow
 
                 if (node.apipayloadType === "none") value = undefined;
-                if (node.apipayloadType === "json" && value != "") value = JSON.parse(value);
+                if (node.apipayloadType === "json" && value != "")
+                  value = JSON.parse(value);
                 if (node.apipayloadType === "jsonata" && value != "")
-                  value = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(value, node), msg);
-                if (node.apipayloadType === "msg") value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
-                if (node.apipayloadType === "flow") value = JSON.stringify(RED.util.evaluateNodeProperty(node.apipayload, node.apipayloadType, node, msg));
+                  value = RED.util.evaluateJSONataExpression(
+                    RED.util.prepareJSONataExpression(value, node),
+                    msg
+                  );
+                if (node.apipayloadType === "msg")
+                  value = JSON.stringify(
+                    RED.util.getMessageProperty(msg, node.apipayload)
+                  );
+                if (node.apipayloadType === "flow")
+                  value = JSON.stringify(
+                    RED.util.evaluateNodeProperty(
+                      node.apipayload,
+                      node.apipayloadType,
+                      node,
+                      msg
+                    )
+                  );
               }
               if (param === "orderid") {
-                if (node.orderidType === "msg") value = RED.util.getMessageProperty(msg, node.orderid);
-                if (node.orderidType === "flow") value = RED.util.evaluateNodeProperty(node.orderid, node.orderidType, node, msg);
+                if (node.orderidType === "msg")
+                  value = RED.util.getMessageProperty(msg, node.orderid);
+                if (node.orderidType === "flow")
+                  value = RED.util.evaluateNodeProperty(
+                    node.orderid,
+                    node.orderidType,
+                    node,
+                    msg
+                  );
               }
               if (param === "amount") {
-                if (node.amountType === "msg") value = JSON.stringify(RED.util.getMessageProperty(msg, node.amount));
-                if (node.amountType === "flow") value = RED.util.evaluateNodeProperty(node.amount, node.amountType, node, msg);
+                if (node.amountType === "msg")
+                  value = JSON.stringify(
+                    RED.util.getMessageProperty(msg, node.amount)
+                  );
+                if (node.amountType === "flow")
+                  value = RED.util.evaluateNodeProperty(
+                    node.amount,
+                    node.amountType,
+                    node,
+                    msg
+                  );
               }
               if (param === "orderprice") {
-                if (node.orderpriceType === "msg") value = JSON.stringify(RED.util.getMessageProperty(msg, node.orderprice));
-                if (node.orderpriceType === "flow") value = RED.util.evaluateNodeProperty(node.orderprice, node.orderpriceType, node, msg);
+                if (node.orderpriceType === "msg")
+                  value = JSON.stringify(
+                    RED.util.getMessageProperty(msg, node.orderprice)
+                  );
+                if (node.orderpriceType === "flow")
+                  value = RED.util.evaluateNodeProperty(
+                    node.orderprice,
+                    node.orderpriceType,
+                    node,
+                    msg
+                  );
               }
               // special handling for since argument to convert to milliseconds
               if (param === "since") {
@@ -526,14 +626,38 @@ module.exports = function (RED) {
                   value = RED.util.getMessageProperty(msg, node.since);
                 }
                 if (node.sinceType === "flow") {
-                  value = RED.util.evaluateNodeProperty(node.since, node.sinceType, node, msg);
+                  value = RED.util.evaluateNodeProperty(
+                    node.since,
+                    node.sinceType,
+                    node,
+                    msg
+                  );
+                }
+                if (
+                  (value && node.sinceType === "json" && value != "") ||
+                  isObject(value)
+                ) {
+                  Object.keys(value).forEach(function (key) {
+                    if (value[key] !== null) {
+                      if (isNumber(value[key]) === false && value[key] !== "") {
+                        let newdate = new Date(value[key]);
+                        value[key] = exchange.parse8601(newdate.toISOString());
+                      }
+                    } else value[key] = undefined;
+                  });
+                  value = JSON.parse(JSON.stringify(value));
                 }
                 // special handling for since parameter
                 // make sure you get ISO string
-                // the value can either be a number (long) or a date string.
+                // the value can either be a number (long) or a date string or an object (key/value pair where key is symbol)
                 // if the value is number then i assume its already in milliseconds UTC
-                // if the value is not a number then i convert the date to milliseconds iso
-                if (isNumber(value) === false && value !== "") {
+                // if the value is not a number & not an object then i convert the date to milliseconds iso
+                if (
+                  value &&
+                  isNumber(value) === false &&
+                  value !== "" &&
+                  isObject(value) === false
+                ) {
                   value = new Date(value);
                   value = exchange.parse8601(value.toISOString());
                 }
@@ -542,18 +666,46 @@ module.exports = function (RED) {
                 if (node.timeframeType === "msg") {
                   value = RED.util.getMessageProperty(msg, node.timeframe);
                 }
-                if (node.sinceType === "flow") {
-                  value = RED.util.evaluateNodeProperty(node.timeframe, node.sinceType, node, msg);
+                if (node.timeframeType === "flow") {
+                  value = RED.util.evaluateNodeProperty(
+                    node.timeframe,
+                    node.timeframeType,
+                    node,
+                    msg
+                  );
                 }
               }
               //market
               if (param === "symbol") {
-                if (node.symbolType === "msg") value = RED.util.getMessageProperty(msg, node.symbol);
-                if (node.symbolType === "flow") value = RED.util.evaluateNodeProperty(node.symbol, node.symbolType, node, msg);
+                if (node.symbolType === "msg")
+                  value = RED.util.getMessageProperty(msg, node.symbol);
+                if (node.symbolType === "flow")
+                  value = RED.util.evaluateNodeProperty(
+                    node.symbol,
+                    node.symbolType,
+                    node,
+                    msg
+                  );
                 if (node.symbolType === "allSymbols") value = exchange.symbols;
                 // if (node.symbolType === "symbolList") value = value.split(",");
-                if (value !== "" && !Array.isArray(value)) value = value.split(",");
+                if (value !== "" && !Array.isArray(value))
+                  value = value.split(",");
               }
+              //limit param
+              if (param === "limit") {
+                if (node.limitType === "msg") {
+                  value = RED.util.getMessageProperty(msg, node.limit);
+                }
+                if (node.limitType === "flow") {
+                  value = RED.util.evaluateNodeProperty(
+                    node.limit,
+                    node.limitType,
+                    node,
+                    msg
+                  );
+                }
+              }
+
               if (value === "") value = undefined;
               return value;
             };
@@ -578,12 +730,29 @@ module.exports = function (RED) {
                 //filter output of markets if provided
                 if (node.filtermarkets) {
                   let filterlist = [];
-                  if (node.filtermarketsType === "str") filterlist = node.filtermarkets.split(",");
-                  if (node.filtermarketsType === "msg") filterlist = RED.util.getMessageProperty(msg, node.filtermarkets).split(",");
-                  if (node.filtermarketsType === "flow") filterlist = RED.util.evaluateNodeProperty(node.filtermarkets, node.filtermarketsType, node, msg);
-                  if (node.filtermarketsType === "json") filterlist = JSON.parse(node.filtermarkets);
+                  if (node.filtermarketsType === "str")
+                    filterlist = node.filtermarkets.split(",");
+                  if (node.filtermarketsType === "msg")
+                    filterlist = RED.util
+                      .getMessageProperty(msg, node.filtermarkets)
+                      .split(",");
+                  if (node.filtermarketsType === "flow")
+                    filterlist = RED.util.evaluateNodeProperty(
+                      node.filtermarkets,
+                      node.filtermarketsType,
+                      node,
+                      msg
+                    );
+                  if (node.filtermarketsType === "json")
+                    filterlist = JSON.parse(node.filtermarkets);
                   if (node.filtermarketsType === "jsonata")
-                    filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
+                    filterlist = RED.util.evaluateJSONataExpression(
+                      RED.util.prepareJSONataExpression(
+                        node.filtermarkets,
+                        node
+                      ),
+                      msg
+                    );
 
                   //filter result here
                   payload = Object.keys(payload)
@@ -605,16 +774,36 @@ module.exports = function (RED) {
                     addresult
                   );
                 }
-              } else if (api === "fetchMarkets" && exchange.has["fetchMarkets"]) {
+              } else if (
+                api === "fetchMarkets" &&
+                exchange.has["fetchMarkets"]
+              ) {
                 let payload = await exchange.fetchMarkets();
                 if (node.filtermarkets) {
                   let filterlist = [];
-                  if (node.filtermarketsType === "str") filterlist = node.filtermarkets.split(",");
-                  if (node.filtermarketsType === "msg") filterlist = RED.util.getMessageProperty(msg, node.filtermarkets).split(",");
-                  if (node.filtermarketsType === "flow") filterlist = RED.util.evaluateNodeProperty(node.filtermarkets, node.filtermarketsType, node, msg);
-                  if (node.filtermarketsType === "json") filterlist = JSON.parse(node.filtermarkets);
+                  if (node.filtermarketsType === "str")
+                    filterlist = node.filtermarkets.split(",");
+                  if (node.filtermarketsType === "msg")
+                    filterlist = RED.util
+                      .getMessageProperty(msg, node.filtermarkets)
+                      .split(",");
+                  if (node.filtermarketsType === "flow")
+                    filterlist = RED.util.evaluateNodeProperty(
+                      node.filtermarkets,
+                      node.filtermarketsType,
+                      node,
+                      msg
+                    );
+                  if (node.filtermarketsType === "json")
+                    filterlist = JSON.parse(node.filtermarkets);
                   if (node.filtermarketsType === "jsonata")
-                    filterlist = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.filtermarkets, node), msg);
+                    filterlist = RED.util.evaluateJSONataExpression(
+                      RED.util.prepareJSONataExpression(
+                        node.filtermarkets,
+                        node
+                      ),
+                      msg
+                    );
 
                   //filter result here
                   payload = payload.filter((key) => {
@@ -637,8 +826,10 @@ module.exports = function (RED) {
               // make sure the exchange has the api and execute the api
               else if (exchange.has[api]) {
                 addresult = true;
-                let marketparm = false;
+                let marketparam = false;
+                let sinceparam = false;
                 let marketpos = 0;
+                let sincepos = 0;
                 let counter = 0;
                 //this call ensures that exchange has loaded all markets
                 await exchange.loadMarkets(true);
@@ -647,8 +838,14 @@ module.exports = function (RED) {
                 // requirements for unifiedAPIs most notably some exchanges require api keys for all calls.
                 let args = getApiParams(api).map((x) => {
                   if (x === "symbol") {
-                    marketparm = true;
+                    marketparam = true;
                     marketpos = counter;
+                  }
+                  //@nileio indicate that since is both symbol&since are params for this api
+                  // required to support key/value for since param . since param position is always defined after the symbol param
+                  if (marketparam && x === "since") {
+                    sinceparam = true;
+                    sincepos = counter;
                   }
                   counter++;
                   return getVal(x);
@@ -659,41 +856,60 @@ module.exports = function (RED) {
                   //check if market param is used as one of the args
                   // this check is needed so that we can also loop over the markets if multiple markets provided
 
-                  if (marketparm) {
+                  if (marketparam) {
                     // var marketresult;
                     let marketsarr = args[marketpos];
                     //result = {};
                     //[{ market: { symbol: null, result: null } }];
                     //  result = {};
-                    let sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+                    let sleep = (ms) =>
+                      new Promise((resolve) => setTimeout(resolve, ms));
                     //empty markets list?
                     if (marketsarr) {
                       // loop across all markets provided
+                      let since_arg = sinceparam ? args[sincepos] : undefined;
                       for (let index = 0; index < marketsarr.length; index++) {
                         const element = marketsarr[index];
-                        //carefull! modify of array modifies the original.
-                        // arrays pass by reference in javascript!!
-                        args[marketpos] = element;
-                        if (index > 0) await sleep(exchange.rateLimit);
-                        // add a note about the market being queried for the call
-                        // useful when there are many markets to use
-                        node.status({
-                          fill: "blue",
-                          shape: "dot",
-                          text: exchange.name + " : " + node.api + " - " + (marketsarr.length - index).toString() + " : " + element,
-                        });
-                        //get the resulting payload then return as streaming msg
-                        let payload = await exchange[api](...args);
-                        returnResult(
-                          {
-                            exchange: exchange.name,
-                            api: api,
-                            arguments: args.concat(),
-                            market: element,
-                            payload: payload,
-                          },
-                          addresult
-                        );
+                        //@nileio check that the market symbol exists for this exchange prior to making the call.
+                        if (exchange.symbols.includes(element)) {
+                          args[marketpos] = element;
+                          if (since_arg && isObject(since_arg)) {
+                            //@nileio since parameter is key/value pair where key is the symbol and value is since
+                            args[sincepos] = since_arg[element] || undefined;
+                          }
+                          //@nileio ratelimiting increase for any exchange by 200 millis!
+                          //this is done to avoid bans- it does not seem that the internal rateLimiter of ccxt is doing anything!
+                          if (index > 0) await sleep(exchange.rateLimit + 500);
+                          // add a note about the market being queried for the call
+                          // useful when there are many markets to use
+                          node.status({
+                            fill: "blue",
+                            shape: "dot",
+                            text:
+                              exchange.name +
+                              " : " +
+                              node.api +
+                              " - " +
+                              (marketsarr.length - index).toString() +
+                              " : " +
+                              element,
+                          });
+                          //get the resulting payload then return as streaming msg
+                          let payload = await exchange[api](...args);
+                          returnResult(
+                            {
+                              exchange: exchange.name,
+                              api: api,
+                              arguments: args.concat(),
+                              market: element,
+                              payload: payload,
+                            },
+                            addresult
+                          );
+                        } else {
+                          //the symbol provided does not exist for this exchange
+                          // node.warn(`${element} skipped. Symbol is not found at ${exchange.name} exchange.`);
+                        }
                       }
                       // market is a param of the api but no market is provided as an argument
                     } else {
@@ -750,10 +966,14 @@ module.exports = function (RED) {
               method = node.customapitype + "_" + method.toLowerCase();
               // issue #5
               // last character should never be an underscore as a result of previous replacement
-              if (method.endsWith("_")) method = method.slice(0, method.length - 1);
+              if (method.endsWith("_"))
+                method = method.slice(0, method.length - 1);
               //invoke api without a payload param
               if (node.apipayloadType === "none") {
-                if (hasPathParameters) throw new Error("No values provided for API path parameters. Ensure you provide the required keys in the Payload.");
+                if (hasPathParameters)
+                  throw new Error(
+                    "No values provided for API path parameters. Ensure you provide the required keys in the Payload."
+                  );
 
                 let payload = await exchange[method]();
                 returnResult(
@@ -780,7 +1000,10 @@ module.exports = function (RED) {
                   addresult
                 );
               } else if (node.apipayloadType === "jsonata") {
-                let parsedPayload = RED.util.evaluateJSONataExpression(RED.util.prepareJSONataExpression(node.apipayload, node), msg);
+                let parsedPayload = RED.util.evaluateJSONataExpression(
+                  RED.util.prepareJSONataExpression(node.apipayload, node),
+                  msg
+                );
                 let payload = await exchange[method](parsedPayload);
                 returnResult(
                   {
@@ -794,7 +1017,9 @@ module.exports = function (RED) {
               }
               //todo : handle msg and flow
               else if (node.apipayloadType === "msg") {
-                let value = JSON.stringify(RED.util.getMessageProperty(msg, node.apipayload));
+                let value = JSON.stringify(
+                  RED.util.getMessageProperty(msg, node.apipayload)
+                );
                 let parsedPayload = JSON.parse(value);
                 let payload = await exchange[method](parsedPayload);
                 returnResult(
@@ -828,24 +1053,6 @@ module.exports = function (RED) {
               });
               node.warn("CCXT API configuration error");
             }
-            // build api results as an array per exchange
-            // if (addresult === true) {
-            //   results = {
-            //     exchange: exchange.name,
-            //     api: node.api,
-            //     //  apitype: node.apitype,
-            //     payload: result
-            //   };
-            //   res++;
-            //   //stream results
-            //   msg.payload = results;
-            //   node.send(msg);
-            // }
-
-            // if (index < node.exchange.length && node.exchange.length > 1) {
-            //   //sleep 200 milliseconds
-            //   node.status({ fill: "blue", shape: "dot", text: "Zzz.." });
-            //   // await sleep(2000);
 
             // clear any node error
           } catch (err) {
@@ -867,6 +1074,9 @@ module.exports = function (RED) {
       };
 
       asyncInput.apply(this, [config]);
+    });
+    node.on("close", function () {
+      return true;
     });
   }
 
@@ -893,4 +1103,3 @@ module.exports = function (RED) {
     },
   });
 };
-//# sourceMappingURL=/ccxt-v2/ccxt-api.js.map

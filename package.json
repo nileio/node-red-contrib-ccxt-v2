@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-ccxt-v2",
-  "version": "0.2.10",
+  "version": "0.2.12",
   "description": "A Node-RED node to communicate with crypto exchanges using CCXT library supporting both CCXT Unified and Exchange-specific API calls.",
   "keywords": [
     "node-red",
@@ -13,16 +13,24 @@
   ],
   "scripts": {
     "maps": "genmaps --sourceRoot /ccxt-v2/",
-    "debug": "genmaps -r /ccxt-v2/ && node --nolazy --inspect /usr/local/lib/node_modules/node-red/red.js",
-    "start": "/usr/local/lib/node_modules/node-red/red.js",
+    "debug": "genmaps -r /ccxt-v2/ && node-red --inspect --nolazy",
+    "start": "node-red",
     "test": "mocha \"test/**/*_spec.js\"",
     "lint": "eslint"
   },
   "author": "Islam El'ewady",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "dependencies": {
     "ccxt": "^1.47.46"
   },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nileio/node-red-contrib-ccxt-v2"
+  },
+  "bugs": "https://github.com/nileio/node-red-contrib-ccxt-v2/issues",
   "node-red": {
     "nodes": {
       "ccxt-api-v2": "ccxt-v2/ccxt-api.js"
