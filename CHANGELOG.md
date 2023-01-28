@@ -103,3 +103,10 @@ jquery ensure that exchange symbol provided exists for the exchange prior to mak
 - added a number of new Unified APIs : fetchFundingRate, fetchFundingRates,fetchFundingRateHistory,fetchFundingHistory
 - Fixed some Unified APIs signature to be "private" rather than public.
 - Tested with latest Node-RED version (v3.0.2) and NodeJS versions, (v14.20.0) , (v16.17.1)
+
+## 0.2.13:
+
+### Enhancment
+
+- changed node `close` event listener to accept input argument `done` to signal completion to the runtime.
+- various old comments cleanup

@@ -2,9 +2,6 @@ module.exports = function (RED) {
   "use strict";
 
   // load package dependencies
-  // add this line in package.json if you want to use serveStatic "serve-static": "^1.14.1"
-  //var serveStatic = require("serve-static");
-  var path = require("path");
   const ccxt = require("ccxt");
   const exchanges = require("./js/exchanges");
 
@@ -28,8 +25,6 @@ module.exports = function (RED) {
   function isObject(value) {
     return Object.prototype.toString.call(value) === "[object Object]";
   }
-  // configure image static folder
-  //app.use("/", serveStatic(path.join(__dirname, "images")));
 
   var errorHandler = function (err, req, res, next) {
     console.warn(err);
@@ -50,15 +45,6 @@ module.exports = function (RED) {
 
     var rst = req.query.exchange;
     //   var exchangeSet = [];
-
-    // multi-exchange
-    // note this is now not needed because every request coming here should ALWAYS
-    // be an array
-    // Array.isArray(exchangereq)
-    //   ? (exchangeSet = exchangereq)
-    //   : (exchangeSet[0] = exchangereq);
-
-    // using ES-6 Set object here for a change !
     //let exchangeSet = new Set(exchangereq);
     let outputarr = [];
     for (let index = 0; index < rst.length; index++) {
@@ -1069,14 +1055,12 @@ module.exports = function (RED) {
         }
         // clear any node error
         node.status({});
-        // msg.payload = results;
-        // node.send(msg);
       };
 
       asyncInput.apply(this, [config]);
     });
-    node.on("close", function () {
-      return true;
+    node.on("close", function (removed, done) {
+      if (done) done();
     });
   }
 
@@ -1089,8 +1073,6 @@ module.exports = function (RED) {
     this.defaultconfig = config.defaultconfig;
     this.activeconfig = config.activeconfig;
     this.sandboxmode = config.sandboxmode;
-
-    var node = this;
   }
 
   RED.nodes.registerType("ccxt-exchange-v2", CcxtExchange, {
