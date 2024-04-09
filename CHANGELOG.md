@@ -110,3 +110,19 @@ jquery ensure that exchange symbol provided exists for the exchange prior to mak
 
 - changed node `close` event listener to accept input argument `done` to signal completion to the runtime.
 - various old comments cleanup
+
+
+## 0.2.14:
+
+### Enhancment
+
+- nodejs version pump to support version 18.
+
+## 0.2.15:
+
+### Fixes
+
+- added a check that filter market list array has values. simple fixe for fetchMarkets & loadMarkets filtered list of markets to handle empty values. it used to give an error if the provided property such as `msg` resolves to an empty value.
+- Note: module desperately needs a rewrite !
+
+

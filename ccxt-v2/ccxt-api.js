@@ -37,7 +37,7 @@ module.exports = function (RED) {
 
     // get all exchanges
     res.setHeader("Content-Type", "application/json");
-    res.send(JSON.stringify({exchange: exchanges.exchanges}));
+    res.send(JSON.stringify({ exchange: exchanges.exchanges }));
   };
 
   var callbackExchangeCaps = function (req, res) {
@@ -121,7 +121,7 @@ module.exports = function (RED) {
     res.setHeader("Content-Type", "application/json");
     // send out the array of all supported unified APIs of the exchange
     // including true or false for private apis
-    res.send(JSON.stringify({caps: outputarr}));
+    res.send(JSON.stringify({ caps: outputarr }));
   };
 
   var callbackExchangeSymbols = async function (req, res) {
@@ -168,7 +168,7 @@ module.exports = function (RED) {
         }
         res.setHeader("Content-Type", "application/json");
 
-        res.send(JSON.stringify({symbols: outputarr}));
+        res.send(JSON.stringify({ symbols: outputarr }));
       } catch (error) {
         console.log(error);
       }
@@ -286,7 +286,7 @@ module.exports = function (RED) {
     // provided by the exchange categories into private/public and other groups
     res.setHeader("Content-Type", "application/json");
 
-    res.send(JSON.stringify({api: flatten_api(exchange.api)}));
+    res.send(JSON.stringify({ api: flatten_api(exchange.api) }));
   };
 
   // returns parameters of the unified api
@@ -334,7 +334,7 @@ module.exports = function (RED) {
     let apiparams = getApiParams(api);
     res.setHeader("Content-Type", "application/json");
 
-    res.send(JSON.stringify({apiparams: apiparams}));
+    res.send(JSON.stringify({ apiparams: apiparams }));
   };
 
   var callbackExchangerequiredCredentials = function (req, res) {
@@ -375,7 +375,7 @@ module.exports = function (RED) {
     res.setHeader("Content-Type", "application/json");
     // send out the array of all supported unified APIs of the exchange
     // including true or false for private apis
-    res.send(JSON.stringify({exchangereqcreds: arr}));
+    res.send(JSON.stringify({ exchangereqcreds: arr }));
   };
 
   RED.httpAdmin.get(
@@ -718,10 +718,13 @@ module.exports = function (RED) {
                   let filterlist = [];
                   if (node.filtermarketsType === "str")
                     filterlist = node.filtermarkets.split(",");
-                  if (node.filtermarketsType === "msg")
-                    filterlist = RED.util
-                      .getMessageProperty(msg, node.filtermarkets)
-                      .split(",");
+                  if (node.filtermarketsType === "msg") {
+                    filterlist = RED.util.getMessageProperty(
+                      msg,
+                      node.filtermarkets
+                    );
+                    if (filterlist) filterlist = filterlist.split(",");
+                  }
                   if (node.filtermarketsType === "flow")
                     filterlist = RED.util.evaluateNodeProperty(
                       node.filtermarkets,
@@ -741,12 +744,14 @@ module.exports = function (RED) {
                     );
 
                   //filter result here
-                  payload = Object.keys(payload)
-                    .filter((key) => filterlist.includes(key))
-                    .reduce((obj, key) => {
-                      obj[key] = payload[key];
-                      return obj;
-                    }, {});
+                  if (filterlist.length > 0) {
+                    payload = Object.keys(payload)
+                      .filter((key) => filterlist.includes(key))
+                      .reduce((obj, key) => {
+                        obj[key] = payload[key];
+                        return obj;
+                      }, {});
+                  }
                 }
                 //if we have markets after applying filters then return result showing the exchange and the markets available
                 if (Object.entries(payload).length > 0) {
@@ -769,10 +774,13 @@ module.exports = function (RED) {
                   let filterlist = [];
                   if (node.filtermarketsType === "str")
                     filterlist = node.filtermarkets.split(",");
-                  if (node.filtermarketsType === "msg")
-                    filterlist = RED.util
-                      .getMessageProperty(msg, node.filtermarkets)
-                      .split(",");
+                  if (node.filtermarketsType === "msg") {
+                    filterlist = RED.util.getMessageProperty(
+                      msg,
+                      node.filtermarkets
+                    );
+                    if (filterlist) filterlist = filterlist.split(",");
+                  }
                   if (node.filtermarketsType === "flow")
                     filterlist = RED.util.evaluateNodeProperty(
                       node.filtermarkets,
@@ -792,9 +800,11 @@ module.exports = function (RED) {
                     );
 
                   //filter result here
-                  payload = payload.filter((key) => {
-                    return filterlist.includes(key.symbol);
-                  });
+                  if (filterlist.length > 0) {
+                    payload = payload.filter((key) => {
+                      return filterlist.includes(key.symbol);
+                    });
+                  }
                 }
                 if (payload.length > 0) {
                   addresult = true;
@@ -1077,11 +1087,11 @@ module.exports = function (RED) {
 
   RED.nodes.registerType("ccxt-exchange-v2", CcxtExchange, {
     credentials: {
-      apikey: {type: "text"},
-      secret: {type: "text"},
-      uid: {type: "text"},
-      login: {type: "text"},
-      password: {type: "password"},
+      apikey: { type: "text" },
+      secret: { type: "text" },
+      uid: { type: "text" },
+      login: { type: "text" },
+      password: { type: "password" },
     },
   });
 };
